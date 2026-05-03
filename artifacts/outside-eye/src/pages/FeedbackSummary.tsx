@@ -23,10 +23,105 @@ function formatDate(ts: number) {
   });
 }
 
+function formatLongDate() {
+  return new Date().toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function buildBrief(
+  visited: string[],
+  feedback: FeedbackEntry[]
+): string {
+  const triedCount = visited.length;
+  const useful = ROOMS.filter((r) =>
+    feedback.find((f) => f.roomKey === r.key && f.rating === "up")
+  );
+  const notUseful = ROOMS.filter((r) =>
+    feedback.find((f) => f.roomKey === r.key && f.rating === "down")
+  );
+  const triedUnrated = ROOMS.filter(
+    (r) =>
+      visited.includes(r.key) &&
+      !feedback.find((f) => f.roomKey === r.key)
+  );
+  const notTried = ROOMS.filter((r) => !visited.includes(r.key));
+
+  const div = "─────────────────────────────────────";
+  const lines: string[] = [];
+
+  lines.push("THE OUTSIDE EYE");
+  lines.push(`Review brief · ${formatLongDate()}`);
+  lines.push("");
+
+  if (triedCount === 0) {
+    lines.push("No rooms tested yet.");
+    return lines.join("\n");
+  }
+
+  // Opening sentence
+  const sentenceParts: string[] = [];
+  sentenceParts.push(`I tested ${triedCount} of the nine rooms.`);
+  if (useful.length > 0)
+    sentenceParts.push(
+      `${useful.length} ${useful.length === 1 ? "felt" : "felt"} genuinely useful.`
+    );
+  if (notUseful.length > 0)
+    sentenceParts.push(
+      `${notUseful.length} ${notUseful.length === 1 ? "didn't land." : "didn't land."}`
+    );
+  lines.push(sentenceParts.join(" "));
+  lines.push("");
+  lines.push(div);
+
+  if (useful.length > 0) {
+    lines.push("");
+    lines.push("WORKED WELL");
+    useful.forEach((r) => {
+      const entry = feedback.find((f) => f.roomKey === r.key)!;
+      lines.push(`  ${r.num}  ${r.name}  (rated ${formatDate(entry.at)})`);
+    });
+  }
+
+  if (notUseful.length > 0) {
+    lines.push("");
+    lines.push("DIDN'T WORK");
+    notUseful.forEach((r) => {
+      const entry = feedback.find((f) => f.roomKey === r.key)!;
+      lines.push(`  ${r.num}  ${r.name}  (rated ${formatDate(entry.at)})`);
+    });
+  }
+
+  if (triedUnrated.length > 0) {
+    lines.push("");
+    lines.push("TRIED · NOT YET RATED");
+    triedUnrated.forEach((r) => {
+      lines.push(`  ${r.num}  ${r.name}`);
+    });
+  }
+
+  if (notTried.length > 0) {
+    lines.push("");
+    lines.push("NOT YET TRIED");
+    notTried.forEach((r) => {
+      lines.push(`  ${r.num}  ${r.name}`);
+    });
+  }
+
+  lines.push("");
+  lines.push(div);
+  lines.push("theoutsideeye.com");
+
+  return lines.join("\n");
+}
+
 export default function FeedbackSummary() {
   const [visited, setVisited] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
   const [copied, setCopied] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     setVisited(getVisited());
@@ -34,44 +129,25 @@ export default function FeedbackSummary() {
   }, []);
 
   const triedCount = visited.length;
-  const ratedCount = feedback.length;
   const upCount = feedback.filter((f) => f.rating === "up").length;
   const downCount = feedback.filter((f) => f.rating === "down").length;
+  const ratedCount = feedback.length;
 
-  function handleExport() {
-    const lines: string[] = ["THE OUTSIDE EYE — SESSION NOTES", ""];
-    lines.push(`Rooms tried: ${triedCount} of 9`);
-    lines.push(`Rooms rated: ${ratedCount} — ${upCount} useful, ${downCount} not useful`);
-    lines.push("");
-    lines.push("─────────────────────────────────");
-    lines.push("");
+  const briefText = buildBrief(visited, feedback);
 
-    ROOMS.forEach((room) => {
-      const wasVisited = visited.includes(room.key);
-      const entry = feedback.find((f) => f.roomKey === room.key);
-      const status = !wasVisited
-        ? "Not tried"
-        : entry
-        ? entry.rating === "up"
-          ? "Tried · Useful"
-          : "Tried · Not useful"
-        : "Tried · Not rated";
-      lines.push(`${room.num}  ${room.name}`);
-      lines.push(`    ${status}${entry ? "  (" + formatDate(entry.at) + ")" : ""}`);
-      lines.push("");
-    });
-
-    navigator.clipboard.writeText(lines.join("\n")).then(() => {
+  function handleCopy() {
+    navigator.clipboard.writeText(briefText).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   }
 
-  function handleClearFeedback() {
+  function handleClear() {
     localStorage.removeItem("outsideeye_feedback");
     localStorage.removeItem("outsideeye_visited");
     setVisited([]);
     setFeedback([]);
+    setShowPreview(false);
   }
 
   return (
@@ -117,7 +193,7 @@ export default function FeedbackSummary() {
 
       <hr className="hr-hairline" style={{ marginBottom: 32 }} />
 
-      {/* Summary stats */}
+      {/* Stats */}
       {triedCount > 0 && (
         <div
           style={{
@@ -136,11 +212,7 @@ export default function FeedbackSummary() {
           ].map((stat) => (
             <div
               key={stat.label}
-              style={{
-                backgroundColor: "#0D0D0D",
-                padding: "20px 24px",
-                textAlign: "center",
-              }}
+              style={{ backgroundColor: "#0D0D0D", padding: "20px 24px", textAlign: "center" }}
             >
               <p
                 style={{
@@ -154,10 +226,7 @@ export default function FeedbackSummary() {
               >
                 {stat.label}
               </p>
-              <p
-                className="fraunces-label"
-                style={{ fontSize: 28, color: "#F5F0E8", fontWeight: 500 }}
-              >
+              <p className="fraunces-label" style={{ fontSize: 28, color: "#F5F0E8", fontWeight: 500 }}>
                 {stat.value}
               </p>
             </div>
@@ -197,24 +266,12 @@ export default function FeedbackSummary() {
 
               <p
                 className="fraunces-label"
-                style={{
-                  fontSize: 18,
-                  fontWeight: 500,
-                  color: "#F5F0E8",
-                  flex: 1,
-                }}
+                style={{ fontSize: 18, fontWeight: 500, color: "#F5F0E8", flex: 1 }}
               >
                 {room.name}
               </p>
 
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  flexShrink: 0,
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
                 {!wasVisited ? (
                   <span
                     style={{
@@ -270,13 +327,88 @@ export default function FeedbackSummary() {
         })}
       </div>
 
-      {/* Actions */}
+      {/* Brief preview + actions */}
       {triedCount > 0 && (
         <>
-          <hr className="hr-hairline" style={{ marginTop: 32, marginBottom: 24 }} />
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <hr className="hr-hairline" style={{ marginTop: 40, marginBottom: 32 }} />
+
+          {/* Preview toggle */}
+          <div style={{ marginBottom: showPreview ? 0 : 0 }}>
             <button
-              onClick={handleExport}
+              onClick={() => setShowPreview((v) => !v)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Departure Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#F5A623",
+                }}
+              >
+                {showPreview ? "Hide brief preview" : "Preview brief"}
+              </span>
+              <span
+                style={{
+                  color: "#F5A623",
+                  fontSize: 12,
+                  transform: showPreview ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 200ms ease",
+                  lineHeight: 1,
+                }}
+              >
+                ▾
+              </span>
+            </button>
+          </div>
+
+          {showPreview && (
+            <div
+              style={{
+                marginTop: 20,
+                marginBottom: 8,
+                backgroundColor: "#0D0D0D",
+                border: "1px solid #2A2A2A",
+                padding: "28px 32px",
+              }}
+            >
+              <pre
+                style={{
+                  fontFamily: "'Departure Mono', 'Courier New', monospace",
+                  fontSize: 12,
+                  lineHeight: 1.9,
+                  color: "#B8B2A8",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  margin: 0,
+                }}
+              >
+                {briefText}
+              </pre>
+            </div>
+          )}
+
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <button
+              onClick={handleCopy}
               style={{
                 fontFamily: "'Departure Mono', 'Courier New', monospace",
                 fontSize: 11,
@@ -303,11 +435,11 @@ export default function FeedbackSummary() {
                 }
               }}
             >
-              {copied ? "Copied to clipboard" : "Copy session notes"}
+              {copied ? "Copied" : "Copy brief"}
             </button>
 
             <button
-              onClick={handleClearFeedback}
+              onClick={handleClear}
               style={{
                 background: "none",
                 border: "none",
