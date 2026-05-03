@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronRight, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube, Search, Sparkles } from "lucide-react";
 import { clusters } from "@/data/guides";
 import { tools, DISCLAIMER, TAX_BRACKETS_RESIDENT, TAX_BRACKETS_NON_RESIDENT, MEDICARE_LEVY, PUBLIC_TRANSPORT_DATA, PARKING_FINES_DATA, WWC_DATA } from "@/data/tools";
 import type { ToolId } from "@/data/tools";
 import { referenceTiles } from "@/data/reference";
+
+const heroImg = "/Kindd_Hero.png";
 
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 const C = {
@@ -649,9 +651,8 @@ export default function Home() {
 
       {/* ── SECTION 1 — HERO ────────────────────────────────────────────────── */}
       <section id="home" style={{ position: "relative", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "20vh", paddingLeft: 24, paddingRight: 24 }}>
-        {/* Hero placeholder — replace this div with <img src="/Kindd_Hero.png"> when image is available */}
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(175deg, #FCEEE8 0%, #FAF6E8 55%, ${C.cream} 100%)`, zIndex: -2 }} title="Hero image placeholder: Kindd_Hero.png — Australian suburban street, painterly illustration, warm cream palette." />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, rgba(250,246,232,0.55) 0%, rgba(250,246,232,0.15) 40%, transparent 60%)`, zIndex: -1 }} />
+        <img src={heroImg} alt="An Australian suburban street with houses, picket fences, a letterbox, and a kookaburra on a post. Painterly illustration." style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", zIndex: -2 }} />
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, rgba(250,246,232,0.55) 0%, rgba(250,246,232,0.15) 45%, transparent 65%)`, zIndex: -1 }} />
 
         <div className="max-w-3xl mx-auto text-center flex flex-col items-center" style={{ zIndex: 1 }}>
           <h1 style={{ fontSize: "clamp(4rem, 12vw, 7rem)", fontWeight: 700, letterSpacing: "-0.04em", color: C.navy, marginBottom: 24, lineHeight: 1 }}>kindd</h1>
@@ -679,6 +680,39 @@ export default function Home() {
             <p>Adult life in Australia comes with no manual. There are forms to fill. Bodies to call. Rights you have but were never told about. Money you might be owed. Doors you did not know to knock on.</p>
             <p>KINDD points you to the right door. Eleven plain-language guide clusters covering tax, renting, health, family, neighbours, money, voting, business, work, and the rest of it. We do not give advice. We tell you where to go and what to ask when you get there.</p>
             <p>Every word here came from a government source. Every link goes back to one. Updated monthly. Free forever. No account. No catch.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHAT'S NEW ──────────────────────────────────────────────────────── */}
+      <section style={{ padding: "0 24px 0", background: C.cream }}>
+        <div className="max-w-6xl mx-auto">
+          <div style={{ borderTop: `1px solid ${C.offCream}`, borderBottom: `1px solid ${C.offCream}`, padding: "32px 0" }}>
+            <div className="flex flex-wrap items-start gap-6 md:gap-10">
+              <div className="flex items-center gap-2 shrink-0" style={{ paddingTop: 2 }}>
+                <Sparkles style={{ width: 16, height: 16, color: C.cerulean }} />
+                <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.75rem", fontWeight: 500, color: C.cerulean, letterSpacing: "0.08em", textTransform: "uppercase" }}>May 2026</span>
+              </div>
+              <div className="flex flex-wrap gap-x-8 gap-y-3 flex-1">
+                {[
+                  { label: "New", items: ["Tools section — 10 calculators", "Reference section — About Australia"] },
+                  { label: "New guide clusters", items: ["Business Setup", "Employment and Workplace", "Consumer and Fair Trade", "Education and Training", "Government Jobs", "Students"] },
+                  { label: "Updated", items: ["Civic and Legal — Online Abuse and Cybercrime guides added", "All 11 clusters reviewed against May 2026 government sources"] },
+                ].map(({ label, items }) => (
+                  <div key={label} style={{ minWidth: 200 }}>
+                    <p style={{ fontSize: "0.72rem", fontFamily: "'Geist Mono', monospace", color: C.grey, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>{label}</p>
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+                      {items.map((item) => (
+                        <li key={item} style={{ fontSize: "0.875rem", color: C.navy, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                          <span style={{ color: C.cerulean, marginTop: 1, flexShrink: 0 }}>—</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
