@@ -1,173 +1,181 @@
-export interface ReferenceTile {
-  id: string;
-  title: string;
-  intro: string;
-  alwaysVisible?: boolean;
-  specialStyle?: string;
-  content: string;
-  source?: string;
+export interface HolidayEntry {
+  date: string;
+  name: string;
 }
 
-export const referenceTiles: ReferenceTile[] = [
+export interface RefTileData {
+  id: string;
+  title: string;
+  stripe: string;
+  description: string;
+  content: string;
+  source?: string;
+  holidays?: { [state: string]: HolidayEntry[] };
+}
+
+export const referenceTiles: RefTileData[] = [
   {
-    id: "at-a-glance",
+    id: "glance",
     title: "Australia at a Glance",
-    intro: "The official facts about Australia in one place.",
-    content: `Official name: Commonwealth of Australia.
-Capital: Canberra.
-Population: approximately 27 million (ABS 2024).
-Area: 7.692 million square kilometres.
-Currency: Australian dollar (AUD).
-Official language: None legislated. English is the de facto language.
-Government: Federal parliamentary constitutional monarchy.
-Head of State: King Charles III.
-Governor-General: Appointed by the King on the advice of the Prime Minister.
-Head of Government: Prime Minister.`,
-    source: "australia.gov.au",
+    stripe: "#F59E0B",
+    description: "Official name, capital, population, and government structure.",
+    content: "Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Currency: Australian dollar (AUD). Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Head of Government: Prime Minister.",
+    source: "Source: australia.gov.au",
   },
   {
-    id: "states-territories",
+    id: "states",
     title: "States and Territories",
-    intro: "Six states, two self-governing territories, and seven external territories.",
-    content: `Six states:
-New South Wales (Sydney). Victoria (Melbourne). Queensland (Brisbane). South Australia (Adelaide). Western Australia (Perth). Tasmania (Hobart).
-
-Two self-governing territories:
-Australian Capital Territory (Canberra). Northern Territory (Darwin).
-
-Seven external territories:
-Christmas Island. Cocos (Keeling) Islands. Norfolk Island. Jervis Bay Territory. Ashmore and Cartier Islands. Coral Sea Islands. Heard Island and McDonald Islands.
-
-Note: Most Australians cannot name all seven external territories. Now you can.`,
-    source: "australia.gov.au",
+    stripe: "#2A9D8F",
+    description: "Six states, two self-governing territories, and seven external territories.",
+    content: "Six states: New South Wales, Victoria, Queensland, South Australia, Western Australia, Tasmania. Two self-governing territories: Australian Capital Territory, Northern Territory. Seven external territories: Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands. Most Australians cannot name all seven external territories.",
+    source: "Source: australia.gov.au",
   },
   {
-    id: "national-anthem",
+    id: "anthem",
     title: "National Anthem",
-    intro: "Advance Australia Fair. Adopted 1984. Modified January 2021.",
-    content: `Full title: Advance Australia Fair.
-Adopted: 1984.
-Modified: January 2021. The word "young" in the first verse was changed to "one" to better reflect Australia's Indigenous history.
-
-Verse one:
-Australians all let us rejoice,
-For we are one and free,
-With golden soil and wealth for toil,
-Our home is girt by sea,
-Our land abounds in nature's gifts,
-Of beauty rich and rare,
-In history's page let every stage,
-Advance Australia Fair,
-In joyful strains then let us sing,
-Advance Australia Fair.
-
-Verse two:
-Beneath our radiant southern cross,
-We'll toil with hearts and hands,
-To make this Commonwealth of ours,
-Renowned of all the lands,
-For those who've come across the seas,
-We've boundless plains to share,
-With courage let us all combine,
-To advance Australia Fair,
-In joyful strains then let us sing,
-Advance Australia Fair.`,
-    source: "pmc.gov.au",
+    stripe: "#6B8F71",
+    description: "Advance Australia Fair. Adopted 1984. Modified January 2021.",
+    content: `The word "young" was changed to "one" in the first verse to better reflect Australia's Indigenous history.\n\nVerse one:\nAustralians all let us rejoice,\nFor we are one and free,\nWith golden soil and wealth for toil,\nOur home is girt by sea,\nOur land abounds in nature's gifts,\nOf beauty rich and rare,\nIn history's page let every stage,\nAdvance Australia Fair,\nIn joyful strains then let us sing,\nAdvance Australia Fair.\n\nVerse two:\nBeneath our radiant Southern Cross,\nWe'll toil with hearts and hands,\nTo make this Commonwealth of ours,\nRenowned of all the lands,\nFor those who've come across the seas,\nWe've boundless plains to share,\nWith courage let us all combine,\nTo advance Australia Fair,\nIn joyful strains then let us sing,\nAdvance Australia Fair.`,
+    source: "Source: pmc.gov.au",
   },
   {
-    id: "australian-values",
+    id: "values",
     title: "Australian Values",
-    intro: "Sourced directly from homeaffairs.gov.au.",
-    content: `The Australian values include:
-
-Respect for the equal worth, dignity and freedom of the individual.
-Freedom of speech and association.
-Freedom of religion and a secular government.
-Support for parliamentary democracy and the rule of law.
-Equality under the law.
-Equality of men and women.
-Equality of opportunity.
-Peacefulness.
-A spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.`,
-    source: "homeaffairs.gov.au/about-us/our-portfolios/multicultural-affairs/about-australian-citizenship/australians-values",
+    stripe: "#4F6FA0",
+    description: "The values assessed during the citizenship process.",
+    content: "The Australian values include respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.",
+    source: "Source: homeaffairs.gov.au",
   },
   {
-    id: "time-zones",
+    id: "timezones",
     title: "Time Zones",
-    intro: "Australia has five main time zones.",
-    content: `AEST — Australian Eastern Standard Time. UTC+10.
-States: NSW, VIC, QLD, TAS, ACT.
-
-AEDT — Australian Eastern Daylight Time. UTC+11.
-States: NSW, VIC, TAS, ACT (during daylight saving).
-
-ACST — Australian Central Standard Time. UTC+9:30.
-States: SA, NT.
-
-ACDT — Australian Central Daylight Time. UTC+10:30.
-States: SA (during daylight saving).
-
-AWST — Australian Western Standard Time. UTC+8.
-States: WA.
-
-No daylight saving in WA, QLD, or NT.
-Lord Howe Island observes UTC+10:30 in winter and UTC+11 in summer.`,
-    source: "australia.gov.au",
+    stripe: "#B5651D",
+    description: "Australia spans five main time zones.",
+    content: "AEST UTC+10: NSW, VIC, QLD, TAS, ACT. AEDT UTC+11: NSW, VIC, TAS, ACT during daylight saving. ACST UTC+9:30: SA, NT. ACDT UTC+10:30: SA during daylight saving. AWST UTC+8: WA. No daylight saving in WA, QLD, or NT. Lord Howe Island: UTC+10:30 winter, UTC+11 summer.",
+    source: "Source: bom.gov.au",
   },
   {
-    id: "daylight-saving",
+    id: "daylightsaving",
     title: "Daylight Saving",
-    intro: "Not every state observes it.",
-    content: `Daylight saving runs from the first Sunday in October to the first Sunday in April.
-
-Clocks go forward one hour in October. Back one hour in April.
-
-States that observe it: NSW, VIC, SA, TAS, ACT.
-States that do not: QLD, WA, NT.
-
-QLD held referendums in 1992 and 2010 and voted no both times.`,
-    source: "australia.gov.au",
+    stripe: "#E07A5F",
+    description: "Not observed in all states.",
+    content: "Runs first Sunday October to first Sunday April. Clocks forward one hour in October. Back one hour in April. States that observe: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. Queensland held referendums in 1992 and 2010 and voted no both times.",
+    source: "Source: australia.gov.au",
   },
   {
-    id: "emergency-numbers",
-    title: "Emergency Numbers",
-    intro: "Save these. Share these.",
-    alwaysVisible: true,
-    specialStyle: "signal-green",
-    content: `000 — Police, fire, ambulance. Use from any phone.
-112 — Emergency from a mobile with no signal. Connects to 000.
-13 11 14 — Lifeline. Crisis support. 24 hours.
-1800 737 732 — 1800RESPECT. Family violence and sexual assault.
-131 114 — Poisons Information Centre. 24 hours.
-132 500 — State Emergency Service. Floods, storms.
-131 444 — Police Assistance Line. Non-emergency.
-1300 22 4636 — Beyond Blue. Mental health support.
-1800 551 800 — Kids Helpline. 5 to 25 years old.`,
-  },
-  {
-    id: "public-holidays",
+    id: "holidays",
     title: "Public Holidays 2026",
-    intro: "National holidays plus state variations.",
-    content: `National public holidays (all states and territories):
-New Year's Day — 1 January
-Australia Day — 26 January
-Good Friday — 3 April
-Easter Saturday — 4 April
-Easter Sunday — 5 April
-Easter Monday — 6 April
-Anzac Day — 25 April
-Christmas Day — 25 December
-Boxing Day — 26 December
-
-Additional state holidays (selected):
-NSW: Bank Holiday (first Monday August)
-VIC: Melbourne Cup Day (first Tuesday November)
-QLD: Royal Queensland Show / Ekka (Brisbane area, August)
-SA: Adelaide Cup (second Monday May), Proclamation Day (26 Dec, observed separately)
-WA: Western Australia Day (first Monday June)
-TAS: Eight Hours Day / Labour Day (second Monday March), Hobart Regatta (second Monday February, south only)
-ACT: Canberra Day (second Monday March), Family & Community Day / AFL Grand Final Friday
-NT: May Day (first Monday May), Picnic Day (first Monday August)`,
-    source: "fairwork.gov.au/leave/public-holidays",
+    stripe: "#3A6B35",
+    description: "National and state public holidays for 2026.",
+    content: "Select a state or territory to see its public holidays for 2026.",
+    source: "Source: fairwork.gov.au/leave/public-holidays",
+    holidays: {
+      NSW: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "5 Apr", name: "Easter Sunday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "8 Jun", name: "King's Birthday" },
+        { date: "3 Aug", name: "Bank Holiday" },
+        { date: "5 Oct", name: "Labour Day" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      VIC: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "9 Mar", name: "Labour Day" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "5 Apr", name: "Easter Sunday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "8 Jun", name: "King's Birthday" },
+        { date: "4 Nov", name: "Melbourne Cup Day" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      QLD: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "5 Apr", name: "Easter Sunday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "4 May", name: "Labour Day" },
+        { date: "13 Oct", name: "King's Birthday" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      SA: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "9 Mar", name: "Adelaide Cup" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "9 Jun", name: "King's Birthday" },
+        { date: "5 Oct", name: "Labour Day" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Proclamation Day (observed)" },
+      ],
+      WA: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "1 Jun", name: "Western Australia Day" },
+        { date: "22 Sep", name: "King's Birthday" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      TAS: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "9 Mar", name: "Eight Hours Day" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "8 Jun", name: "King's Birthday" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      ACT: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "9 Mar", name: "Canberra Day" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "5 Apr", name: "Easter Sunday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "1 Jun", name: "Reconciliation Day" },
+        { date: "8 Jun", name: "King's Birthday" },
+        { date: "5 Oct", name: "Family and Community Day" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+      NT: [
+        { date: "1 Jan", name: "New Year's Day" },
+        { date: "27 Jan", name: "Australia Day (observed)" },
+        { date: "3 Apr", name: "Good Friday" },
+        { date: "4 Apr", name: "Easter Saturday" },
+        { date: "6 Apr", name: "Easter Monday" },
+        { date: "25 Apr", name: "Anzac Day" },
+        { date: "4 May", name: "May Day" },
+        { date: "8 Jun", name: "King's Birthday" },
+        { date: "3 Aug", name: "Picnic Day" },
+        { date: "25 Dec", name: "Christmas Day" },
+        { date: "28 Dec", name: "Boxing Day (observed)" },
+      ],
+    },
   },
 ];

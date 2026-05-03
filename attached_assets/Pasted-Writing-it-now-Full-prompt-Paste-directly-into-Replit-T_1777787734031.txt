@@ -1,0 +1,469 @@
+Writing it now. Full prompt. Paste directly into Replit.
+
+---
+
+This is a complete visual and content rebuild of the KINDD website. The React + Vite + Tailwind + Framer Motion + Lucide React structure stays. Every visual decision is replaced. Do not carry forward any colour, font, spacing, or component style from the current build.
+
+---
+
+**FONTS. DO THIS FIRST. NOTHING ELSE UNTIL FONTS LOAD.**
+
+Replace everything in index.html head with these imports only.
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/style.css" rel="stylesheet">
+```
+
+In your Tailwind config or global CSS set font families:
+- `font-serif`: DM Serif Display
+- `font-sans`: DM Sans
+- `font-mono`: Geist Mono
+
+DM Serif Display: all section headings, hero wordmark, hero line, final two lines of the "For the people" section, About Australia card headings, citizenship stage headings.
+
+DM Sans: all body copy, nav items, button labels, card descriptions, guide names, tool labels, input labels. Weight 400 body, 500 nav and buttons, 600 card titles.
+
+Geist Mono: every disclaimer block inside tools, all last-updated stamps, source attribution lines, emergency number labels.
+
+Verify fonts are rendering before touching anything else.
+
+---
+
+**COLOUR SYSTEM.**
+
+White #FFFFFF: guides section, tools section, "For the people" section, reference section backgrounds.
+Warm cream #FAF6E8: hero, premise, always free, disclaimer sections.
+Off-cream #F0EAD6: who KINDD is for section.
+Midnight Navy #0F172A: all headings, primary text, dark cards, footer, emergency band background.
+Warm grey #6B6B5E: all secondary text, body copy.
+On dark backgrounds: primary text warm cream #FAF6E8, secondary #A89880.
+
+Cerulean #007BA7: interactive only. Links, button outlines, hover states, active accordion chevrons. Not used decoratively anywhere.
+Amber #F59E0B: cluster icon backgrounds at 12 percent opacity only. Icon itself at full Amber. Nowhere else.
+Australian Green #00843D and Australian Gold #FFCD00: citizenship section and emergency numbers band only.
+
+No Breeze #B8D4E8 anywhere. No Terracotta. No other colours.
+
+Card shadows throughout: box-shadow 0 4px 28px rgba(15,23,42,0.11). Present and felt, not subtle.
+Card border-radius: 20px.
+Input border-radius: 12px.
+Button border-radius: 32px primary, 10px secondary.
+
+---
+
+**NAVIGATION.**
+
+Sticky top. backdrop-filter blur(14px). On scroll: background rgba(255,255,255,0.93). At top: transparent.
+Left: wordmark "kindd" DM Serif Display 22px Midnight Navy.
+Right links: Home, Guides, Tools, Reference, Citizenship, How It Works, Contact. DM Sans 500 14px. Midnight Navy. Letter-spacing 0.02em.
+Rightmost: "Part of Breza + You" Cerulean. Links to brezaplusyou.com.au. Once only. Remove any other instance.
+Mobile: hamburger. Framer Motion slide drawer. Full width overlay.
+
+---
+
+**SECTION 1. HERO.**
+
+Min-height 100vh. Full bleed.
+Background: Kindd_Hero.png. object-fit cover. object-position center top.
+Overlay: linear-gradient(to bottom, rgba(250,246,232,0.72) 0%, rgba(250,246,232,0.28) 48%, transparent 100%).
+Content centred horizontally, positioned top 38 percent of viewport.
+Wordmark: "kindd" DM Serif Display 52px desktop 34px mobile. Midnight Navy.
+Hero line: "You are one of our kind." DM Serif Display 68px desktop 38px mobile. Midnight Navy. Line-height 1.08.
+Subtext: "A plain-language guide to Australian life. Sourced from government. Updated monthly. Always free." DM Sans 400 18px. Warm grey. Max-width 540px. Centred.
+CTA: "Browse the guides." Midnight Navy fill, cream text, border-radius 32px, padding 16px 40px. Hover Cerulean fill. DM Sans 500 16px.
+Scroll arrow: Lucide ChevronDown. Bottom centre. Framer Motion opacity pulse 1 to 0.4. Fades to display none after 120px scroll.
+Go-to-top: fixed bottom-right 32px. Lucide ArrowUp. 48x48px circle. White background. Midnight Navy icon. Shadow 0 2px 12px rgba(15,23,42,0.15). Appears after 400px scroll via Framer Motion fade.
+
+---
+
+**SECTION 2. THE PREMISE.**
+
+Background cream #FAF6E8. Padding 96px 24px.
+Max-width 800px centred.
+Heading: "Why KINDD exists." DM Serif Display 46px. Midnight Navy. Left-aligned.
+Three paragraphs below. DM Sans 400 18px. Warm grey #6B6B5E. Max-width 660px. Left-aligned. Line-height 1.75. Gap 24px between paragraphs.
+"Adult life in Australia comes with no manual. There are forms to fill. Bodies to call. Rights you have but were never told about. Money you might be owed. Doors you did not know to knock on."
+"KINDD points you to the right door. Plain-language guides covering tax, renting, health, family, neighbours, money, voting, citizenship, and more. We do not give advice. We tell you where to go and what to ask when you get there."
+"Every word here came from a government source. Every link goes back to one. Updated monthly. Free forever. No account. No catch."
+
+---
+
+**SECTION 3. GUIDES.**
+
+Background white #FFFFFF. Padding 96px 24px.
+Heading: "Guides." DM Serif Display 52px. Midnight Navy. Centred.
+Sub-line: "Plain language. Government sources. Updated monthly." DM Sans 400 17px. Warm grey. Centred.
+Last reviewed line: "All guides last reviewed May 2026. Always check the official government source linked in each guide." Geist Mono 12px. Warm grey. Centred. Margin-bottom 48px.
+
+Grid: CSS columns 3 desktop, 2 tablet 768px, 1 mobile. column-gap 24px. Each card uses margin-bottom 24px. Cards are different heights, masonry effect natural.
+
+Each cluster card: background white. Border-radius 20px. Box-shadow 0 4px 28px rgba(15,23,42,0.11). Padding 28px. Break-inside avoid.
+
+Card top: icon block 52x52px. Border-radius 14px. Background is cluster colour at 12 percent opacity. Inside: custom filled SVG icon, not Lucide, in the full cluster colour. Simple solid shapes.
+
+Cluster colour and icon assignments:
+Money and Work: Amber #F59E0B. Icon: filled coin circle with dollar mark.
+Home and Renting: Sage #6B8F71. Icon: filled house silhouette.
+Health and Family: Rose #C0635A. Icon: filled heart.
+Civic and Legal: Indigo #4F6FA0. Icon: filled scales of justice, simplified.
+New to Australia: Teal #2A9D8F. Icon: filled compass.
+Business Setup: #4A6580 Steel. Icon: filled briefcase.
+Employment and Workplace: Plum #7B5EA7. Icon: filled ID badge.
+Consumer and Fair Trade: Copper #B5651D. Icon: filled shield.
+Education and Training: Forest #3A6B35. Icon: filled graduation cap.
+Government Jobs: Navy #1E3A5F. Icon: filled building columns.
+Students: Coral #E07A5F. Icon: filled open book.
+Citizenship and Coming to Australia: Australian Gold #C9A84C. Icon: filled star, five-pointed.
+Volunteering: Australian Green #00843D. Icon: filled hand with heart.
+
+Below icon: cluster name DM Sans 600 17px Midnight Navy. Margin-top 14px.
+Description DM Sans 400 13px warm grey. Margin-top 4px.
+Divider 1px #E8E0D0. Margin 16px 0.
+
+Guide rows: each guide name Cerulean #007BA7 DM Sans 500 14px. Padding 10px 0. Border-bottom 1px #F0EAD6. Display flex justify-between align-center. Chevron-right Lucide small Cerulean right side. Cursor pointer. On click expands below via Framer Motion AnimatePresence.
+
+Expanded guide state: margin 8px 0. Background #F7F6F2. Border-radius 12px. Padding 16px.
+Description: DM Sans 400 14px Midnight Navy. Line-height 1.65.
+Last updated: Geist Mono 11px warm grey. Margin-top 8px. "Last updated: May 2026. Always check the official source."
+Link buttons: margin-top 12px. Wrap flex-wrap gap 8px. Each button: Cerulean 1.5px border, Cerulean text, transparent fill, border-radius 8px, padding 8px 14px, DM Sans 500 13px, Lucide ExternalLink icon 12px after label. Hover Cerulean fill white text.
+
+THIRTEEN CLUSTERS. ALL CONTENT BELOW.
+
+CLUSTER ONE. Money and Work. Amber. Coin icon.
+Tax Basics: "Covers income tax, how the PAYG system works, what a tax return is, and when you need to lodge one. Covers both employees and sole traders." Links: ATO Lodge a Tax Return (ato.gov.au/individuals-and-families/lodging-your-tax-return), MyTax (my.gov.au).
+Side Income and Gig Work: "If you earn money from Uber, Airtasker, Etsy, markets, or any platform, that income is taxable. Covers ABN requirements, declaring income, and GST thresholds." Links: ATO Gig Economy (ato.gov.au/businesses-and-organisations/gig-economy), ABN registration (abr.gov.au).
+Money and Super: "Superannuation basics, how to find lost super, what your employer must pay, and how to check your balance. Covers MoneySmart tools." Links: MoneySmart Super (moneysmart.gov.au/superannuation), ATO Super (ato.gov.au/super), ATO Lost Super (ato.gov.au/calculators-and-tools/find-your-lost-super).
+Consumer Rights: "What you are entitled to when something you buy is broken, not fit for purpose, or not as described. Covers refunds, replacements, and your rights under Australian Consumer Law." Links: ACCC (accc.gov.au/consumers), NSW Fair Trading (fairtrading.nsw.gov.au).
+
+CLUSTER TWO. Home and Renting. Sage. House icon.
+Renting and Tenancy: "Covers your rights as a tenant including bond, repairs, entry by the landlord, rent increases, and how to dispute an unfair eviction. Links to your state tenancy authority." Links: NSW Fair Trading Tenancy (fairtrading.nsw.gov.au/housing-and-property), Consumer Affairs Victoria (consumer.vic.gov.au/housing), RTA Queensland (rta.qld.gov.au).
+Neighbours and Community: "What to do about noise complaints, fences, trees, and disputes with neighbours. Covers mediation options and when to involve your council." Links: Community Justice Centres NSW (cjc.nsw.gov.au), Dispute Settlement Centre VIC (disputes.vic.gov.au).
+Council and Local Government: "What your council is responsible for, how to find yours, how to report local issues, and how to participate in council decisions." Links: australia.gov.au/councils.
+Utilities and Cost of Living: "How to compare energy providers, what to do if you cannot pay a bill, hardship programs available from utilities, and telco complaints." Links: Energy Made Easy (energymadeeasy.gov.au), Telecommunications Industry Ombudsman (tio.com.au).
+
+CLUSTER THREE. Health and Family. Rose. Heart icon.
+Health and Medicare: "How Medicare works, how to enrol, what is covered, what is not, and how to find a bulk-billing GP near you." Links: Services Australia Medicare (servicesaustralia.gov.au/medicare), Healthdirect GP finder (healthdirect.gov.au/gp-and-health-services-finder).
+Mental Health and Wellbeing: "Free and low-cost mental health support in Australia. Covers GP Mental Health Plans, crisis lines, and community services." Links: Beyond Blue (beyondblue.org.au), Lifeline (lifeline.org.au), Headspace (headspace.org.au).
+Kids and Families: "Family payments, parental leave, child care subsidies, school enrolment, and where to find free activities for children." Links: Services Australia Families (servicesaustralia.gov.au/families), Playgroup Australia (playgroupaustralia.com.au).
+Disability and Carer Support: "NDIS eligibility, how to apply, what it funds, and support for carers including Carer Payment and Carer Allowance." Links: NDIS (ndis.gov.au), Carers Australia (carersaustralia.com.au).
+
+CLUSTER FOUR. Civic and Legal. Indigo. Scales icon.
+Voting and Civic Life: "Electoral roll enrolment, how federal and state elections work, compulsory voting rules, and how to vote if you are overseas." Links: AEC (aec.gov.au), AEC enrolment (aec.gov.au/enrol).
+Legal Basics: "Free and low-cost legal help in Australia. Community legal centres, Legal Aid, and what to expect if you receive a letter from a court or debt collector." Links: Law Access NSW (lawaccess.nsw.gov.au), Legal Aid NSW (legalaid.nsw.gov.au), Community Legal Centres (clcs.org.au).
+Safety and Family Violence: "If you or someone you know is not safe at home. Covers what to do, who to call, and your legal options including AVOs." Links: 1800RESPECT (1800respect.org.au), Safe Steps VIC (safesteps.org.au).
+Online Abuse and Your Rights: "If someone is harassing, threatening, or humiliating you online, you have legal options. The Online Safety Act 2021 gives the eSafety Commissioner power to have harmful content removed." Links: eSafety Commissioner (esafety.gov.au), Report cyberbullying (esafety.gov.au/report).
+Cybercrime and Financial Fraud: "If your card was used without permission or you lost money to a scam, act in this order. Contact your bank immediately. Report to ReportCyber. Contact IDCARE. Lodge a police report for a reference number." Links: ReportCyber (cyber.gov.au/report), IDCARE (idcare.org), AFCA (afca.org.au), Scamwatch (scamwatch.gov.au).
+
+CLUSTER FIVE. New to Australia. Teal. Compass icon.
+Settling In: "First steps after arriving. Medicare enrolment, bank account setup, TFN application, finding a GP, and connecting with local settlement services." Links: Services Australia (servicesaustralia.gov.au), Settlement Services International (ssi.org.au).
+Health: "How to get a Medicare card as a new arrival, what is covered, and how to find community health services near you." Links: Services Australia Medicare (servicesaustralia.gov.au/medicare).
+Banking: "How to open an Australian bank account, what ID you need, and what to look for in a transaction account." Links: ASIC MoneySmart Banking (moneysmart.gov.au/banking).
+Schools: "How to enrol your child in a government school, what documentation is needed, and how the Australian school year works." Links: State education department per state. Use australia.gov.au/education as the starting point.
+Community: "Finding community organisations, cultural groups, and settlement support in your area." Links: Settlement Services (settlingaustralia.com.au).
+Qualifications: "How to get your overseas qualifications recognised in Australia for work and study." Links: NOOSR (noosr.education.gov.au), Skills Assessment (vetassess.com.au).
+
+CLUSTER SIX. Business Setup. Steel. Briefcase icon.
+Business Structures Explained: "Sole trader, partnership, company, and trust. What each means for tax, liability, and setup cost. Not advice. A plain-language comparison to help you ask better questions." Links: business.gov.au/registrations/register-a-business.
+Registering Your ABN: "Who needs an ABN, how to apply, and what to do if your application is rejected." Links: ABN registration (abr.gov.au).
+Setting Up a Company via ASIC: "What ASIC does, what registering a company involves, annual fees, and reporting obligations." Links: ASIC (asic.gov.au/for-business/registering-a-company).
+GST and BAS Basics: "When you must register for GST, how BAS works, and quarterly lodgement basics." Links: ATO GST (ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst).
+Business Name Registration: "How to register a business name, check availability, and renew annually." Links: ASIC Business Names (asic.gov.au/for-business/registering-a-business/business-names).
+
+CLUSTER SEVEN. Employment and Workplace. Plum. ID badge icon.
+Job Types and Contracts: "Full-time, part-time, casual, fixed-term, and contractor. What each means for leave entitlements, tax, and super." Links: Fair Work (fairwork.gov.au/employment-conditions/types-of-employees).
+Your Pay and Entitlements: "National Minimum Wage, penalty rates, overtime, and leave. How to check if you are being paid correctly." Links: Fair Work Pay Calculator (calculate.fairwork.gov.au).
+Workplace Rights and Safety: "Your right to a safe workplace, how to report unsafe conditions, and what WorkSafe covers." Links: Safe Work Australia (safeworkaustralia.gov.au), Fair Work (fairwork.gov.au).
+Unfair Dismissal Basics: "What counts as unfair dismissal, the 21-day window to lodge a claim, and what the process looks like." Links: Fair Work Commission (fwc.gov.au).
+Wage Theft and Underpayment: "Underpaying a worker is not a grey area in Australia. It is a crime. If your employer is paying below the minimum wage, not paying penalty rates, or asking you to work off the clock, you can report it. Fair Work takes anonymous reports. You cannot be fired for reporting. Your visa status does not affect your workplace rights." Links: Fair Work anonymous report (fairwork.gov.au/about-us/contact-us), Wage Theft report.
+
+CLUSTER EIGHT. Consumer and Fair Trade. Copper. Shield icon.
+Refunds and Warranties: "Under Australian Consumer Law you have automatic rights when something you buy fails. No receipt required for many claims. Covers refund, repair, and replacement rights." Links: ACCC (accc.gov.au/consumers/consumer-rights-guarantees).
+Dealing with Scams: "How to identify common scams, what to do if you have been targeted, and how to report." Links: Scamwatch (scamwatch.gov.au), ACCC (accc.gov.au/media-and-publications/publications/the-little-black-book-of-scams).
+Debt Collectors and Your Rights: "What a debt collector can and cannot do, your right to request verification, and how to dispute a debt." Links: ACCC Debt Collection (accc.gov.au), ASIC MoneySmart (moneysmart.gov.au).
+Product Recalls: "How to check if something you own has been recalled and what to do." Links: Product Safety Australia (productsafety.gov.au/recalls).
+Price Gouging: "When price increases become illegal, who regulates them, and how to report excessive pricing." Links: ACCC (accc.gov.au).
+
+CLUSTER NINE. Education and Training. Forest. Graduation cap icon.
+TAFE by State: "TAFE is Australia's national vocational education network. Covers how to find your nearest TAFE, how to enrol, and what courses are available." Links: TAFE NSW (tafensw.edu.au), TAFE VIC (tafe.vic.gov.au), TAFE QLD (tafeqld.edu.au).
+Apprenticeships and Traineeships: "How to find an apprenticeship, what an Australian Apprenticeship entails, and what financial support is available." Links: Australian Apprenticeships (australianapprenticeships.gov.au).
+Skills Recognition for Migrants: "How to get overseas qualifications assessed for use in Australia." Links: VETASSESS (vetassess.com.au), Engineers Australia (engineersaustralia.org.au/skills-assessment).
+Mature Age and Career Change: "Programs and support specifically for Australians over 45 re-entering the workforce or changing careers." Links: jobactive (jobactive.gov.au), Workforce Australia (workforceaustralia.gov.au).
+VET Student Loans: "What VET Student Loans cover, which courses qualify, and how repayment works." Links: VET Student Loans (dese.gov.au/vet-student-loans).
+
+CLUSTER TEN. Government Jobs. Navy. Building icon.
+APSJobs Federal: "The official federal government job board. All APS roles listed here." Links: APSJobs (apsjobs.gov.au).
+I Work for NSW: "NSW government job listings across all agencies." Links: iworkfor.nsw.gov.au.
+Jobs Victoria: "Victorian government jobs across health, education, and public service." Links: jobs.vic.gov.au.
+Queensland Government Careers: "All Queensland Government roles across departments." Links: smartjobs.qld.gov.au.
+WA Government Jobs: "Western Australian public sector jobs." Links: jobs.wa.gov.au.
+SA Government Careers: "South Australian Government roles." Links: iworkfor.sa.gov.au.
+
+CLUSTER ELEVEN. Students. Coral. Open book icon.
+Student Workplace Rights: "As a student worker you have the same rights as any other employee in Australia. Visa conditions do not change your minimum wage entitlements." Links: Fair Work Students (fairwork.gov.au/pay-and-wages/minimum-wages/student-and-apprentice-pay).
+Underpayment and Wage Theft: "If you are being paid below the minimum wage, asked to work for free, or not receiving your super, that is wage theft. It is illegal. Report it anonymously." Links: Fair Work anonymous report (fairwork.gov.au/about-us/contact-us).
+International Student Work Rights: "Work hour limits on student visas, what happens if you breach them, and how to check your entitlements." Links: Home Affairs (homeaffairs.gov.au/visa-subclass-500).
+Where to Report Exploitation: "Who to contact if you are being exploited as a student worker, including the national Student Visa and Temporary Graduate Visa program." Links: Fair Work (fairwork.gov.au), International student support (studyaustralia.gov.au).
+Mental Health Support for Students: "Free and low-cost mental health support specifically for students. University counselling, headspace, and beyond." Links: Headspace (headspace.org.au), Beyond Blue Student Wellbeing (beyondblue.org.au).
+
+CLUSTER TWELVE. Volunteering. Australian Green. Hand with heart icon.
+Finding Volunteer Opportunities: "How to find volunteering roles in your area and why volunteering counts as experience for job applications and visa purposes." Links: Volunteer Australia (volunteeringaustralia.org), Go Volunteer (govolunteer.com.au).
+Volunteer Rights and Protections: "What protections volunteers have in Australia, insurance coverage, and what organisations are required to provide." Links: Volunteering Australia (volunteeringaustralia.org/framework/national-standards).
+Volunteering and Visa Holders: "Whether you can volunteer on a student visa or temporary visa, and what conditions apply." Links: Home Affairs (homeaffairs.gov.au).
+Volunteering for Career Development: "How to use volunteering to build Australian work experience, references, and professional networks." Links: Seek Volunteer (volunteer.com.au).
+
+---
+
+**SECTION 4. TOOLS. THREE PANELS. ALL VISIBLE.**
+
+Background white #FFFFFF. Padding 96px 24px.
+Section heading: "Three tools we built ourselves." DM Serif Display 52px. Midnight Navy. Centred.
+Sub-line: "All indicators. Not financial, legal, or tax advice. Every tool tells you exactly what it is before you use it." DM Sans 400 17px. Warm grey. Centred. Margin-bottom 56px.
+
+Three panels. CSS grid. Three equal columns desktop. One column mobile and tablet. gap 28px.
+
+Each panel: white background. Border-radius 20px. Box-shadow 0 4px 28px rgba(15,23,42,0.13). Padding 36px. Full height. No click to open. Tools are immediately visible and usable.
+
+Each panel top: large icon illustration 80x80px. Custom SVG. Midnight Navy base with one Cerulean accent element inside. Not Lucide icons.
+Tool one icon: stylised invoice card with a rate figure on it.
+Tool two icon: arc curve representing a repayment schedule.
+Tool three icon: document page with a bold checkmark.
+
+Below icon: tool name DM Serif Display 26px Midnight Navy.
+One-line description DM Sans 400 14px warm grey.
+
+Disclaimer block below description: background #F7F6F2. Border-radius 10px. Padding 14px. Geist Mono 12px warm grey. "This tool gives you an estimate only. It is not financial, legal, or tax advice. For accurate figures, speak to a registered professional or use the official government source linked below." Full text every time. No shortening.
+
+Then the tool interface.
+
+TOOL ONE. Freelance Day Rate Calculator.
+Label: Annual income target ($). Input: number field. Placeholder "e.g. 80000". Styled with border 1.5px #E8E0D0, border-radius 12px, padding 12px 16px, DM Sans 400 15px Midnight Navy. Focus border Cerulean.
+Label: Weeks working per year. Input: number. Default value 48. Same styling.
+Label: Days per week. Input: number. Default value 5. Same styling.
+Output appears immediately on input change. No submit button. Live calculation.
+Output block: background #F0F7FA. Border-radius 12px. Padding 20px. Margin-top 16px.
+Three output rows: Day rate, Hourly rate (day rate divided by 8), Monthly equivalent (annual divided by 12). Each row: label DM Sans 400 13px warm grey left, value DM Serif Display 22px Midnight Navy right.
+Below output: small Geist Mono 11px warm grey. "Assumes you pay your own tax and super from this rate."
+
+TOOL TWO. Loan Repayment Estimator.
+Label: Loan amount ($). Input number. Placeholder "e.g. 25000".
+Label: Annual interest rate (%). Input number. Placeholder "e.g. 6.5".
+Label: Loan term (years). Input number. Placeholder "e.g. 5".
+Live output. Same output block style as tool one.
+Three output rows: Monthly repayment, Total amount repaid, Total interest paid. Values in DM Serif Display 22px.
+Below output: Cerulean text link with ExternalLink icon. "MoneySmart loan calculator" links to moneysmart.gov.au/loans/personal-loans. DM Sans 500 13px.
+
+TOOL THREE. 100 Point ID Checker.
+Sub-label: "Select the documents you have. Points add up as you tick." DM Sans 400 13px warm grey. Above the list.
+Checklist. Each item: checkbox left, document name DM Sans 400 14px Midnight Navy, point value DM Sans 600 14px Cerulean right-aligned. Checkbox styled with Cerulean accent on check.
+Documents and points:
+Australian passport: 70 points.
+Australian birth certificate: 70 points.
+Australian citizenship certificate: 70 points.
+Australian driver's licence: 40 points.
+Medicare card: 25 points.
+Centrelink health care card: 25 points.
+Bank card with signature: 25 points.
+Utility bill with name and address: 25 points.
+Council rates notice: 25 points.
+ATO notice of assessment: 25 points.
+
+Running total: large display below list. "Your total: XX points." DM Serif Display 36px. Updates live.
+Result message below total: if 100 or more, "You have enough for most 100-point checks." Midnight Navy DM Sans 500. If under 100, "You need X more points." Warm grey.
+Below: small Geist Mono 11px. "Requirements vary. Always confirm with the organisation what documents they will accept."
+
+---
+
+**SECTION 5. CITIZENSHIP AND COMING TO AUSTRALIA.**
+
+Background warm cream #FAF6E8. Padding 96px 24px.
+Section heading: "Citizenship and coming to Australia." DM Serif Display 52px. Midnight Navy. Centred.
+Sub-line: "A plain-language guide to the pathway. Not immigration advice. For your individual situation, see a registered migration agent." DM Sans 400 17px. Warm grey. Centred.
+
+Five stages displayed as a numbered horizontal timeline on desktop. Vertical numbered list on mobile.
+Each stage: number in a circle, Australian Gold #C9A84C fill, Midnight Navy numeral, DM Serif Display. Stage heading DM Sans 600 16px Midnight Navy. Click to expand via Framer Motion AnimatePresence.
+
+Stage one. Eligibility.
+"You generally need to have been a permanent resident for at least four years, including one year as a permanent resident immediately before applying. Good character requirement applies. Basic English is assessed during the citizenship test." Link: homeaffairs.gov.au/citizenship.
+
+Stage two. The Test.
+"The Australian Citizenship Test is 20 questions. You need 75 percent to pass. It covers Australian values, history, government, and rights and responsibilities. The official practice site includes a question bank and a podcast series." Links: Citizenship test practice (citizenshiptest.homeaffairs.gov.au), Official podcast (homeaffairs.gov.au/citizenship/test-and-interview/prepare-for-test).
+
+Stage three. The Application.
+"You apply online through ImmiAccount. The application fee as of 2026 is $490 for adults. Processing times vary. You will be asked to provide identity documents, proof of residence, and passport photos." Links: ImmiAccount (immi.homeaffairs.gov.au/immiaccount), DFAT for document certification (dfat.gov.au).
+
+Stage four. The Ceremony.
+"If your application is approved you will be invited to an Australian Citizenship Ceremony. You will make the Australian Citizenship Pledge. You receive your certificate at the ceremony. Ceremonies are run by local councils." Link: homeaffairs.gov.au/citizenship/ceremony.
+
+Stage five. What unlocks after citizenship.
+Four items displayed as a clean card row inside the expanded stage.
+Item one. myID. "Your myID identity strength increases with your citizenship certificate. This improves access to government services online." Link: myid.gov.au.
+Item two. Passport. "You can now apply for an Australian passport. First-time adult applications take approximately six weeks standard processing. Use VFS Global for applications overseas." Links: passports.gov.au, VFS Australia passports (vfsglobal.com/australia/passports).
+Item three. Electoral Roll. "Enrolment is mandatory for Australian citizens aged 18 and over. You must enrol within 8 weeks of becoming a citizen. Failing to vote when enrolled carries a fine." Link: AEC enrol (aec.gov.au/enrol).
+Item four. Jury Duty. "As a citizen you may be called for jury duty. This is a civic obligation, not optional. Employers must allow you to attend. You receive a daily payment for attending." Link: Jury duty by state, starting point: australiangovernment.gov.au.
+
+---
+
+**SECTION 6. EMERGENCY NUMBERS. FULL WIDTH BAND.**
+
+Full width. Background Midnight Navy #0F172A. No border-radius. No card. Edge to edge.
+Top border: 4px solid Signal green #A3E635.
+Padding: 64px 24px.
+Heading: "Save these. Share these." DM Serif Display 36px. Warm cream. Centred. Margin-bottom 48px.
+
+Numbers displayed in a responsive grid. Four columns desktop. Two columns tablet. One column mobile. gap 32px.
+
+Each number item: centred. No box. No card. Just the number and label in space.
+Number: DM Serif Display 32px warm cream.
+Label: DM Sans 400 13px #A89880.
+Below label: one-line description DM Sans 300 12px #A89880.
+
+Numbers:
+000. Police, fire, ambulance. Any phone.
+112. Mobile emergency. No signal needed.
+13 11 14. Lifeline. Crisis support 24hr.
+1800 737 732. 1800RESPECT. Family violence.
+131 114. Poisons Information. 24hr.
+132 500. State Emergency Service.
+131 444. Police assistance. Non-emergency.
+1300 22 4636. Beyond Blue. Mental health.
+1800 551 800. Kids Helpline. 5 to 25 years.
+1800 422 322. Suicide Call Back Service.
+
+Small note below grid: Geist Mono 11px #A89880. Centred. "In immediate danger, always call 000 first."
+
+---
+
+**SECTION 7. ABOUT AUSTRALIA.**
+
+Background white #FFFFFF. Padding 96px 24px.
+Heading: "About Australia." DM Serif Display 52px. Midnight Navy. Centred.
+Sub-line: "Hard-coded facts. Sourced from official government records. Updated when they change." DM Sans 400 17px. Warm grey. Centred. Margin-bottom 48px.
+
+Map placeholder: a clean SVG rectangle 800px wide max, 400px tall, border-radius 16px, background #1A2A3A, centred. Inside: text in DM Sans 400 14px warm grey centred. "Interactive Australia map coming soon. Each state will show local facts, public holidays, and key contacts." This is a placeholder. Do not build the interactive map now.
+
+Below map placeholder: reference tiles grid. Three columns desktop. Two tablet. One mobile. gap 24px.
+
+Each tile: background Midnight Navy #0F172A. Border-radius 20px. Padding 28px. Box-shadow 0 4px 28px rgba(15,23,42,0.18). Text warm cream.
+Top of tile: a 4px wide colour stripe across the full width at the very top, border-radius 20px 20px 0 0. Each tile gets a different stripe colour from the cluster palette.
+Tile heading: DM Serif Display 22px warm cream.
+One-line description: DM Sans 400 13px #A89880.
+Expand button: "Read more" Cerulean DM Sans 500 13px with ChevronDown. Framer Motion expand.
+
+Expanded tile content: DM Sans 400 14px #A89880. Line-height 1.7. Source credit Geist Mono 11px #6B6B5E.
+
+Tile one. Australia at a Glance. Stripe Amber.
+Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Currency: Australian dollar AUD. Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Head of Government: Prime Minister. Source: australia.gov.au.
+
+Tile two. States and Territories. Stripe Teal.
+Six states: New South Wales, Victoria, Queensland, South Australia, Western Australia, Tasmania. Two self-governing territories: Australian Capital Territory, Northern Territory. Seven external territories: Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands. Most Australians cannot name all seven external territories.
+
+Tile three. National Anthem. Stripe Sage.
+Title: Advance Australia Fair. Adopted 1984. Modified January 2021. The word "young" was changed to "one" in the first verse to better reflect Australia's Indigenous history. Full two verses shown in expanded state. Source: pmc.gov.au.
+Verse one: Australians all let us rejoice, For we are one and free, With golden soil and wealth for toil, Our home is girt by sea, Our land abounds in nature's gifts, Of beauty rich and rare, In history's page let every stage, Advance Australia Fair, In joyful strains then let us sing, Advance Australia Fair.
+Verse two: Beneath our radiant Southern Cross, We'll toil with hearts and hands, To make this Commonwealth of ours, Renowned of all the lands, For those who've come across the seas, We've boundless plains to share, With courage let us all combine, To advance Australia Fair, In joyful strains then let us sing, Advance Australia Fair.
+
+Tile four. Australian Values. Stripe Indigo.
+Source: homeaffairs.gov.au. The Australian values include respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.
+
+Tile five. Time Zones. Stripe Copper.
+AEST UTC+10: NSW, VIC, QLD, TAS, ACT. AEDT UTC+11: NSW, VIC, TAS, ACT during daylight saving. ACST UTC+9:30: SA, NT. ACDT UTC+10:30: SA during daylight saving. AWST UTC+8: WA. No daylight saving in WA, QLD, NT. Lord Howe Island: UTC+10:30 winter, UTC+11 summer.
+
+Tile six. Daylight Saving. Stripe Coral.
+Runs first Sunday October to first Sunday April. Clocks forward one hour in October. Back one hour in April. States that observe: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. Queensland held referendums in 1992 and 2010 and voted no both times.
+
+Tile seven. Public Holidays 2026. Stripe Forest.
+Expanded state: eight tabs for states and territories. Each tab shows that state's public holidays for 2026 as a clean two-column list. Date left, name right. DM Sans. No accordion within. National holidays apply to all: New Year's Day 1 Jan, Australia Day 27 Jan 2026 (observed), Good Friday 3 Apr, Easter Saturday 4 Apr, Easter Sunday 5 Apr, Easter Monday 6 Apr, Anzac Day 25 Apr, Christmas Day 25 Dec, Boxing Day 28 Dec 2026 (observed). Source: fairwork.gov.au/leave/public-holidays.
+
+---
+
+**SECTION 8. HOW KINDD WORKS.**
+
+Background cream #FAF6E8. Padding 96px 24px.
+Heading: "Three things to know before you start." DM Serif Display 46px. Midnight Navy. Centred.
+Three blocks. CSS grid three columns desktop, one column mobile. gap 32px. Max-width 960px centred.
+Each block: no card, no border. Top border 3px solid #E8E0D0. Padding-top 24px.
+Block heading: DM Serif Display 22px Midnight Navy.
+Body: DM Sans 400 16px warm grey. Line-height 1.7.
+Free forever: "No login. No account. No tier. Cookies clear, you start fresh. That is the whole arrangement."
+Government sources only: "ATO, Services Australia, Fair Trading, Healthdirect, every state tribunal. Linked at the end of every guide. Last updated date shown."
+Directions not advice: "We are not lawyers, accountants, or doctors. We are the person who knows which door to knock on. Once you find the door, the experts on the other side take it from there."
+
+---
+
+**SECTION 9. FOR THE PEOPLE.**
+
+Background white #FFFFFF. Padding 96px 24px.
+Max-width 720px. Left-aligned inside a centred container.
+Heading: "For the people no one wrote a manual for." DM Serif Display 46px. Midnight Navy. Left-aligned.
+Margin-bottom 40px.
+Seven lines. Each line: DM Sans 400 19px. Warm grey #6B6B5E. Left-aligned. Line-height 1.6. Margin-bottom 18px. Not centred. Not uniform. Just clean left-aligned text with space to breathe.
+"For the freelancer who just got their first invoice and does not know what to do with it."
+"For the renter staring at a leaky ceiling and a quiet landlord."
+"For the parent looking for somewhere free for the kids on Saturday."
+"For the new citizen working out how Medicare actually works."
+"For the small business owner who got a Centrelink letter and panicked."
+"For the tradie whose neighbour just took down a shared fence without asking."
+"For anyone who has ever Googled something at 11pm and ended up on a forum from 2014."
+Margin-top 56px. Two final lines. Each on its own line. DM Serif Display 36px. Midnight Navy. Left-aligned.
+"KINDD is for them."
+"KINDD is for you."
+
+---
+
+**SECTION 10. ALWAYS FREE.**
+
+Background cream #FAF6E8. Padding 96px 24px. Max-width 680px. Centred.
+Heading: "It costs nothing. It will always cost nothing." DM Serif Display 40px. Midnight Navy. Centred.
+Body: DM Sans 400 18px. Warm grey. Line-height 1.75. Centred.
+"KINDD is free because some things should be open. Tax. Tenancy. Health. Mental health. The basics of being an adult here. None of that should sit behind a paywall. No tier. No upgrade. No premium. Just the guides."
+CTA: "Start with a guide." Midnight Navy fill, cream text, border-radius 32px. Scrolls to guides section.
+
+---
+
+**SECTION 11. DISCLAIMER.**
+
+Background #F0EAD6. Padding 64px 24px. Max-width 640px. Centred.
+Heading: "Before you use KINDD." DM Serif Display 28px. Midnight Navy. Centred.
+Three paragraphs. Geist Mono 13px. Warm grey. Line-height 1.7. Centred.
+"Information here was last updated May 2026. Always check the official government website linked at the end of each guide for the most current details."
+"KINDD is not a substitute for professional advice. For tax, see a registered tax agent. For legal matters, see a lawyer or your local community legal centre. For medical concerns, see a doctor. For immigration and citizenship matters, see a registered migration agent."
+"KINDD points you to the right place. The experts there take it from there."
+
+---
+
+**FOOTER. DO NOT TOUCH. IT IS WORKING.**
+
+---
+
+**RESPONSIVE.**
+
+Breakpoints: 320px, 375px to 414px, 768px, 1024px, 1280px to 1440px, 1920px and above.
+No horizontal scroll. No clipped content. No layout collapse at any breakpoint.
+All three-column grids collapse to two at 768px and one below 640px.
+Tool panels stack vertically on mobile. Each full width.
+Citizenship timeline stacks vertically on mobile. Numbers left, content right at each stage.
+Emergency numbers grid: four columns desktop, two tablet, one mobile.
+Hero text scales. CTA full width on mobile.
+
+---
+
+**INTERACTIONS.**
+
+Scroll arrow fades on scroll. Go-to-top fades in. Both via Framer Motion.
+Nav blurs on scroll.
+Guide accordions: Framer Motion AnimatePresence, smooth height.
+Citizenship stages: same expand mechanic.
+Reference tiles: same expand mechanic.
+Emergency numbers: no expand. Always visible.
+Public Holidays: tab switching. No animation needed. Clean state change.
+Tools: all live calculation. No submit buttons. Values update on input change.
+No parallax. No scroll-triggered reveals. No other animations.
+
+---
+
+**GITHUB.**
+
+Repo: kindd-site. README updated. Commit message: "Full rebuild: design system, typography, colour, guides expansion, tools, citizenship section, emergency band, about Australia."

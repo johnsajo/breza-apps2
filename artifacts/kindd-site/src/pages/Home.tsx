@@ -1,57 +1,261 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronRight, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube, Search, Sparkles } from "lucide-react";
+import {
+  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink,
+  Linkedin, Instagram, Twitter, Youtube,
+} from "lucide-react";
 import { clusters } from "@/data/guides";
-import { tools, DISCLAIMER, TAX_BRACKETS_RESIDENT, TAX_BRACKETS_NON_RESIDENT, MEDICARE_LEVY, PUBLIC_TRANSPORT_DATA, PARKING_FINES_DATA, WWC_DATA } from "@/data/tools";
-import type { ToolId } from "@/data/tools";
+import type { Cluster } from "@/data/guides";
 import { referenceTiles } from "@/data/reference";
+import type { RefTileData } from "@/data/reference";
 
 const heroImg = "/Kindd_Hero.png";
 
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 const C = {
-  cream: "#FAF6E8",
-  offCream: "#F0EAD6",
-  warmWhite: "#F8F8F5",
-  navy: "#0F172A",
-  grey: "#6B6B5E",
-  cerulean: "#007BA7",
-  breeze: "#B8D4E8",
-  white: "#FFFFFF",
-  signalGreen: "rgba(163,230,53,0.60)",
+  navy:        "#0F172A",
+  cream:       "#FAF6E8",
+  offCream:    "#F0EAD6",
+  white:       "#FFFFFF",
+  grey:        "#6B6B5E",
+  cerulean:    "#007BA7",
+  amber:       "#F59E0B",
+  auGreen:     "#00843D",
+  auGold:      "#C9A84C",
+  darkSec:     "#A89880",
+  signalGreen: "#A3E635",
 };
 
-// ─── Card style helper ────────────────────────────────────────────────────────
-const card: React.CSSProperties = {
-  background: C.white,
-  borderRadius: 16,
-  boxShadow: "0 2px 16px rgba(15,23,42,0.07)",
-};
+// ─── Typography ───────────────────────────────────────────────────────────────
+const SERIF = "'DM Serif Display', Georgia, serif";
+const SANS  = "'DM Sans', Inter, sans-serif";
+const MONO  = "'Geist Mono', monospace";
 
-// ─── Cerulean button classes ──────────────────────────────────────────────────
-const ceruleanBtn = `inline-flex items-center px-4 py-2 rounded-lg border font-medium text-sm transition-colors`;
-const ceruleanBtnStyle: React.CSSProperties = { borderColor: C.cerulean, color: C.cerulean, background: C.cream };
-const ceruleanBtnHoverStyle: React.CSSProperties = { background: C.cerulean, color: C.white };
+// ─── Shared card style ────────────────────────────────────────────────────────
+const cardShadow = "0 4px 28px rgba(15,23,42,0.11)";
+const cardRadius = 20;
 
-// ─── CTA button ──────────────────────────────────────────────────────────────
-function CtaButton({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) {
+// ─── Tool disclaimer ──────────────────────────────────────────────────────────
+const TOOL_DISCLAIMER =
+  "This tool gives you an estimate only. It is not financial, legal, or tax advice. For accurate figures, speak to a registered professional or use the official government source linked below.";
+
+// ─── Citizenship stages data ──────────────────────────────────────────────────
+interface CitLink    { label: string; url: string; }
+interface CitUnlock  { title: string; desc: string; link: CitLink; }
+interface CitStage   { num: number; heading: string; content: string; links: CitLink[]; unlocks?: CitUnlock[]; }
+
+const CITIZENSHIP_STAGES: CitStage[] = [
+  {
+    num: 1,
+    heading: "Eligibility",
+    content:
+      "You generally need to have been a permanent resident for at least four years, including one year as a permanent resident immediately before applying. Good character requirement applies. Basic English is assessed during the citizenship test.",
+    links: [{ label: "homeaffairs.gov.au/citizenship", url: "https://www.homeaffairs.gov.au/citizenship" }],
+  },
+  {
+    num: 2,
+    heading: "The Test",
+    content:
+      "The Australian Citizenship Test is 20 questions. You need 75 percent to pass. It covers Australian values, history, government, and rights and responsibilities. The official practice site includes a question bank and a podcast series.",
+    links: [
+      { label: "Citizenship test practice", url: "https://citizenshiptest.homeaffairs.gov.au" },
+      { label: "Official podcast", url: "https://www.homeaffairs.gov.au/citizenship/test-and-interview/prepare-for-test" },
+    ],
+  },
+  {
+    num: 3,
+    heading: "The Application",
+    content:
+      "You apply online through ImmiAccount. The application fee as of 2026 is $490 for adults. Processing times vary. You will be asked to provide identity documents, proof of residence, and passport photos.",
+    links: [
+      { label: "ImmiAccount", url: "https://immi.homeaffairs.gov.au/immiaccount" },
+      { label: "DFAT for document certification", url: "https://www.dfat.gov.au" },
+    ],
+  },
+  {
+    num: 4,
+    heading: "The Ceremony",
+    content:
+      "If your application is approved you will be invited to an Australian Citizenship Ceremony. You will make the Australian Citizenship Pledge. You receive your certificate at the ceremony. Ceremonies are run by local councils.",
+    links: [{ label: "homeaffairs.gov.au/citizenship/ceremony", url: "https://www.homeaffairs.gov.au/citizenship/ceremony" }],
+  },
+  {
+    num: 5,
+    heading: "What unlocks",
+    content: "",
+    links: [],
+    unlocks: [
+      {
+        title: "myID",
+        desc: "Your myID identity strength increases with your citizenship certificate. This improves access to government services online.",
+        link: { label: "myid.gov.au", url: "https://www.myid.gov.au" },
+      },
+      {
+        title: "Passport",
+        desc: "You can now apply for an Australian passport. First-time adult applications take approximately six weeks standard processing. Use VFS Global for applications overseas.",
+        link: { label: "passports.gov.au", url: "https://www.passports.gov.au" },
+      },
+      {
+        title: "Electoral Roll",
+        desc: "Enrolment is mandatory for Australian citizens aged 18 and over. You must enrol within 8 weeks of becoming a citizen. Failing to vote when enrolled carries a fine.",
+        link: { label: "AEC enrol", url: "https://www.aec.gov.au/enrol" },
+      },
+      {
+        title: "Jury Duty",
+        desc: "As a citizen you may be called for jury duty. This is a civic obligation, not optional. Employers must allow you to attend. You receive a daily payment for attending.",
+        link: { label: "australiangovernment.gov.au", url: "https://www.australia.gov.au" },
+      },
+    ],
+  },
+];
+
+// ─── Emergency numbers ────────────────────────────────────────────────────────
+const EMERGENCY_NUMBERS = [
+  { number: "000",           label: "Police, fire, ambulance",    desc: "Any phone." },
+  { number: "112",           label: "Mobile emergency",           desc: "No signal needed." },
+  { number: "13 11 14",      label: "Lifeline",                   desc: "Crisis support 24hr." },
+  { number: "1800 737 732",  label: "1800RESPECT",                desc: "Family violence." },
+  { number: "131 114",       label: "Poisons Information",        desc: "24hr." },
+  { number: "132 500",       label: "State Emergency Service",    desc: "" },
+  { number: "131 444",       label: "Police assistance",          desc: "Non-emergency." },
+  { number: "1300 22 4636",  label: "Beyond Blue",                desc: "Mental health." },
+  { number: "1800 551 800",  label: "Kids Helpline",              desc: "5 to 25 years." },
+  { number: "1800 422 322",  label: "Suicide Call Back Service",  desc: "" },
+];
+
+// ─── ID Checker docs ──────────────────────────────────────────────────────────
+const ID_DOCS = [
+  { id: "au_passport",    label: "Australian passport",                    points: 70 },
+  { id: "au_birth",       label: "Australian birth certificate",            points: 70 },
+  { id: "au_citizenship", label: "Australian citizenship certificate",       points: 70 },
+  { id: "au_licence",     label: "Australian driver's licence",              points: 40 },
+  { id: "medicare",       label: "Medicare card",                           points: 25 },
+  { id: "centrelink",     label: "Centrelink health care card",             points: 25 },
+  { id: "bank_card",      label: "Bank card with signature",                points: 25 },
+  { id: "utility",        label: "Utility bill with name and address",      points: 25 },
+  { id: "council_rates",  label: "Council rates notice",                    points: 25 },
+  { id: "ato_notice",     label: "ATO notice of assessment",                points: 25 },
+];
+
+// ─── Cluster icon ─────────────────────────────────────────────────────────────
+function ClusterIcon({ id, color }: { id: string; color: string }) {
+  const icons: Record<string, React.ReactNode> = {
+    money: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 7v1M12 16v1M9.5 9.5c0-1.1.9-2 2.5-2s2.5.9 2.5 2.5c0 1.2-1 1.8-2.5 2.2C10.5 12.5 9.5 13.2 9.5 14.5c0 1.2 1 2 2.5 2s2.5-.9 2.5-2"
+          stroke="white" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+      </svg>
+    ),
+    home: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M3 9.5L12 2l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1z"/>
+        <path d="M9 22v-9h6v9" fill="rgba(255,255,255,0.25)"/>
+      </svg>
+    ),
+    health: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"/>
+      </svg>
+    ),
+    civic: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M3 8h18l-9-5z"/>
+        <rect x="3" y="19" width="18" height="2" rx="0.5"/>
+        <rect x="4.5" y="8" width="2" height="11"/>
+        <rect x="8.5" y="8" width="2" height="11"/>
+        <rect x="13.5" y="8" width="2" height="11"/>
+        <rect x="17.5" y="8" width="2" height="11"/>
+      </svg>
+    ),
+    new: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <circle cx="12" cy="12" r="10"/>
+        <polygon points="12,5 14,11 12,10.5 10,11" fill="white"/>
+        <polygon points="12,19 10,13 12,13.5 14,13" fill="rgba(255,255,255,0.4)"/>
+        <line x1="5" y1="12" x2="7.5" y2="12" stroke="rgba(255,255,255,0.4)" strokeWidth="1.2"/>
+        <line x1="16.5" y1="12" x2="19" y2="12" stroke="rgba(255,255,255,0.4)" strokeWidth="1.2"/>
+        <circle cx="12" cy="12" r="1.5" fill="rgba(0,0,0,0.3)"/>
+      </svg>
+    ),
+    business: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <rect x="2" y="9" width="20" height="13" rx="2"/>
+        <path d="M8 9V7.5a4 4 0 018 0V9" fill={color} stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/>
+        <rect x="10" y="14" width="4" height="2" rx="1" fill="rgba(255,255,255,0.35)"/>
+      </svg>
+    ),
+    employment: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <rect x="5" y="3" width="14" height="18" rx="2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="12" cy="12" r="2.5" fill="rgba(255,255,255,0.3)"/>
+        <rect x="7.5" y="16" width="9" height="1.5" rx="0.75" fill="rgba(255,255,255,0.35)"/>
+      </svg>
+    ),
+    consumer: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M12 2l8 3v5.5c0 5.5-3.5 9.5-8 11-4.5-1.5-8-5.5-8-11V5z"/>
+        <path d="M9 12l2.5 2.5L15 9" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    education: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M12 3L2 8l10 6 10-6z"/>
+        <path d="M6 11.5v4.5c0 2 2.7 4 6 4s6-2 6-4v-4.5" fill={color} opacity="0.7"/>
+        <rect x="19.5" y="8" width="2" height="7" rx="1"/>
+        <circle cx="20.5" cy="16.5" r="1.5"/>
+      </svg>
+    ),
+    govjobs: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M3 8.5h18l-9-5z"/>
+        <rect x="3" y="18" width="18" height="3" rx="0.5"/>
+        <rect x="4.5" y="8.5" width="2" height="9.5"/>
+        <rect x="8.5" y="8.5" width="2" height="9.5"/>
+        <rect x="13.5" y="8.5" width="2" height="9.5"/>
+        <rect x="17.5" y="8.5" width="2" height="9.5"/>
+      </svg>
+    ),
+    students: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <path d="M2 6h10v15.5C9 20.5 5 19.5 2 17.5V6z" opacity="0.75"/>
+        <path d="M22 6H12v15.5c3-1 7-2 10-4V6z"/>
+        <line x1="12" y1="6" x2="12" y2="21.5" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/>
+      </svg>
+    ),
+    volunteering: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <rect x="7" y="12" width="10" height="9" rx="2"/>
+        <path d="M8 12V9a1.5 1.5 0 013 0v3M11 11.5V8a1.5 1.5 0 013 0v3.5M14 11V9a1.5 1.5 0 013 0v3"/>
+        <path d="M12 16.5c0 0-2-1.5-2-2.8a2 2 0 014 0c0 1.3-2 2.8-2 2.8z" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+    ),
+    citizenship: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill={color}>
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+    ),
+  };
+  return (
+    <div style={{ width: 52, height: 52, borderRadius: 14, background: color + "1F", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      {icons[id] || <svg width="28" height="28" viewBox="0 0 24 24" fill={color}><circle cx="12" cy="12" r="10"/></svg>}
+    </div>
+  );
+}
+
+// ─── CTA button ───────────────────────────────────────────────────────────────
+function CtaButton({ onClick, children, variant = "dark" }: { onClick?: () => void; children: React.ReactNode; variant?: "dark" | "cerulean" }) {
   const [hov, setHov] = useState(false);
+  const bg = variant === "cerulean"
+    ? (hov ? C.navy : C.cerulean)
+    : (hov ? C.cerulean : C.navy);
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{
-        background: hov ? C.cerulean : C.navy,
-        color: C.cream,
-        borderRadius: 32,
-        padding: "16px 32px",
-        fontWeight: 500,
-        fontSize: "1.0625rem",
-        transition: "background 0.2s",
-        cursor: "pointer",
-        border: "none",
-      }}
+      style={{ background: bg, color: C.cream, borderRadius: 32, padding: "16px 40px", fontFamily: SANS, fontWeight: 500, fontSize: 16, border: "none", cursor: "pointer", transition: "background 0.2s" }}
     >
       {children}
     </button>
@@ -63,1179 +267,614 @@ function CerBtn({ href, children }: { href: string; children: React.ReactNode })
   const [hov, setHov] = useState(false);
   return (
     <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={hov ? { ...ceruleanBtnHoverStyle, borderRadius: 8, border: `1px solid ${C.cerulean}`, padding: "8px 16px", fontSize: "0.875rem", fontWeight: 500, display: "inline-flex", alignItems: "center", textDecoration: "none", transition: "all 0.15s" } : { ...ceruleanBtnStyle, borderRadius: 8, border: `1px solid ${C.cerulean}`, padding: "8px 16px", fontSize: "0.875rem", fontWeight: 500, display: "inline-flex", alignItems: "center", textDecoration: "none", transition: "all 0.15s" }}
+      href={href} target="_blank" rel="noreferrer"
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "7px 14px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: hov ? C.white : C.cerulean, background: hov ? C.cerulean : "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 13, textDecoration: "none", transition: "all 0.15s" }}
     >
       {children}
+      <ExternalLink style={{ width: 11, height: 11 }} />
     </a>
   );
 }
 
-// ─── SVG icons for clusters ───────────────────────────────────────────────────
-function ClusterIcon({ name }: { name: string }) {
-  const s = { stroke: C.navy, strokeWidth: 1.75, fill: "none", strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  switch (name) {
-    case "money": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" {...s}/><path d="M16 9v14M12 12.5c0-1.93 1.79-3.5 4-3.5s4 1.57 4 3.5-1.79 3.5-4 3.5-4 1.57-4 3.5S13.79 23 16 23s4-1.57 4-3.5" {...s}/></svg>;
-    case "home": return <svg width={32} height={32} viewBox="0 0 32 32"><path d="M5 14L16 4l11 10" {...s}/><path d="M8 11.5V26h16V11.5" {...s}/><rect x="12" y="18" width="8" height="8" {...s}/></svg>;
-    case "health": return <svg width={32} height={32} viewBox="0 0 32 32"><path d="M16 27S5 20 5 12a6 6 0 0 1 11-3.36A6 6 0 0 1 27 12c0 8-11 15-11 15z" {...s}/><path d="M16 15v-4M14 13h4" {...s}/></svg>;
-    case "civic": return <svg width={32} height={32} viewBox="0 0 32 32"><path d="M7 25h18M4 25l12-18 12 18" {...s}/><line x1="16" y1="7" x2="16" y2="4" {...s}/><path d="M10 25v-8h12v8" {...s}/></svg>;
-    case "compass": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" {...s}/><path d="M16 5v2M16 25v2M5 16h2M25 16h2" {...s}/><polygon points="16,11 20,16 16,21 12,16" {...s}/></svg>;
-    case "briefcase": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="4" y="11" width="24" height="16" rx="2" {...s}/><path d="M11 11V9a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" {...s}/><line x1="4" y1="19" x2="28" y2="19" {...s}/></svg>;
-    case "employment": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="5" y="8" width="14" height="18" rx="2" {...s}/><path d="M19 14h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4" {...s}/><line x1="9" y1="13" x2="15" y2="13" {...s}/><line x1="9" y1="17" x2="15" y2="17" {...s}/><line x1="9" y1="21" x2="12" y2="21" {...s}/></svg>;
-    case "shield": return <svg width={32} height={32} viewBox="0 0 32 32"><path d="M16 4l10 4v8c0 6-4 10-10 12C10 26 6 22 6 16V8l10-4z" {...s}/><path d="M12 16l3 3 5-5" {...s}/></svg>;
-    case "graduation": return <svg width={32} height={32} viewBox="0 0 32 32"><polygon points="16,7 30,14 16,21 2,14" {...s}/><path d="M8 17.5V24c0 2 3.58 4 8 4s8-2 8-4v-6.5" {...s}/><line x1="30" y1="14" x2="30" y2="21" {...s}/></svg>;
-    case "building": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="6" y="8" width="20" height="18" rx="1" {...s}/><path d="M6 8l10-4 10 4" {...s}/><rect x="11" y="16" width="4" height="5" {...s}/><rect x="17" y="16" width="4" height="5" {...s}/><line x1="6" y1="26" x2="26" y2="26" {...s}/></svg>;
-    case "book": return <svg width={32} height={32} viewBox="0 0 32 32"><path d="M6 6h10v20H6z" {...s}/><path d="M16 6h10v20H16z" {...s}/><line x1="16" y1="6" x2="16" y2="26" {...s}/></svg>;
-    default: return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" {...s}/></svg>;
-  }
-}
-
-// ─── SVG icons for tools ──────────────────────────────────────────────────────
-function ToolIcon({ name }: { name: string }) {
-  const s = { stroke: C.navy, strokeWidth: 1.75, fill: "none", strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  switch (name) {
-    case "tax": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="24" rx="2" {...s}/><line x1="11" y1="10" x2="21" y2="10" {...s}/><line x1="11" y1="15" x2="21" y2="15" {...s}/><line x1="11" y1="20" x2="17" y2="20" {...s}/><text x="19" y="22" fontSize="7" fill={C.navy} stroke="none" fontWeight="600">$</text></svg>;
-    case "calculator": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="24" rx="2" {...s}/><rect x="11" y="8" width="10" height="5" rx="1" {...s}/><circle cx="12" cy="18" r="1" fill={C.navy}/><circle cx="16" cy="18" r="1" fill={C.navy}/><circle cx="20" cy="18" r="1" fill={C.navy}/><circle cx="12" cy="23" r="1" fill={C.navy}/><circle cx="16" cy="23" r="1" fill={C.navy}/><circle cx="20" cy="23" r="1" fill={C.navy}/></svg>;
-    case "loan": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" {...s}/><path d="M10 10l12 12" {...s}/><circle cx="13" cy="13" r="2" {...s}/><circle cx="19" cy="19" r="2" {...s}/></svg>;
-    case "solar": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="5" {...s}/><line x1="16" y1="4" x2="16" y2="8" {...s}/><line x1="16" y1="24" x2="16" y2="28" {...s}/><line x1="4" y1="16" x2="8" y2="16" {...s}/><line x1="24" y1="16" x2="28" y2="16" {...s}/><line x1="7.5" y1="7.5" x2="10.5" y2="10.5" {...s}/><line x1="21.5" y1="21.5" x2="24.5" y2="24.5" {...s}/><line x1="24.5" y1="7.5" x2="21.5" y2="10.5" {...s}/><line x1="10.5" y1="21.5" x2="7.5" y2="24.5" {...s}/></svg>;
-    case "compare": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="20" rx="1" {...s}/><line x1="5" y1="11" x2="27" y2="11" {...s}/><line x1="13" y1="6" x2="13" y2="26" {...s}/><line x1="20" y1="6" x2="20" y2="26" {...s}/></svg>;
-    case "id": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="4" y="8" width="24" height="16" rx="2" {...s}/><circle cx="11" cy="16" r="3" {...s}/><line x1="17" y1="13" x2="24" y2="13" {...s}/><line x1="17" y1="17" x2="22" y2="17" {...s}/></svg>;
-    case "passport": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="24" rx="2" {...s}/><circle cx="16" cy="15" r="4" {...s}/><line x1="11" y1="23" x2="21" y2="23" {...s}/><line x1="11" y1="8" x2="21" y2="8" {...s}/></svg>;
-    case "transport": return <svg width={32} height={32} viewBox="0 0 32 32"><rect x="5" y="8" width="22" height="16" rx="3" {...s}/><line x1="5" y1="14" x2="27" y2="14" {...s}/><circle cx="10" cy="26" r="2" {...s}/><circle cx="22" cy="26" r="2" {...s}/><path d="M10 24h12" {...s}/><line x1="13" y1="8" x2="13" y2="14" {...s}/><line x1="19" y1="8" x2="19" y2="14" {...s}/></svg>;
-    case "parking": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" {...s}/><path d="M12 9h5a4 4 0 0 1 0 8h-5V9zM12 17v6" {...s}/></svg>;
-    case "children": return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="10" r="4" {...s}/><path d="M9 28c0-3.87 3.13-7 7-7s7 3.13 7 7" {...s}/><path d="M24 8l2 2-2 2M26 10h-4" {...s}/></svg>;
-    default: return <svg width={32} height={32} viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" {...s}/></svg>;
-  }
-}
-
-// ─── Tax bracket calculator ───────────────────────────────────────────────────
-function calcResidentTax(income: number): number {
-  if (income <= 18200) return 0;
-  if (income <= 45000) return (income - 18200) * 0.19;
-  if (income <= 120000) return 5092 + (income - 45000) * 0.325;
-  if (income <= 180000) return 29467 + (income - 120000) * 0.37;
-  return 51667 + (income - 180000) * 0.45;
-}
-function calcNonResidentTax(income: number): number {
-  if (income <= 120000) return income * 0.325;
-  if (income <= 180000) return 39000 + (income - 120000) * 0.37;
-  return 61200 + (income - 180000) * 0.45;
-}
-function getBracketLabel(income: number, resident: boolean): string {
-  const brackets = resident ? TAX_BRACKETS_RESIDENT : TAX_BRACKETS_NON_RESIDENT;
-  const b = brackets.find((br) => income >= br.min && (br.max === Infinity || income <= br.max));
-  return b ? b.label : "–";
-}
-const fmt = (n: number) => `$${Math.round(n).toLocaleString("en-AU")}`;
-
-// ─── ID Checker documents ─────────────────────────────────────────────────────
-const ID_DOCS = [
-  { id: "passport_au", label: "Australian passport", points: 70 },
-  { id: "birth_cert", label: "Australian birth certificate", points: 70 },
-  { id: "citizenship", label: "Citizenship certificate", points: 70 },
-  { id: "drivers", label: "Australian driver's licence", points: 40 },
-  { id: "medicare", label: "Medicare card", points: 25 },
-  { id: "centrelink", label: "Centrelink card", points: 25 },
-  { id: "bank_card", label: "Bank card with signature", points: 25 },
-  { id: "utility", label: "Utility bill with name and address", points: 25 },
-  { id: "rates", label: "Council rate notice", points: 25 },
-  { id: "ato", label: "ATO notice of assessment", points: 25 },
-];
-
-const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
-
-// ─── Disclaimer block ─────────────────────────────────────────────────────────
-function DisclaimerBlock() {
+// ─── Tool input ───────────────────────────────────────────────────────────────
+function ToolInput({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  const [focused, setFocused] = useState(false);
   return (
-    <div style={{ background: C.warmWhite, borderRadius: 8, padding: "14px 16px", marginBottom: 20 }}>
-      <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.78rem", color: C.grey, lineHeight: 1.6, margin: 0 }}>
-        {DISCLAIMER}
-      </p>
-    </div>
-  );
-}
-
-// ─── Labelled input ───────────────────────────────────────────────────────────
-function LabelledInput({ label, type = "number", value, onChange, placeholder, min }: { label: string; type?: string; value: string; onChange: (v: string) => void; placeholder?: string; min?: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>{label}</label>
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ display: "block", fontFamily: SANS, fontSize: 13, fontWeight: 400, color: C.grey, marginBottom: 6 }}>{label}</label>
       <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        min={min}
-        style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "8px 12px", fontSize: "0.9rem", color: C.navy, outline: "none", width: "100%" }}
+        type="number" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        style={{ width: "100%", border: `1.5px solid ${focused ? C.cerulean : "#E8E0D0"}`, borderRadius: 12, padding: "12px 16px", fontFamily: SANS, fontSize: 15, color: C.navy, background: C.white, boxSizing: "border-box", outline: "none", transition: "border-color 0.15s" }}
       />
     </div>
   );
 }
 
-// ─── Output block ─────────────────────────────────────────────────────────────
-function OutputRow({ label, value }: { label: string; value: string }) {
+// ─── Tool output row ──────────────────────────────────────────────────────────
+function ToolOutputRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between items-baseline py-2" style={{ borderBottom: `1px solid ${C.offCream}` }}>
-      <span style={{ fontSize: "0.85rem", color: C.grey }}>{label}</span>
-      <span style={{ fontSize: "1rem", fontWeight: 600, color: C.navy }}>{value}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: "1px solid rgba(15,23,42,0.06)" }}>
+      <span style={{ fontFamily: SANS, fontSize: 13, color: C.grey }}>{label}</span>
+      <span style={{ fontFamily: SERIF, fontSize: 24, color: C.navy }}>{value}</span>
     </div>
   );
 }
 
-// ─── Solar state multipliers ──────────────────────────────────────────────────
-const SOLAR_MULT: Record<string, number> = { QLD: 0.62, WA: 0.6, SA: 0.58, NSW: 0.52, VIC: 0.44, TAS: 0.38, ACT: 0.50, NT: 0.65 };
-
-// ─── Loan calculator ──────────────────────────────────────────────────────────
-function loanMonthly(P: number, annualRate: number, years: number): number {
-  const r = annualRate / 100 / 12;
-  const n = years * 12;
-  if (r === 0) return P / n;
-  return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+// ─── Freelance day rate tool ───────────────────────────────────────────────────
+function FreelanceTool() {
+  const [income, setIncome] = useState("");
+  const [weeks, setWeeks]   = useState("48");
+  const [days, setDays]     = useState("5");
+  const inc = parseFloat(income), wk = parseFloat(weeks), dy = parseFloat(days);
+  const dayRate = (inc > 0 && wk > 0 && dy > 0) ? inc / (wk * dy) : null;
+  const fmt = (n: number) => `$${Math.round(n).toLocaleString("en-AU")}`;
+  return (
+    <div>
+      <ToolInput label="Annual income target ($)" value={income} onChange={setIncome} placeholder="e.g. 100000" />
+      <ToolInput label="Billable weeks per year" value={weeks} onChange={setWeeks} placeholder="e.g. 48" />
+      <ToolInput label="Days per week" value={days} onChange={setDays} placeholder="e.g. 5" />
+      {dayRate !== null && !isNaN(dayRate) && (
+        <div style={{ background: "#F0F7FA", borderRadius: 12, padding: 20, marginTop: 4 }}>
+          <ToolOutputRow label="Day rate" value={fmt(dayRate)} />
+          <ToolOutputRow label="Hourly rate (8hr day)" value={fmt(dayRate / 8)} />
+          <ToolOutputRow label="Monthly equivalent" value={fmt(inc / 12)} />
+          <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, marginTop: 12, lineHeight: 1.6 }}>Assumes you pay your own tax and super from this rate. This is before expenses.</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
-// ─── Spotlight result type ────────────────────────────────────────────────────
-type SpotResult = { kind: "guide" | "tool" | "ref"; label: string; sub: string; id: string };
+// ─── Loan repayment tool ──────────────────────────────────────────────────────
+function LoanTool() {
+  const [amount, setAmount] = useState("");
+  const [rate, setRate]     = useState("");
+  const [term, setTerm]     = useState("");
+  const P = parseFloat(amount), rAnn = parseFloat(rate), yrs = parseFloat(term);
+  const r = rAnn / 100 / 12, n = yrs * 12;
+  const monthly = (P > 0 && r > 0 && n > 0) ? (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : null;
+  const total = monthly ? monthly * n : null;
+  const interest = total ? total - P : null;
+  const fmt = (n: number) => `$${Math.round(n).toLocaleString("en-AU")}`;
+  return (
+    <div>
+      <ToolInput label="Loan amount ($)" value={amount} onChange={setAmount} placeholder="e.g. 25000" />
+      <ToolInput label="Annual interest rate (%)" value={rate} onChange={setRate} placeholder="e.g. 6.5" />
+      <ToolInput label="Loan term (years)" value={term} onChange={setTerm} placeholder="e.g. 5" />
+      {monthly !== null && !isNaN(monthly) && monthly > 0 && (
+        <div style={{ background: "#F0F7FA", borderRadius: 12, padding: 20, marginTop: 4 }}>
+          <ToolOutputRow label="Monthly repayment" value={fmt(monthly)} />
+          <ToolOutputRow label="Total amount repaid" value={fmt(total!)} />
+          <ToolOutputRow label="Total interest paid" value={fmt(interest!)} />
+          <a href="https://moneysmart.gov.au/loans/personal-loans" target="_blank" rel="noreferrer"
+            style={{ display: "inline-flex", alignItems: "center", gap: 4, color: C.cerulean, fontFamily: SANS, fontSize: 13, fontWeight: 500, textDecoration: "none", marginTop: 12 }}>
+            MoneySmart loan calculator <ExternalLink style={{ width: 11, height: 11 }} />
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── 100 point ID checker ─────────────────────────────────────────────────────
+function IDTool() {
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const toggle = (id: string) => {
+    const s = new Set(checked);
+    s.has(id) ? s.delete(id) : s.add(id);
+    setChecked(s);
+  };
+  const total = Array.from(checked).reduce((sum, id) => {
+    const doc = ID_DOCS.find((d) => d.id === id);
+    return sum + (doc?.points ?? 0);
+  }, 0);
+  return (
+    <div>
+      <p style={{ fontFamily: SANS, fontSize: 13, color: C.grey, marginBottom: 12 }}>Select the documents you have. Points add up as you tick.</p>
+      {ID_DOCS.map((doc) => (
+        <label key={doc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: "1px solid #F0EAD6", cursor: "pointer" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <input type="checkbox" checked={checked.has(doc.id)} onChange={() => toggle(doc.id)}
+              style={{ width: 17, height: 17, accentColor: C.cerulean, cursor: "pointer", flexShrink: 0 }} />
+            <span style={{ fontFamily: SANS, fontSize: 14, color: C.navy }}>{doc.label}</span>
+          </div>
+          <span style={{ fontFamily: SANS, fontSize: 13, fontWeight: 600, color: C.cerulean, marginLeft: 12, flexShrink: 0 }}>{doc.points} pts</span>
+        </label>
+      ))}
+      <div style={{ marginTop: 24, textAlign: "center" }}>
+        <div style={{ fontFamily: SERIF, fontSize: 40, color: C.navy }}>{total} points</div>
+        <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500, color: total >= 100 ? C.auGreen : C.grey, marginTop: 6 }}>
+          {total >= 100 ? "You have enough for most 100-point checks." : `You need ${100 - total} more points.`}
+        </div>
+        <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, marginTop: 8, lineHeight: 1.6 }}>Requirements vary by organisation. Always confirm which documents they will accept.</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Guide cluster card ───────────────────────────────────────────────────────
+function GuideClusterCard({ cluster }: { cluster: Cluster }) {
+  const [openGuide, setOpenGuide] = useState<string | null>(null);
+  const toggle = (name: string) => setOpenGuide(openGuide === name ? null : name);
+  return (
+    <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: cardShadow, padding: 28, breakInside: "avoid", marginBottom: 24 }}>
+      <ClusterIcon id={cluster.id} color={cluster.color} />
+      <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 17, color: C.navy, marginTop: 14 }}>{cluster.name}</div>
+      <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, marginTop: 4, lineHeight: 1.5 }}>{cluster.description}</div>
+      <div style={{ height: 1, background: "#E8E0D0", margin: "16px 0" }} />
+      {cluster.guides.map((guide) => (
+        <div key={guide.name} style={{ borderBottom: "1px solid #F0EAD6" }}>
+          <button
+            onClick={() => toggle(guide.name)}
+            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "10px 0", cursor: "pointer", background: "none", border: "none" }}
+          >
+            <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.cerulean, textAlign: "left" }}>{guide.name}</span>
+            <ChevronRight style={{ width: 14, height: 14, color: C.cerulean, flexShrink: 0, transform: openGuide === guide.name ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
+          </button>
+          <AnimatePresence>
+            {openGuide === guide.name && (
+              <motion.div key={guide.name} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} style={{ overflow: "hidden" }}>
+                <div style={{ background: "#F7F6F2", borderRadius: 12, padding: 16, marginBottom: 10 }}>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 14, color: C.navy, lineHeight: 1.65 }}>{guide.description}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, marginTop: 8 }}>Last reviewed May 2026. Always check the official source linked below.</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+                    {guide.links.map((link) => (
+                      <CerBtn key={link.label} href={link.url}>{link.label}</CerBtn>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Reference tile card ──────────────────────────────────────────────────────
+function RefTileCard({ tile }: { tile: RefTileData }) {
+  const [open, setOpen]   = useState(false);
+  const [phTab, setPhTab] = useState("NSW");
+  return (
+    <div style={{ background: C.navy, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.18)", overflow: "hidden" }}>
+      <div style={{ height: 4, background: tile.stripe }} />
+      <div style={{ padding: 28 }}>
+        <h3 style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, lineHeight: 1.2 }}>{tile.title}</h3>
+        <p style={{ fontFamily: SANS, fontSize: 13, color: C.darkSec, marginTop: 6, lineHeight: 1.5 }}>{tile.description}</p>
+        <button
+          onClick={() => setOpen(!open)}
+          style={{ display: "inline-flex", alignItems: "center", gap: 4, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, background: "none", border: "none", cursor: "pointer", marginTop: 16, padding: 0 }}
+        >
+          {open ? "Read less" : "Read more"}
+          <ChevronDown style={{ width: 14, height: 14, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} style={{ overflow: "hidden" }}>
+              <div style={{ marginTop: 16 }}>
+                {tile.id === "holidays" && tile.holidays ? (
+                  <div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 16 }}>
+                      {Object.keys(tile.holidays).map((state) => (
+                        <button key={state} onClick={() => setPhTab(state)}
+                          style={{ padding: "4px 10px", borderRadius: 6, fontFamily: SANS, fontSize: 12, fontWeight: phTab === state ? 600 : 400, background: phTab === state ? C.cerulean : "rgba(255,255,255,0.1)", color: phTab === state ? C.white : C.darkSec, border: "none", cursor: "pointer" }}>
+                          {state}
+                        </button>
+                      ))}
+                    </div>
+                    {tile.holidays[phTab]?.map((h) => (
+                      <div key={h.date + h.name} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                        <span style={{ fontFamily: MONO, fontSize: 12, color: C.darkSec }}>{h.date}</span>
+                        <span style={{ fontFamily: SANS, fontSize: 13, color: C.cream }}>{h.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ fontFamily: SANS, fontSize: 14, color: C.darkSec, lineHeight: 1.75, whiteSpace: "pre-line" }}>{tile.content}</p>
+                )}
+                {tile.source && (
+                  <p style={{ fontFamily: MONO, fontSize: 11, color: "#6B6B5E", marginTop: 14 }}>{tile.source}</p>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Home() {
-  // Nav / scroll
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Guides
-  const [openGuide, setOpenGuide] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Tools
-  const [openTool, setOpenTool] = useState<ToolId | null>(null);
-
-  // Tool states — Tax
-  const [taxIncome, setTaxIncome] = useState("");
-  const [taxResident, setTaxResident] = useState(true);
-
-  // Tool states — Day Rate
-  const [dayTarget, setDayTarget] = useState("");
-  const [dayWeeks, setDayWeeks] = useState("48");
-  const [dayDays, setDayDays] = useState("5");
-
-  // Tool states — Loan
-  const [loanAmount, setLoanAmount] = useState("");
-  const [loanRate, setLoanRate] = useState("");
-  const [loanTerm, setLoanTerm] = useState("");
-
-  // Tool states — Solar
-  const [solarBill, setSolarBill] = useState("");
-  const [solarState, setSolarState] = useState("NSW");
-
-  // Tool states — ID Checker
-  const [idChecked, setIdChecked] = useState<string[]>([]);
-
-  // Tool states — Passport
-  const [passportHas, setPassportHas] = useState<boolean | null>(null);
-  const [passportExpired3, setPassportExpired3] = useState<boolean | null>(null);
-  const [passportTravelDate, setPassportTravelDate] = useState("");
-
-  // Tool states — Transport / Parking / WWC
-  const [transportState, setTransportState] = useState("NSW");
-  const [parkingState, setParkingState] = useState("NSW");
-  const [wwcState, setWwcState] = useState("NSW");
-
-  // Reference
-  const [openTile, setOpenTile] = useState<string | null>(null);
-
-  // Spotlight
-  const [spotOpen, setSpotOpen] = useState(false);
-  const [spotQ, setSpotQ] = useState("");
-  const [spotIdx, setSpotIdx] = useState(0);
+  const [scrollY, setScrollY]       = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openCit, setOpenCit]       = useState<number | null>(null);
 
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > window.innerHeight * 0.45);
-    window.addEventListener("scroll", h);
+    const h = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", h, { passive: true });
     return () => window.removeEventListener("scroll", h);
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSpotOpen((v) => !v); }
-      if (e.key === "Escape") { setSpotOpen(false); setSpotQ(""); }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setMobileMenuOpen(false);
+    setMobileOpen(false);
   };
 
-  // Spotlight results
-  const spotResults = useMemo<SpotResult[]>(() => {
-    const q = spotQ.trim().toLowerCase();
-    if (!q) return [];
-    const out: SpotResult[] = [];
-    clusters.forEach((c) => c.guides.forEach((g) => {
-      if (g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
-        out.push({ kind: "guide", label: g.name, sub: c.name, id: `${c.name}|${g.name}` });
-    }));
-    tools.forEach((t) => {
-      if (t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q))
-        out.push({ kind: "tool", label: t.name, sub: "Tools", id: t.id });
-    });
-    referenceTiles.forEach((r) => {
-      if (r.title.toLowerCase().includes(q) || r.intro.toLowerCase().includes(q))
-        out.push({ kind: "ref", label: r.title, sub: "Reference", id: r.id });
-    });
-    return out.slice(0, 12);
-  }, [spotQ]);
+  const scrolled  = scrollY > 50;
+  const showTop   = scrollY > 400;
 
-  const handleSpotSelect = (r: SpotResult) => {
-    setSpotOpen(false);
-    setSpotQ("");
-    setSpotIdx(0);
-    if (r.kind === "guide") { scrollTo("guides"); setTimeout(() => setOpenGuide(r.id), 400); }
-    else if (r.kind === "tool") { scrollTo("tools"); setTimeout(() => setOpenTool(r.id as ToolId), 400); }
-    else { scrollTo("reference"); setTimeout(() => setOpenTile(r.id), 400); }
-  };
+  const navLinks = [
+    { label: "Home",        id: "home" },
+    { label: "Guides",      id: "guides" },
+    { label: "Tools",       id: "tools" },
+    { label: "Reference",   id: "reference" },
+    { label: "Citizenship", id: "citizenship" },
+    { label: "How It Works",id: "how-it-works" },
+    { label: "Contact",     id: "contact" },
+  ];
 
-  // Guide search
-  const filteredClusters = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return clusters;
-    return clusters
-      .map((c) => ({ ...c, guides: c.guides.filter((g) => g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)) }))
-      .filter((c) => c.guides.length > 0);
-  }, [searchQuery]);
-
-  // Tax calc
-  const taxResult = useMemo(() => {
-    const income = parseFloat(taxIncome);
-    if (!income || income < 0) return null;
-    const baseTax = taxResident ? calcResidentTax(income) : calcNonResidentTax(income);
-    const medicare = taxResident && income > 23365 ? income * MEDICARE_LEVY : 0;
-    const total = baseTax + medicare;
-    const monthlyTakeHome = (income - total) / 12;
-    return { bracket: getBracketLabel(income, taxResident), tax: total, medicare, monthlyTakeHome };
-  }, [taxIncome, taxResident]);
-
-  // Day rate calc
-  const dayResult = useMemo(() => {
-    const t = parseFloat(dayTarget), w = parseFloat(dayWeeks) || 48, d = parseFloat(dayDays) || 5;
-    if (!t || t <= 0) return null;
-    const dayRate = t / (w * d);
-    return { dayRate, hourlyRate: dayRate / 8, monthly: t / 12 };
-  }, [dayTarget, dayWeeks, dayDays]);
-
-  // Loan calc
-  const loanResult = useMemo(() => {
-    const P = parseFloat(loanAmount), r = parseFloat(loanRate), y = parseFloat(loanTerm);
-    if (!P || !r || !y || P <= 0 || r <= 0 || y <= 0) return null;
-    const monthly = loanMonthly(P, r, y);
-    const total = monthly * y * 12;
-    return { monthly, total, interest: total - P };
-  }, [loanAmount, loanRate, loanTerm]);
-
-  // Solar calc
-  const solarResult = useMemo(() => {
-    const bill = parseFloat(solarBill);
-    if (!bill || bill <= 0) return null;
-    const mult = SOLAR_MULT[solarState] ?? 0.5;
-    const annual = bill * 12;
-    const saveLow = annual * (mult - 0.1);
-    const saveHigh = annual * (mult + 0.05);
-    const systemCost = 7000;
-    const paybackLow = systemCost / saveHigh;
-    const paybackHigh = systemCost / saveLow;
-    return { saveLow, saveHigh, paybackLow, paybackHigh };
-  }, [solarBill, solarState]);
-
-  // ID checker
-  const idTotal = idChecked.reduce((sum, id) => sum + (ID_DOCS.find((d) => d.id === id)?.points ?? 0), 0);
-  const toggleId = (id: string) => setIdChecked((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-
-  // Passport
-  const passportResult = useMemo(() => {
-    if (passportHas === null) return null;
-    const isRenewal = passportHas && passportExpired3 === false;
-    const isNew = !passportHas || passportExpired3 === true;
-    let weeksToTravel: number | null = null;
-    if (passportTravelDate) {
-      const diff = new Date(passportTravelDate).getTime() - Date.now();
-      weeksToTravel = Math.ceil(diff / (1000 * 60 * 60 * 24 * 7));
-    }
-    const urgent = weeksToTravel !== null && weeksToTravel <= 6;
-    return { type: isNew ? "new" : isRenewal ? "renewal" : "new", urgent, weeksToTravel };
-  }, [passportHas, passportExpired3, passportTravelDate]);
-
-  // ─── Tool renderers ─────────────────────────────────────────────────────────
-  function renderToolContent(id: ToolId) {
-    switch (id) {
-      case "tax-bracket":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <LabelledInput label="Annual income ($)" value={taxIncome} onChange={setTaxIncome} placeholder="e.g. 75000" />
-              <div className="flex flex-col gap-1">
-                <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Residency</label>
-                <div className="flex gap-2">
-                  {["Resident", "Non-resident"].map((opt, i) => (
-                    <button key={opt} onClick={() => setTaxResident(i === 0)} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.cerulean}`, background: taxResident === (i === 0) ? C.cerulean : C.warmWhite, color: taxResident === (i === 0) ? C.white : C.cerulean, fontSize: "0.85rem", fontWeight: 500, cursor: "pointer", transition: "all 0.15s" }}>{opt}</button>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {taxResult && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Tax bracket" value={taxResult.bracket} />
-                <OutputRow label="Approx. income tax" value={fmt(taxResult.tax - taxResult.medicare)} />
-                {taxResident && <OutputRow label="Medicare levy (est.)" value={fmt(taxResult.medicare)} />}
-                <OutputRow label="Total tax payable (est.)" value={fmt(taxResult.tax)} />
-                <OutputRow label="Approx. monthly take-home" value={fmt(taxResult.monthlyTakeHome)} />
-              </div>
-            )}
-            <CerBtn href="https://www.ato.gov.au/calculators-and-tools/tax-withheld-calculator">ATO tax withheld calculator ↗</CerBtn>
-          </div>
-        );
-
-      case "day-rate":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <LabelledInput label="Annual income target ($)" value={dayTarget} onChange={setDayTarget} placeholder="e.g. 100000" />
-              <LabelledInput label="Working weeks per year" value={dayWeeks} onChange={setDayWeeks} placeholder="48" min="1" />
-              <LabelledInput label="Days per week" value={dayDays} onChange={setDayDays} placeholder="5" min="1" />
-            </div>
-            {dayResult && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Day rate" value={fmt(dayResult.dayRate)} />
-                <OutputRow label="Hourly rate (8-hr day)" value={fmt(dayResult.hourlyRate)} />
-                <OutputRow label="Monthly equivalent" value={fmt(dayResult.monthly)} />
-              </div>
-            )}
-          </div>
-        );
-
-      case "loan-repayment":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <LabelledInput label="Loan amount ($)" value={loanAmount} onChange={setLoanAmount} placeholder="e.g. 400000" />
-              <LabelledInput label="Annual interest rate (%)" value={loanRate} onChange={setLoanRate} placeholder="e.g. 6.5" />
-              <LabelledInput label="Loan term (years)" value={loanTerm} onChange={setLoanTerm} placeholder="e.g. 30" />
-            </div>
-            {loanResult && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Monthly repayment (est.)" value={fmt(loanResult.monthly)} />
-                <OutputRow label="Total amount repaid" value={fmt(loanResult.total)} />
-                <OutputRow label="Total interest paid" value={fmt(loanResult.interest)} />
-              </div>
-            )}
-            <CerBtn href="https://moneysmart.gov.au/home-loans/mortgage-calculator">MoneySmart loan calculator ↗</CerBtn>
-          </div>
-        );
-
-      case "solar-savings":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <LabelledInput label="Average monthly electricity bill ($)" value={solarBill} onChange={setSolarBill} placeholder="e.g. 220" />
-              <div className="flex flex-col gap-1">
-                <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>State</label>
-                <select value={solarState} onChange={(e) => setSolarState(e.target.value)} style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "8px 12px", fontSize: "0.9rem", color: C.navy }}>
-                  {AU_STATES.map((s) => <option key={s}>{s}</option>)}
-                </select>
-              </div>
-            </div>
-            {solarResult && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Estimated annual saving range" value={`${fmt(solarResult.saveLow)} – ${fmt(solarResult.saveHigh)}`} />
-                <OutputRow label="Estimated payback period" value={`${solarResult.paybackLow.toFixed(1)} – ${solarResult.paybackHigh.toFixed(1)} years`} />
-              </div>
-            )}
-            <div className="flex flex-wrap gap-3">
-              <CerBtn href="https://www.energymadeeasy.gov.au">Energy Made Easy ↗</CerBtn>
-              <CerBtn href="https://www.cleanenergycouncil.org.au">Clean Energy Council ↗</CerBtn>
-            </div>
-          </div>
-        );
-
-      case "business-structure": {
-        const headers = ["", "Sole Trader", "Partnership", "Company", "Trust"];
-        const rows = [
-          ["Tax treatment", "Personal income tax rate", "Partners pay personal income tax on their share", "Company tax rate (25–30%)", "Distributed to beneficiaries who pay at their marginal rate"],
-          ["Personal liability", "Unlimited — personal assets at risk", "Unlimited — partners share liability", "Limited to amount invested in shares", "Trustee has unlimited liability; beneficiaries are protected"],
-          ["Setup cost", "Low — ABN registration is free", "Low — partnership agreement recommended", "Moderate — ASIC fees apply annually", "Higher — trust deed required, legal fees"],
-          ["Admin burden", "Minimal — BAS if GST registered", "Moderate — shared records required", "Higher — annual ASIC returns, director obligations", "Complex — trustee duties, annual tax distributions"],
-          ["Best suited for", "Freelancers, sole contractors, simple operations", "Two or more people in a simple shared venture", "Businesses wanting limited liability and growth investment", "Family businesses or those seeking tax-effective income splitting"],
-        ];
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="overflow-x-auto">
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
-                <thead>
-                  <tr style={{ background: C.cerulean }}>
-                    {headers.map((h, i) => <th key={i} style={{ padding: "10px 12px", color: C.white, fontWeight: 600, textAlign: "left", border: `1px solid ${C.cerulean}` }}>{h}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, ri) => (
-                    <tr key={ri} style={{ background: ri % 2 === 0 ? C.warmWhite : C.white }}>
-                      {row.map((cell, ci) => (
-                        <td key={ci} style={{ padding: "9px 12px", color: ci === 0 ? C.navy : C.grey, fontWeight: ci === 0 ? 600 : 400, border: `1px solid ${C.offCream}`, verticalAlign: "top" }}>{cell}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <CerBtn href="https://business.gov.au/registrations/register-a-business">business.gov.au — Register a business ↗</CerBtn>
-          </div>
-        );
-      }
-
-      case "id-checker":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="space-y-2">
-              {ID_DOCS.map((doc) => (
-                <label key={doc.id} className="flex items-center justify-between gap-3 cursor-pointer" style={{ background: C.warmWhite, borderRadius: 8, padding: "10px 14px" }}>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" checked={idChecked.includes(doc.id)} onChange={() => toggleId(doc.id)} style={{ accentColor: C.cerulean, width: 16, height: 16 }} />
-                    <span style={{ fontSize: "0.875rem", color: C.navy }}>{doc.label}</span>
-                  </div>
-                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: C.cerulean, whiteSpace: "nowrap" }}>{doc.points} pts</span>
-                </label>
-              ))}
-            </div>
-            <div style={{ background: idTotal >= 100 ? "rgba(163,230,53,0.15)" : C.warmWhite, border: `2px solid ${idTotal >= 100 ? "#A3E635" : C.offCream}`, borderRadius: 8, padding: "14px 16px" }}>
-              <div className="flex items-center justify-between">
-                <span style={{ fontWeight: 700, fontSize: "1.1rem", color: C.navy }}>Total: {idTotal} points</span>
-                <span style={{ fontWeight: 600, color: idTotal >= 100 ? "#4D7C0F" : C.cerulean }}>{idTotal >= 100 ? "✓ Enough points" : `Need ${100 - idTotal} more`}</span>
-              </div>
-              {idTotal < 100 && idTotal > 0 && (
-                <p style={{ fontSize: "0.8rem", color: C.grey, marginTop: 8 }}>Try adding a card with signature, a utility bill, or a council rate notice to reach 100.</p>
-              )}
-            </div>
-          </div>
-        );
-
-      case "passport":
-        return (
-          <div className="space-y-4">
-            <DisclaimerBlock />
-            <div className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Do you have an Australian passport?</label>
-                <div className="flex gap-2">
-                  {[{ label: "Yes", val: true }, { label: "No", val: false }].map(({ label, val }) => (
-                    <button key={label} onClick={() => setPassportHas(val)} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.cerulean}`, background: passportHas === val ? C.cerulean : C.warmWhite, color: passportHas === val ? C.white : C.cerulean, fontSize: "0.85rem", fontWeight: 500, cursor: "pointer", transition: "all 0.15s" }}>{label}</button>
-                  ))}
-                </div>
-              </div>
-              {passportHas === true && (
-                <div className="flex flex-col gap-2">
-                  <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Has it been expired for more than 3 years?</label>
-                  <div className="flex gap-2">
-                    {[{ label: "Yes", val: true }, { label: "No", val: false }].map(({ label, val }) => (
-                      <button key={label} onClick={() => setPassportExpired3(val)} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.cerulean}`, background: passportExpired3 === val ? C.cerulean : C.warmWhite, color: passportExpired3 === val ? C.white : C.cerulean, fontSize: "0.85rem", fontWeight: 500, cursor: "pointer", transition: "all 0.15s" }}>{label}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className="flex flex-col gap-1">
-                <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Travel date (optional)</label>
-                <input type="date" value={passportTravelDate} onChange={(e) => setPassportTravelDate(e.target.value)} style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "8px 12px", fontSize: "0.9rem", color: C.navy }} />
-              </div>
-            </div>
-            {passportResult && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <p style={{ fontWeight: 600, color: C.navy, marginBottom: 8 }}>{passportResult.type === "renewal" ? "Renewal application" : "New application"}</p>
-                <p style={{ fontSize: "0.875rem", color: C.grey }}>Routine processing: 3–6 weeks. Priority processing: up to 2 weeks (fee applies).</p>
-                {passportResult.urgent && <p style={{ fontSize: "0.875rem", color: "#B45309", fontWeight: 500, marginTop: 8 }}>Your travel date is within 6 weeks — consider priority processing or a passport office appointment.</p>}
-              </div>
-            )}
-            <CerBtn href="https://www.passports.gov.au">passports.gov.au ↗</CerBtn>
-          </div>
-        );
-
-      case "public-transport": {
-        const t = PUBLIC_TRANSPORT_DATA[transportState];
-        return (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1">
-              <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Select your state or territory</label>
-              <select value={transportState} onChange={(e) => setTransportState(e.target.value)} style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "10px 12px", fontSize: "0.9rem", color: C.navy }}>
-                {AU_STATES.map((s) => <option key={s}>{s}</option>)}
-              </select>
-            </div>
-            {t && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Card" value={t.card} />
-                <OutputRow label="Website" value={t.website} />
-                <OutputRow label="Top-up" value={t.topUp} />
-              </div>
-            )}
-            {t && <CerBtn href={`https://${t.website}`}>{t.website} ↗</CerBtn>}
-          </div>
-        );
-      }
-
-      case "parking-fine": {
-        const p = PARKING_FINES_DATA[parkingState];
-        return (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1">
-              <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Select your state or territory</label>
-              <select value={parkingState} onChange={(e) => setParkingState(e.target.value)} style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "10px 12px", fontSize: "0.9rem", color: C.navy }}>
-                {AU_STATES.map((s) => <option key={s}>{s}</option>)}
-              </select>
-            </div>
-            {p && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Authority" value={p.authority} />
-                <div className="pt-2">
-                  <p style={{ fontSize: "0.8rem", color: C.grey, marginBottom: 6 }}>How to dispute</p>
-                  <p style={{ fontSize: "0.875rem", color: C.navy }}>{p.disputeNote}</p>
-                </div>
-              </div>
-            )}
-            {p && <CerBtn href={`https://${p.payUrl}`}>Pay or dispute your fine ↗</CerBtn>}
-          </div>
-        );
-      }
-
-      case "wwc": {
-        const w = WWC_DATA[wwcState];
-        return (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1">
-              <label style={{ fontSize: "0.8rem", fontWeight: 500, color: C.navy }}>Select your state or territory</label>
-              <select value={wwcState} onChange={(e) => setWwcState(e.target.value)} style={{ background: C.warmWhite, border: `1px solid ${C.breeze}`, borderRadius: 8, padding: "10px 12px", fontSize: "0.9rem", color: C.navy }}>
-                {AU_STATES.map((s) => <option key={s}>{s}</option>)}
-              </select>
-            </div>
-            {w && (
-              <div style={{ background: C.warmWhite, borderRadius: 8, padding: "16px" }}>
-                <OutputRow label="Who must have it" value={w.who} />
-                <OutputRow label="How to apply" value={w.how} />
-                <OutputRow label="Cost" value={w.cost} />
-                <OutputRow label="Validity" value={w.validity} />
-              </div>
-            )}
-            {w && <CerBtn href={`https://${w.url}`}>Apply — official site ↗</CerBtn>}
-          </div>
-        );
-      }
-
-      default: return null;
-    }
-  }
-
-  // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: "100dvh", width: "100%", fontFamily: "'Geist', Inter, sans-serif", background: C.cream, color: C.navy }}>
+    <div style={{ fontFamily: SANS, background: C.white, color: C.navy, overflowX: "hidden" }}>
 
-      {/* ── NAVIGATION ──────────────────────────────────────────────────────── */}
-      <nav style={{ position: "fixed", top: 0, width: "100%", zIndex: 50, transition: "background 0.3s", background: scrolled ? `${C.cream}E8` : "transparent", backdropFilter: scrolled ? "blur(8px)" : "none" }}>
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <button onClick={() => scrollTo("home")} style={{ fontSize: "1.5rem", fontWeight: 700, color: C.navy, letterSpacing: "-0.03em", background: "none", border: "none", cursor: "pointer" }}>
+      {/* ── NAV ─────────────────────────────────────────────────────────────── */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, backdropFilter: scrolled ? "blur(14px)" : "none", background: scrolled ? "rgba(250,246,232,0.93)" : "transparent", transition: "background 0.3s, backdrop-filter 0.3s", borderBottom: scrolled ? "1px solid rgba(15,23,42,0.07)" : "none" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <button onClick={() => scrollTo("home")} style={{ fontFamily: SERIF, fontSize: 22, color: C.navy, background: "none", border: "none", cursor: "pointer", padding: 0, letterSpacing: "-0.01em" }}>
             kindd
           </button>
-
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-7" style={{ fontSize: "0.875rem", fontWeight: 500, letterSpacing: "0.01em" }}>
-            {[["Home", "home"], ["Guides", "guides"], ["Tools", "tools"], ["Reference", "reference"], ["How KINDD Works", "how-it-works"], ["Contact", "contact"]].map(([label, id]) => (
-              <button key={id} onClick={() => scrollTo(id)} style={{ color: C.navy, background: "none", border: "none", cursor: "pointer", opacity: 0.85 }} onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")} onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.85")}>
-                {label}
+          <div className="hidden lg:flex items-center" style={{ gap: 24 }}>
+            {navLinks.map((l) => (
+              <button key={l.id} onClick={() => scrollTo(l.id)}
+                style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.navy, letterSpacing: "0.02em", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                {l.label}
               </button>
             ))}
-            <button
-              onClick={() => setSpotOpen(true)}
-              style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 10px", borderRadius: 8, border: `1px solid ${C.breeze}90`, background: "none", cursor: "pointer", color: C.grey, fontSize: "0.75rem", fontWeight: 400 }}
-              title="Search (⌘K)"
-            >
-              <Search style={{ width: 13, height: 13 }} />
-              <span style={{ fontFamily: "'Geist Mono', monospace", letterSpacing: "0.04em" }}>⌘K</span>
-            </button>
-            <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" style={{ color: C.breeze, textDecoration: "none", fontWeight: 500 }}>
+            <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer"
+              style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.cerulean, letterSpacing: "0.02em", textDecoration: "none" }}>
               Part of Breza + You
             </a>
           </div>
-
-          {/* Mobile toggle */}
-          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: "none", border: "none", cursor: "pointer", color: C.navy }}>
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <button className="flex lg:hidden" onClick={() => setMobileOpen(true)}
+            style={{ background: "none", border: "none", cursor: "pointer", color: C.navy, padding: 4 }}>
+            <Menu style={{ width: 24, height: 24 }} />
           </button>
         </div>
-
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ background: C.cream, borderBottom: `1px solid ${C.breeze}40`, overflow: "hidden" }} className="md:hidden">
-              <div className="flex flex-col p-6 gap-4 text-lg">
-                {[["Home", "home"], ["Guides", "guides"], ["Tools", "tools"], ["Reference", "reference"], ["How KINDD Works", "how-it-works"], ["Contact", "contact"]].map(([label, id]) => (
-                  <button key={id} onClick={() => scrollTo(id)} style={{ textAlign: "left", color: C.navy, background: "none", border: "none", cursor: "pointer", padding: "6px 0", fontWeight: 500 }}>{label}</button>
-                ))}
-                <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" style={{ color: C.breeze, textDecoration: "none", fontWeight: 500, padding: "6px 0" }}>Part of Breza + You</a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
-      {/* ── SECTION 1 — HERO ────────────────────────────────────────────────── */}
-      <section id="home" style={{ position: "relative", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "16vh", paddingLeft: 24, paddingRight: 24, background: C.cream }}>
-        <img
-          src={heroImg}
-          alt="An Australian suburban street with houses, picket fences, a letterbox, and a kookaburra on a post. Painterly illustration."
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", zIndex: 0, opacity: 1 }}
-        />
-        {/* Top cream fade so text is readable; bottom stays clear */}
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, ${C.cream} 0%, ${C.cream} 18%, rgba(250,246,232,0.75) 36%, rgba(250,246,232,0.15) 56%, transparent 72%)`, zIndex: 1 }} />
+      {/* ── MOBILE DRAWER ───────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "tween", duration: 0.25 }}
+            style={{ position: "fixed", inset: 0, background: C.white, zIndex: 100, padding: 24, display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 36 }}>
+              <span style={{ fontFamily: SERIF, fontSize: 22, color: C.navy }}>kindd</span>
+              <button onClick={() => setMobileOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: C.navy }}>
+                <X style={{ width: 24, height: 24 }} />
+              </button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {navLinks.map((l) => (
+                <button key={l.id} onClick={() => scrollTo(l.id)}
+                  style={{ fontFamily: SANS, fontWeight: 500, fontSize: 19, color: C.navy, background: "none", border: "none", borderBottom: `1px solid ${C.offCream}`, cursor: "pointer", textAlign: "left", padding: "14px 0" }}>
+                  {l.label}
+                </button>
+              ))}
+              <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer"
+                style={{ fontFamily: SANS, fontWeight: 500, fontSize: 19, color: C.cerulean, textDecoration: "none", padding: "14px 0" }}>
+                Part of Breza + You
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        <div className="max-w-3xl mx-auto text-center flex flex-col items-center" style={{ position: "relative", zIndex: 2 }}>
-          <h1 style={{ fontSize: "clamp(4rem, 12vw, 7rem)", fontWeight: 700, letterSpacing: "-0.04em", color: C.navy, marginBottom: 24, lineHeight: 1 }}>kindd</h1>
-          <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 500, color: C.navy, marginBottom: 20, lineHeight: 1.2 }}>You are one of our kind.</h2>
-          <p style={{ fontSize: "1.125rem", color: C.grey, maxWidth: 520, margin: "0 auto 40px", lineHeight: 1.7 }}>
+      {/* ── S1: HERO ────────────────────────────────────────────────────────── */}
+      <section id="home" style={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}>
+        <img src={heroImg} alt="Australian suburban street" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(250,246,232,0.72) 0%, rgba(250,246,232,0.28) 48%, transparent 100%)" }} />
+        <div style={{ position: "absolute", top: "38%", left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 820, padding: "0 24px", textAlign: "center" }}>
+          <div style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3.5vw, 52px)", color: C.navy, marginBottom: 14, letterSpacing: "-0.01em" }}>kindd</div>
+          <h1 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 5.5vw, 68px)", color: C.navy, lineHeight: 1.06, marginBottom: 22, letterSpacing: "-0.02em" }}>
+            You are one of our kind.
+          </h1>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, color: C.grey, maxWidth: 520, margin: "0 auto 40px", lineHeight: 1.65 }}>
             A plain-language guide to Australian life. Sourced from government. Updated monthly. Always free.
           </p>
           <CtaButton onClick={() => scrollTo("guides")}>Browse the guides.</CtaButton>
         </div>
-
         <AnimatePresence>
-          {!scrolled && (
-            <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "absolute", bottom: 48, left: "50%", transform: "translateX(-50%)" }}>
-              <ChevronDown className="h-8 w-8 animate-pulse" style={{ color: C.grey }} />
+          {scrollY < 120 && (
+            <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}
+              animate={{ opacity: [1, 0.4, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}
+              style={{ position: "absolute", bottom: 48, left: "50%", transform: "translateX(-50%)" }}>
+              <ChevronDown style={{ width: 28, height: 28, color: C.grey }} />
             </motion.div>
           )}
         </AnimatePresence>
       </section>
 
-      {/* ── SECTION 2 — PREMISE ─────────────────────────────────────────────── */}
-      <section id="about" style={{ padding: "96px 24px", background: C.cream }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 style={{ fontSize: "2.25rem", fontWeight: 700, color: C.navy, marginBottom: 48 }}>Why KINDD exists.</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 28, fontSize: "1.1rem", color: C.grey, maxWidth: 680, margin: "0 auto", lineHeight: 1.8 }}>
-            <p>Adult life in Australia comes with no manual. There are forms to fill. Bodies to call. Rights you have but were never told about. Money you might be owed. Doors you did not know to knock on.</p>
-            <p>KINDD points you to the right door. Eleven plain-language guide clusters covering tax, renting, health, family, neighbours, money, voting, business, work, and the rest of it. We do not give advice. We tell you where to go and what to ask when you get there.</p>
-            <p>Every word here came from a government source. Every link goes back to one. Updated monthly. Free forever. No account. No catch.</p>
+      {/* ── S2: PREMISE ─────────────────────────────────────────────────────── */}
+      <section style={{ background: C.offCream, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, marginBottom: 36 }}>Why KINDD exists.</h2>
+          <div style={{ maxWidth: 660, display: "flex", flexDirection: "column", gap: 22 }}>
+            <p style={{ fontFamily: SANS, fontSize: 18, color: C.grey, lineHeight: 1.75 }}>Adult life in Australia comes with no manual. There are forms to fill. Bodies to call. Rights you have but were never told about. Money you might be owed. Doors you did not know to knock on.</p>
+            <p style={{ fontFamily: SANS, fontSize: 18, color: C.grey, lineHeight: 1.75 }}>KINDD points you to the right door. Plain-language guides covering tax, renting, health, family, neighbours, money, voting, citizenship, and more. We do not give advice. We tell you where to go and what to ask when you get there.</p>
+            <p style={{ fontFamily: SANS, fontSize: 18, color: C.grey, lineHeight: 1.75 }}>Every word here came from a government source. Every link goes back to one. Updated monthly. Free forever. No account. No catch.</p>
           </div>
         </div>
       </section>
 
-      {/* ── WHAT'S NEW ──────────────────────────────────────────────────────── */}
-      <section style={{ padding: "0 24px 0", background: C.cream }}>
-        <div className="max-w-6xl mx-auto">
-          <div style={{ borderTop: `1px solid ${C.offCream}`, borderBottom: `1px solid ${C.offCream}`, padding: "32px 0" }}>
-            <div className="flex flex-wrap items-start gap-6 md:gap-10">
-              <div className="flex items-center gap-2 shrink-0" style={{ paddingTop: 2 }}>
-                <Sparkles style={{ width: 16, height: 16, color: C.cerulean }} />
-                <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.75rem", fontWeight: 500, color: C.cerulean, letterSpacing: "0.08em", textTransform: "uppercase" }}>May 2026</span>
+      {/* ── S3: GUIDES ──────────────────────────────────────────────────────── */}
+      <section id="guides" style={{ background: C.cream, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>Guides.</h2>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", marginBottom: 6 }}>
+            Plain language. Government sources. Updated monthly.
+          </p>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: C.grey, textAlign: "center", marginBottom: 48 }}>
+            All guides last reviewed May 2026. Always check the official government source linked in each guide.
+          </p>
+          <div className="columns-1 sm:columns-2 xl:columns-3" style={{ columnGap: 24 }}>
+            {clusters.map((cluster) => (
+              <GuideClusterCard key={cluster.id} cluster={cluster} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── S4: TOOLS ───────────────────────────────────────────────────────── */}
+      <section id="tools" style={{ background: C.white, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(32px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>Three tools we built ourselves.</h2>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", marginBottom: 56 }}>All indicators. Not financial, legal, or tax advice. Every tool tells you exactly what it is before you use it.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-7">
+
+            {/* Tool 1: Freelance Day Rate */}
+            <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.13)", padding: 36 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style={{ marginBottom: 20 }}>
+                <rect x="15" y="6" width="50" height="68" rx="6" fill={C.navy}/>
+                <rect x="22" y="16" width="36" height="4" rx="2" fill="rgba(250,246,232,0.18)"/>
+                <rect x="22" y="24" width="26" height="3" rx="1.5" fill="rgba(250,246,232,0.12)"/>
+                <rect x="22" y="31" width="30" height="3" rx="1.5" fill="rgba(250,246,232,0.12)"/>
+                <rect x="22" y="47" width="36" height="17" rx="4" fill={C.cerulean} opacity="0.18"/>
+                <text x="40" y="59" textAnchor="middle" fontFamily="serif" fontSize="10" fill={C.cerulean}>$640 / day</text>
+              </svg>
+              <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>Freelance Day Rate Calculator</h3>
+              <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Enter your annual income target and working pattern to estimate your day rate.</p>
+              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+                <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
               </div>
-              <div className="flex flex-wrap gap-x-8 gap-y-3 flex-1">
-                {[
-                  { label: "New", items: ["Tools section — 10 calculators", "Reference section — About Australia"] },
-                  { label: "New guide clusters", items: ["Business Setup", "Employment and Workplace", "Consumer and Fair Trade", "Education and Training", "Government Jobs", "Students"] },
-                  { label: "Updated", items: ["Civic and Legal — Online Abuse and Cybercrime guides added", "All 11 clusters reviewed against May 2026 government sources"] },
-                ].map(({ label, items }) => (
-                  <div key={label} style={{ minWidth: 200 }}>
-                    <p style={{ fontSize: "0.72rem", fontFamily: "'Geist Mono', monospace", color: C.grey, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>{label}</p>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 5 }}>
-                      {items.map((item) => (
-                        <li key={item} style={{ fontSize: "0.875rem", color: C.navy, display: "flex", alignItems: "flex-start", gap: 6 }}>
-                          <span style={{ color: C.cerulean, marginTop: 1, flexShrink: 0 }}>—</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              <FreelanceTool />
             </div>
+
+            {/* Tool 2: Loan Repayment */}
+            <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.13)", padding: 36 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style={{ marginBottom: 20 }}>
+                <path d="M10 68 Q40 8 70 68" stroke={C.navy} strokeWidth="3" strokeLinecap="round"/>
+                <line x1="10" y1="70" x2="70" y2="70" stroke={C.navy} strokeWidth="1.5" opacity="0.3"/>
+                <circle cx="10" cy="68" r="5" fill={C.navy}/>
+                <circle cx="70" cy="68" r="5" fill={C.cerulean}/>
+                <polyline points="28,54 40,24 52,54" stroke={C.cerulean} strokeWidth="1.5" strokeLinejoin="round" opacity="0.5"/>
+              </svg>
+              <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>Loan Repayment Estimator</h3>
+              <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Enter a loan amount, interest rate, and term to estimate monthly repayments.</p>
+              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+                <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
+              </div>
+              <LoanTool />
+            </div>
+
+            {/* Tool 3: 100 Point ID */}
+            <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.13)", padding: 36 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style={{ marginBottom: 20 }}>
+                <rect x="18" y="6" width="44" height="68" rx="6" fill={C.navy}/>
+                <rect x="26" y="16" width="28" height="3" rx="1.5" fill="rgba(250,246,232,0.15)"/>
+                <rect x="26" y="23" width="20" height="3" rx="1.5" fill="rgba(250,246,232,0.1)"/>
+                <rect x="26" y="30" width="24" height="3" rx="1.5" fill="rgba(250,246,232,0.08)"/>
+                <path d="M27 52l10 10 18-18" stroke={C.cerulean} strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>100 Point ID Checker</h3>
+              <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Tick the documents you have to see if you meet the 100-point identification threshold.</p>
+              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+                <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
+              </div>
+              <IDTool />
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 3 — GUIDES ──────────────────────────────────────────────── */}
-      <section id="guides" style={{ padding: "96px 24px", background: C.white }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center" style={{ marginBottom: 16 }}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, color: C.navy, marginBottom: 8 }}>Guides.</h2>
-            <p style={{ fontSize: "1.125rem", color: C.grey, marginBottom: 12 }}>Plain language. Government sources. Updated monthly.</p>
-            <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.78rem", color: C.grey, maxWidth: 620, margin: "0 auto 40px" }}>
-              All guides last reviewed May 2026. Always check the official government source linked in each guide for the most current information.
-            </p>
-          </div>
+      {/* ── S5: CITIZENSHIP ─────────────────────────────────────────────────── */}
+      <section id="citizenship" style={{ background: C.cream, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>Citizenship and coming to Australia.</h2>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", maxWidth: 680, margin: "0 auto 56px" }}>
+            A plain-language guide to the pathway. Not immigration advice. For your individual situation, see a registered migration agent.
+          </p>
 
-          {/* Search */}
-          <div className="max-w-xl mx-auto" style={{ marginBottom: 56 }}>
-            <div style={{ position: "relative" }}>
-              <Search style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: C.grey, width: 16, height: 16, pointerEvents: "none" }} />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value); setOpenGuide(null); }}
-                placeholder="Search guides — tax, renting, Medicare, voting…"
-                style={{ width: "100%", background: C.cream, border: `1px solid ${C.breeze}60`, borderRadius: 32, padding: "12px 44px", fontSize: "0.875rem", color: C.navy, outline: "none", boxSizing: "border-box" }}
-                data-testid="input-guide-search"
-              />
-              {searchQuery && (
-                <button onClick={() => { setSearchQuery(""); setOpenGuide(null); }} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: C.grey }}>
-                  <X className="h-4 w-4" />
+          {/* Stage circles */}
+          <div className="flex flex-col lg:flex-row" style={{ gap: 0, marginBottom: 24 }}>
+            {CITIZENSHIP_STAGES.map((stage, i) => (
+              <div key={stage.num} className="flex lg:flex-col" style={{ flex: 1, alignItems: "flex-start", position: "relative" }}>
+                {i < CITIZENSHIP_STAGES.length - 1 && (
+                  <div className="hidden lg:block" style={{ position: "absolute", top: 23, left: "calc(50% + 26px)", right: 0, height: 2, background: "#E8E0D0" }} />
+                )}
+                <button onClick={() => setOpenCit(openCit === stage.num ? null : stage.num)}
+                  className="flex lg:flex-col"
+                  style={{ alignItems: "center", gap: 12, background: "none", border: "none", cursor: "pointer", padding: "0 0 16px", width: "100%", justifyContent: "flex-start" }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: openCit === stage.num ? C.auGold : "#F0EAD6", border: `2px solid ${openCit === stage.num ? C.auGold : "#E8E0D0"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1, transition: "all 0.2s" }}>
+                    <span style={{ fontFamily: SERIF, fontSize: 20, color: openCit === stage.num ? C.navy : C.grey }}>{stage.num}</span>
+                  </div>
+                  <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy }}>{stage.heading}</span>
                 </button>
-              )}
-            </div>
-            {searchQuery && (
-              <p style={{ textAlign: "center", fontSize: "0.75rem", fontFamily: "'Geist Mono', monospace", color: C.grey, marginTop: 10 }}>
-                {filteredClusters.reduce((a, c) => a + c.guides.length, 0)} guide{filteredClusters.reduce((a, c) => a + c.guides.length, 0) !== 1 ? "s" : ""} found
-              </p>
-            )}
+              </div>
+            ))}
           </div>
 
-          {filteredClusters.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "80px 0" }}>
-              <p style={{ color: C.grey, fontSize: "1.1rem" }}>No guides matched &ldquo;{searchQuery}&rdquo;.</p>
-              <button onClick={() => setSearchQuery("")} style={{ marginTop: 16, color: C.cerulean, background: "none", border: "none", cursor: "pointer", fontSize: "0.875rem", textDecoration: "underline" }}>Clear search</button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredClusters.map((cluster) => (
-                <div key={cluster.name} style={card} className="p-8">
-                  <div style={{ marginBottom: 12 }}><ClusterIcon name={cluster.icon} /></div>
-                  <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: C.navy, marginBottom: 6 }}>{cluster.name}</h3>
-                  <p style={{ fontSize: "0.875rem", color: C.grey, marginBottom: 24, lineHeight: 1.6 }}>{cluster.desc}</p>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                    {cluster.guides.map((guide) => {
-                      const id = `${cluster.name}|${guide.name}`;
-                      const isOpen = openGuide === id;
-                      return (
-                        <div key={guide.name} style={{ borderBottom: `1px solid ${C.offCream}` }} className="last:border-0">
-                          <button
-                            onClick={() => setOpenGuide(isOpen ? null : id)}
-                            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", textAlign: "left", padding: "12px 0", color: C.cerulean, fontWeight: 500, fontSize: "0.9rem", background: "none", border: "none", cursor: "pointer" }}
-                            data-testid={`btn-guide-${id.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`}
-                          >
-                            <span>{guide.name}</span>
-                            <ChevronRight style={{ width: 16, height: 16, flexShrink: 0, marginLeft: 8, transition: "transform 0.2s", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }} />
-                          </button>
-                          <AnimatePresence>
-                            {isOpen && (
-                              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
-                                <div style={{ marginLeft: 8, background: C.warmWhite, borderRadius: 8, padding: "12px 14px", marginBottom: 12 }}>
-                                  <p style={{ fontSize: "0.875rem", color: C.grey, lineHeight: 1.65, marginBottom: 10 }}>{guide.description}</p>
-                                  <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, marginBottom: 12 }}>Last updated: {guide.lastUpdated}. Always check the official source.</p>
-                                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                                    {guide.links.map((link) => <CerBtn key={link.url} href={link.url}>{link.label}</CerBtn>)}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── SECTION 4 — TOOLS ───────────────────────────────────────────────── */}
-      <section id="tools" style={{ padding: "96px 24px", background: C.white, borderTop: `1px solid ${C.offCream}` }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center" style={{ marginBottom: 56 }}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, color: C.navy, marginBottom: 8 }}>Tools.</h2>
-            <p style={{ fontSize: "1.0625rem", color: C.grey }}>Indicators only. Not financial, legal, or tax advice. Every tool tells you exactly what it is.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => {
-              const isOpen = openTool === tool.id;
+          {/* Expanded stage content */}
+          <AnimatePresence>
+            {openCit !== null && (() => {
+              const stage = CITIZENSHIP_STAGES.find((s) => s.num === openCit);
+              if (!stage) return null;
               return (
-                <div key={tool.id} style={{ ...card, overflow: "hidden" }}>
-                  <div style={{ padding: "28px 28px 0" }}>
-                    <div style={{ marginBottom: 12 }}><ToolIcon name={tool.icon} /></div>
-                    <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, color: C.navy, marginBottom: 6 }}>{tool.name}</h3>
-                    <p style={{ fontSize: "0.875rem", color: C.grey, lineHeight: 1.6, marginBottom: 20 }}>{tool.description}</p>
-
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: 20 }}>
-                      <button
-                        onClick={() => setOpenTool(isOpen ? null : tool.id)}
-                        style={{ padding: "9px 20px", borderRadius: 8, border: `1px solid ${C.cerulean}`, color: isOpen ? C.white : C.cerulean, background: isOpen ? C.cerulean : C.cream, fontSize: "0.875rem", fontWeight: 500, cursor: "pointer", transition: "all 0.15s" }}
-                      >
-                        {isOpen ? "Close tool" : "Open tool"}
-                      </button>
-                      {isOpen && (
-                        <button onClick={() => setOpenTool(null)} style={{ background: "none", border: "none", cursor: "pointer", color: C.grey, display: "flex", alignItems: "center" }}>
-                          <X style={{ width: 18, height: 18 }} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
-                        <div style={{ padding: "0 28px 28px", borderTop: `1px solid ${C.offCream}`, paddingTop: 20 }}>
-                          {renderToolContent(tool.id)}
-                        </div>
-                      </motion.div>
+                <motion.div key={openCit} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} style={{ overflow: "hidden" }}>
+                  <div style={{ background: C.white, borderRadius: 16, padding: 32, boxShadow: "0 2px 16px rgba(15,23,42,0.07)", marginBottom: 8 }}>
+                    {stage.content && (
+                      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, color: C.navy, lineHeight: 1.72, marginBottom: stage.links.length > 0 ? 20 : 0 }}>{stage.content}</p>
                     )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SECTION 5 — REFERENCE ───────────────────────────────────────────── */}
-      <section id="reference" style={{ padding: "96px 24px", background: C.cream }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center" style={{ marginBottom: 56 }}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, color: C.navy, marginBottom: 8 }}>About Australia.</h2>
-            <p style={{ fontSize: "1.0625rem", color: C.grey }}>Hard-coded facts. Updated when they change. Sourced from official government records.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {referenceTiles.map((tile) => {
-              const isOpen = openTile === tile.id;
-              const isEmergency = tile.alwaysVisible;
-              return (
-                <div key={tile.id} style={{ ...card, background: C.cream, border: `1px solid ${C.offCream}`, borderLeft: isEmergency ? `4px solid ${C.signalGreen}` : undefined, overflow: "hidden" }}>
-                  <div style={{ padding: "24px 24px 0" }}>
-                    <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, color: C.navy, marginBottom: 6 }}>{tile.title}</h3>
-                    <p style={{ fontSize: "0.875rem", color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>{tile.intro}</p>
-                  </div>
-
-                  {isEmergency ? (
-                    <div style={{ padding: "0 24px 24px" }}>
-                      <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.82rem", color: C.navy, lineHeight: 2 }}>
-                        {tile.content.split("\n").map((line, i) => (
-                          <div key={i} style={{ padding: "2px 0" }}>{line}</div>
-                        ))}
+                    {stage.links.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: stage.unlocks ? 28 : 0 }}>
+                        {stage.links.map((l) => <CerBtn key={l.label} href={l.url}>{l.label}</CerBtn>)}
                       </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div style={{ padding: "0 24px", paddingBottom: isOpen ? 0 : 24 }}>
-                        <button
-                          onClick={() => setOpenTile(isOpen ? null : tile.id)}
-                          style={{ display: "flex", alignItems: "center", gap: 6, color: C.cerulean, background: "none", border: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500, paddingBottom: 20 }}
-                        >
-                          {isOpen ? "Close" : "Read more"}
-                          <ChevronDown style={{ width: 15, height: 15, transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
-                        </button>
-                      </div>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
-                            <div style={{ background: C.warmWhite, margin: "0 16px 20px", borderRadius: 8, padding: "16px" }}>
-                              <pre style={{ fontFamily: "'Geist', Inter, sans-serif", fontSize: "0.85rem", color: C.grey, lineHeight: 1.75, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{tile.content}</pre>
-                              {tile.source && (
-                                <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, marginTop: 12 }}>Source: {tile.source}</p>
-                              )}
-                              <button onClick={() => setOpenTile(null)} style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 4, color: C.cerulean, background: "none", border: "none", cursor: "pointer", fontSize: "0.8rem" }}>
-                                <X style={{ width: 14, height: 14 }} /> Close
-                              </button>
+                    )}
+                    {stage.unlocks && (
+                      <div>
+                        <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, marginBottom: 16 }}>Four things citizenship unlocks:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+                          {stage.unlocks.map((u) => (
+                            <div key={u.title} style={{ background: C.cream, borderRadius: 12, padding: 20 }}>
+                              <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, marginBottom: 6 }}>{u.title}</div>
+                              <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, lineHeight: 1.65, marginBottom: 12 }}>{u.desc}</p>
+                              <CerBtn href={u.link.url}>{u.link.label}</CerBtn>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </>
-                  )}
-                </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
               );
-            })}
-          </div>
+            })()}
+          </AnimatePresence>
         </div>
       </section>
 
-      {/* ── SECTION 6 — HOW KINDD WORKS ─────────────────────────────────────── */}
-      <section id="how-it-works" style={{ padding: "96px 24px", background: C.offCream }}>
-        <div className="max-w-5xl mx-auto">
+      {/* ── S6: EMERGENCY NUMBERS ───────────────────────────────────────────── */}
+      <section style={{ background: C.navy, padding: "64px 24px", borderTop: `4px solid ${C.signalGreen}` }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 36, color: C.cream, textAlign: "center", marginBottom: 48 }}>Save these. Share these.</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 32 }}>
+            {EMERGENCY_NUMBERS.map((n) => (
+              <div key={n.number} style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: SERIF, fontSize: 32, color: C.cream, lineHeight: 1.1 }}>{n.number}</div>
+                <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.darkSec, marginTop: 6 }}>{n.label}</div>
+                {n.desc && <div style={{ fontFamily: SANS, fontWeight: 300, fontSize: 12, color: C.darkSec, marginTop: 3 }}>{n.desc}</div>}
+              </div>
+            ))}
+          </div>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: C.darkSec, textAlign: "center", marginTop: 48 }}>
+            In immediate danger, always call 000 first.
+          </p>
+        </div>
+      </section>
 
-          {/* Eyebrow + heading */}
-          <div style={{ textAlign: "center", marginBottom: 72 }}>
-            <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: C.cerulean, fontWeight: 600 }}>How KINDD works</span>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 700, color: C.navy, marginTop: 12, marginBottom: 16, lineHeight: 1.15 }}>From government to you.<br />Three steps.</h2>
-            <p style={{ fontSize: "1.0625rem", color: C.grey, maxWidth: 520, margin: "0 auto", lineHeight: 1.7 }}>
-              KINDD does the legwork. You get plain language, the real source, and nothing else.
+      {/* ── S7: ABOUT AUSTRALIA ─────────────────────────────────────────────── */}
+      <section id="reference" style={{ background: C.white, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>About Australia.</h2>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", marginBottom: 56 }}>
+            Hard-coded facts. Sourced from official government records. Updated when they change.
+          </p>
+
+          {/* Map placeholder */}
+          <div style={{ maxWidth: 800, margin: "0 auto 56px", borderRadius: 16, background: "#1A2A3A", height: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+            <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 14, color: C.darkSec, textAlign: "center", maxWidth: 480, lineHeight: 1.7 }}>
+              Interactive Australia map coming soon. Each state will show local facts, public holidays, and key contacts.
             </p>
           </div>
 
-          {/* Step cards */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {[
-              {
-                num: "01",
-                label: "We find the source.",
-                body: "Every guide begins at an official government website — the ATO, Services Australia, state tribunals, Fair Trading, Healthdirect, Scamwatch. No forums. No opinion pieces. Government only, every time.",
-                aside: "Sources include ATO · Services Australia · ASIC · Fair Work Commission · state CAT / NCAT tribunals · Healthdirect · Scamwatch · Department of Home Affairs · ABS",
-                icon: (
-                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
-                    <rect x="10" y="8" width="28" height="36" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
-                    <line x1="17" y1="18" x2="31" y2="18" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
-                    <line x1="17" y1="24" x2="31" y2="24" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
-                    <line x1="17" y1="30" x2="26" y2="30" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
-                    <circle cx="38" cy="38" r="8" stroke={C.navy} strokeWidth="2" fill={C.offCream}/>
-                    <line x1="43.5" y1="43.5" x2="48" y2="48" stroke={C.navy} strokeWidth="2.5" strokeLinecap="round"/>
-                    <circle cx="38" cy="38" r="2.5" fill={C.cerulean}/>
-                  </svg>
-                ),
-              },
-              {
-                num: "02",
-                label: "We translate it.",
-                body: "Dense legislative language becomes plain sentences. We keep every fact. We cut every hedge. The result is what the information means — not what it says, in the way it was written for lawyers.",
-                aside: "Plain English · No jargon · No disclaimers beyond what is necessary · No opinion · Accurate to the source",
-                icon: (
-                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
-                    <rect x="6" y="12" width="20" height="28" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
-                    <line x1="11" y1="20" x2="21" y2="20" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
-                    <line x1="11" y1="25" x2="21" y2="25" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
-                    <line x1="11" y1="30" x2="18" y2="30" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
-                    <path d="M29 28 L35 28" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M32 24 L36 28 L32 32" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <rect x="37" y="12" width="14" height="28" rx="3" stroke={C.navy} strokeWidth="2" fill={C.cream}/>
-                    <line x1="40" y1="20" x2="48" y2="20" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
-                    <line x1="40" y1="25" x2="48" y2="25" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
-                    <line x1="40" y1="30" x2="45" y2="30" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-              {
-                num: "03",
-                label: "We send you there.",
-                body: "Every guide ends with a direct link back to the official source. You verify the detail yourself. You apply. You speak to the expert. KINDD's job is done the moment you reach the right door.",
-                aside: "Direct links to official sites · Last-updated date on every guide · No middle layer between you and the source",
-                icon: (
-                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
-                    <rect x="10" y="16" width="30" height="22" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
-                    <path d="M20 27 L30 27" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M27 23 L31 27 L27 31" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M40 20 L46 27 L40 34" stroke={C.navy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                    <circle cx="46" cy="27" r="4" fill={C.cerulean} stroke={C.cerulean}/>
-                    <line x1="44.5" y1="27" x2="47.5" y2="27" stroke={C.white} strokeWidth="1.5" strokeLinecap="round"/>
-                    <line x1="46" y1="25.5" x2="46" y2="28.5" stroke={C.white} strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-            ].map(({ num, label, body, aside, icon }, i) => (
-              <motion.div
-                key={num}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "72px 1fr auto",
-                  gap: "0 32px",
-                  alignItems: "start",
-                  padding: "40px 0",
-                  borderBottom: i < 2 ? `1px solid ${C.breeze}50` : "none",
-                }}
-                className="md:grid-cols-[72px_1fr_240px]"
-              >
-                {/* Number */}
-                <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: "2.5rem", fontWeight: 700, color: C.cerulean, lineHeight: 1, paddingTop: 6 }}>
-                  {num}
-                </div>
-
-                {/* Body */}
-                <div>
-                  <div style={{ marginBottom: 14 }}>{icon}</div>
-                  <h3 style={{ fontSize: "1.3125rem", fontWeight: 700, color: C.navy, marginBottom: 12, lineHeight: 1.25 }}>{label}</h3>
-                  <p style={{ fontSize: "1rem", color: C.grey, lineHeight: 1.75, maxWidth: 540 }}>{body}</p>
-                </div>
-
-                {/* Aside */}
-                <div style={{ display: "none" }} className="md:block">
-                  <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, lineHeight: 1.9, paddingTop: 8, borderLeft: `2px solid ${C.breeze}80`, paddingLeft: 16 }}>{aside}</p>
-                </div>
-              </motion.div>
+          {/* Reference tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 24 }}>
+            {referenceTiles.map((tile) => (
+              <RefTileCard key={tile.id} tile={tile} />
             ))}
-          </div>
-
-          {/* Guarantee strip */}
-          <div style={{ marginTop: 64, padding: "32px 40px", background: C.navy, borderRadius: 16, display: "flex", flexWrap: "wrap", gap: 32, alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <p style={{ fontWeight: 700, fontSize: "1.125rem", color: C.cream, marginBottom: 6 }}>The whole arrangement.</p>
-              <p style={{ fontSize: "0.9rem", color: C.breeze, lineHeight: 1.65, maxWidth: 480 }}>
-                No login. No account. No tier. No paywall. No ads. No affiliate links. No recommendations. Government sources only. Free because some things should be.
-              </p>
-            </div>
-            <CtaButton onClick={() => scrollTo("guides")}>Browse the guides.</CtaButton>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── SECTION 7 — WHO KINDD IS FOR ────────────────────────────────────── */}
-      <section id="who" style={{ padding: "96px 24px", background: C.offCream }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 style={{ fontSize: "2rem", fontWeight: 700, color: C.navy, marginBottom: 56 }}>For the people no one wrote a manual for.</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 32, fontSize: "1.1rem", maxWidth: 680, margin: "0 auto" }}>
-            {[
-              "For the freelancer who just got their first invoice and does not know what to do with it.",
-              "For the renter staring at a leaky ceiling and a quiet landlord.",
-              "For the parent looking for somewhere free for the kids on Saturday.",
-              "For the new citizen working out how Medicare actually works.",
-              "For the small business owner who got a Centrelink letter and panicked.",
-              "For the tradie whose neighbour just took down a shared fence without asking.",
-              "For anyone who has ever Googled something at 11pm and ended up on a forum from 2014.",
-            ].map((line) => (
-              <p key={line} style={{ color: C.grey, lineHeight: 1.7 }}>{line}</p>
-            ))}
-            <div style={{ paddingTop: 24, display: "flex", flexDirection: "column", gap: 12 }}>
-              <p style={{ color: C.navy, fontWeight: 500, fontSize: "1.25rem" }}>KINDD is for them.</p>
-              <p style={{ color: C.navy, fontWeight: 500, fontSize: "1.25rem" }}>KINDD is for you.</p>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 8 — ALWAYS FREE ─────────────────────────────────────────── */}
-      <section id="always-free" style={{ padding: "96px 24px", background: C.cream, textAlign: "center" }}>
-        <div className="max-w-3xl mx-auto">
-          <h2 style={{ fontSize: "2rem", fontWeight: 700, color: C.navy, marginBottom: 24 }}>It costs nothing. It will always cost nothing.</h2>
-          <p style={{ fontSize: "1.0625rem", color: C.grey, marginBottom: 40, lineHeight: 1.75, maxWidth: 600, margin: "0 auto 40px" }}>
+      {/* ── S8: HOW KINDD WORKS ─────────────────────────────────────────────── */}
+      <section id="how-it-works" style={{ background: C.cream, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, textAlign: "center", marginBottom: 48 }}>Three things to know before you start.</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 32 }}>
+            {[
+              {
+                heading: "Free forever.",
+                body: "No login. No account. No tier. Cookies clear, you start fresh. That is the whole arrangement.",
+              },
+              {
+                heading: "Government sources only.",
+                body: "ATO, Services Australia, Fair Trading, Healthdirect, every state tribunal. Linked at the end of every guide. Last updated date shown.",
+              },
+              {
+                heading: "Directions not advice.",
+                body: "We are not lawyers, accountants, or doctors. We are the person who knows which door to knock on. Once you find the door, the experts on the other side take it from there.",
+              },
+            ].map((block) => (
+              <div key={block.heading} style={{ borderTop: "3px solid #E8E0D0", paddingTop: 24 }}>
+                <h3 style={{ fontFamily: SERIF, fontSize: 22, color: C.navy, marginBottom: 12 }}>{block.heading}</h3>
+                <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, color: C.grey, lineHeight: 1.7 }}>{block.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── S9: FOR THE PEOPLE ──────────────────────────────────────────────── */}
+      <section style={{ background: C.white, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, marginBottom: 40, lineHeight: 1.1 }}>For the people no one wrote a manual for.</h2>
+          {[
+            "For the freelancer who just got their first invoice and does not know what to do with it.",
+            "For the renter staring at a leaky ceiling and a quiet landlord.",
+            "For the parent looking for somewhere free for the kids on Saturday.",
+            "For the new citizen working out how Medicare actually works.",
+            "For the small business owner who got a Centrelink letter and panicked.",
+            "For the tradie whose neighbour just took down a shared fence without asking.",
+            "For anyone who has ever Googled something at 11pm and ended up on a forum from 2014.",
+          ].map((line) => (
+            <p key={line} style={{ fontFamily: SANS, fontWeight: 400, fontSize: 19, color: C.grey, lineHeight: 1.6, marginBottom: 18 }}>{line}</p>
+          ))}
+          <div style={{ marginTop: 56 }}>
+            <p style={{ fontFamily: SERIF, fontSize: 36, color: C.navy, marginBottom: 0 }}>KINDD is for them.</p>
+            <p style={{ fontFamily: SERIF, fontSize: 36, color: C.navy }}>KINDD is for you.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── S10: ALWAYS FREE ────────────────────────────────────────────────── */}
+      <section style={{ background: C.cream, padding: "96px 24px" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 40px)", color: C.navy, marginBottom: 24, lineHeight: 1.15 }}>It costs nothing. It will always cost nothing.</h2>
+          <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, color: C.grey, lineHeight: 1.75, marginBottom: 40 }}>
             KINDD is free because some things should be open. Tax. Tenancy. Health. Mental health. The basics of being an adult here. None of that should sit behind a paywall. No tier. No upgrade. No premium. Just the guides.
           </p>
           <CtaButton onClick={() => scrollTo("guides")}>Start with a guide.</CtaButton>
         </div>
       </section>
 
-      {/* ── SECTION 9 — DISCLAIMER ──────────────────────────────────────────── */}
-      <section id="disclaimer" style={{ padding: "80px 24px", background: C.offCream }}>
+      {/* ── S11: DISCLAIMER ─────────────────────────────────────────────────── */}
+      <section style={{ background: C.offCream, padding: "64px 24px" }}>
         <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: 600, color: C.navy, marginBottom: 28 }}>Before you use KINDD.</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, fontFamily: "'Geist Mono', monospace", fontSize: "0.82rem", color: C.grey, lineHeight: 1.75 }}>
-            <p>Information here was last updated this month. Always check the official government website linked at the end of each guide for the most current details.</p>
-            <p>KINDD is not a substitute for professional advice. For tax, see a registered tax agent. For legal matters, see a lawyer or your local community legal centre. For medical concerns, see a doctor.</p>
-            <p>KINDD points you to the right place. The experts there take it from there.</p>
-          </div>
+          <h2 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, marginBottom: 28 }}>Before you use KINDD.</h2>
+          {[
+            "Information here was last updated May 2026. Always check the official government website linked at the end of each guide for the most current details.",
+            "KINDD is not a substitute for professional advice. For tax, see a registered tax agent. For legal matters, see a lawyer or your local community legal centre. For medical concerns, see a doctor. For immigration and citizenship matters, see a registered migration agent.",
+            "KINDD points you to the right place. The experts there take it from there.",
+          ].map((para, i) => (
+            <p key={i} style={{ fontFamily: MONO, fontSize: 13, color: C.grey, lineHeight: 1.7, marginBottom: 18 }}>{para}</p>
+          ))}
         </div>
       </section>
-
-      {/* ── CONTACT ─────────────────────────────────────────────────────────── */}
-      <section id="contact" style={{ padding: "80px 24px", background: C.cream }}>
-        <div style={{ maxWidth: 480, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: "2rem", fontWeight: 700, color: C.navy, marginBottom: 12 }}>Get in touch.</h2>
-          <p style={{ color: C.grey, marginBottom: 36, lineHeight: 1.7, fontSize: "1rem" }}>
-            Questions, feedback, or just want to say hello.
-          </p>
-          <a
-            href="mailto:connect@tbcworldwide.com?subject=KINDD%20enquiry"
-            style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 28px", background: C.navy, color: C.cream, borderRadius: 32, fontSize: "0.9375rem", fontWeight: 500, textDecoration: "none", transition: "background 0.2s" }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = C.cerulean)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = C.navy)}
-          >
-            Open in email client ↗
-          </a>
-          <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, marginTop: 20, letterSpacing: "0.02em" }}>
-            connect@tbcworldwide.com
-          </p>
-        </div>
-      </section>
-
-      {/* ── SPOTLIGHT SEARCH MODAL ───────────────────────────────────────────── */}
-      <AnimatePresence>
-        {spotOpen && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => { setSpotOpen(false); setSpotQ(""); }}
-            style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", backdropFilter: "blur(4px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "14vh" }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: -12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{ width: "min(640px, 92vw)", background: C.white, borderRadius: 16, boxShadow: "0 24px 64px rgba(15,23,42,0.22)", overflow: "hidden" }}
-            >
-              {/* Search input row */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "15px 20px", borderBottom: `1px solid ${C.offCream}` }}>
-                <Search style={{ width: 18, height: 18, color: C.grey, flexShrink: 0 }} />
-                <input
-                  autoFocus
-                  value={spotQ}
-                  onChange={(e) => { setSpotQ(e.target.value); setSpotIdx(0); }}
-                  onKeyDown={(e) => {
-                    if (e.key === "ArrowDown") { e.preventDefault(); setSpotIdx((i) => Math.min(i + 1, spotResults.length - 1)); }
-                    else if (e.key === "ArrowUp") { e.preventDefault(); setSpotIdx((i) => Math.max(i - 1, 0)); }
-                    else if (e.key === "Enter" && spotResults[spotIdx]) handleSpotSelect(spotResults[spotIdx]);
-                    else if (e.key === "Escape") { setSpotOpen(false); setSpotQ(""); }
-                  }}
-                  placeholder="Search guides, tools, reference…"
-                  style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: "1rem", color: C.navy, fontFamily: "'Geist', Inter, sans-serif" }}
-                />
-                <kbd style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", color: C.grey, background: C.offCream, borderRadius: 4, padding: "2px 7px", flexShrink: 0 }}>Esc</kbd>
-              </div>
-
-              {/* Results */}
-              <div style={{ maxHeight: 420, overflowY: "auto" }}>
-                {spotQ.trim() && spotResults.length === 0 ? (
-                  <div style={{ padding: "36px 20px", textAlign: "center", color: C.grey, fontSize: "0.9rem" }}>
-                    No results for &ldquo;{spotQ}&rdquo;
-                  </div>
-                ) : spotQ.trim() ? (
-                  <div style={{ padding: "8px 0" }}>
-                    {spotResults.map((r, i) => (
-                      <button key={r.id} onClick={() => handleSpotSelect(r)}
-                        onMouseEnter={() => setSpotIdx(i)}
-                        style={{ width: "100%", textAlign: "left", padding: "11px 20px", background: i === spotIdx ? C.offCream : "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, transition: "background 0.1s" }}
-                      >
-                        <span style={{ fontSize: "0.9rem", color: C.navy, fontWeight: i === spotIdx ? 500 : 400, fontFamily: "'Geist', Inter, sans-serif" }}>{r.label}</span>
-                        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", color: C.cerulean, background: `${C.cerulean}18`, borderRadius: 4, padding: "2px 8px", flexShrink: 0 }}>{r.sub}</span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  /* Empty state — show categories */
-                  <div style={{ padding: "20px 0 12px" }}>
-                    {([["Guides", clusters.slice(0, 4).flatMap((c) => c.guides.slice(0, 1).map((g) => ({ label: g.name, sub: c.name, kind: "guide" as const, id: `${c.name}|${g.name}` })))], ["Tools", tools.slice(0, 3).map((t) => ({ label: t.name, sub: "Tools", kind: "tool" as const, id: t.id }))], ["Reference", referenceTiles.slice(0, 3).map((r) => ({ label: r.title, sub: "Reference", kind: "ref" as const, id: r.id }))]] as [string, SpotResult[]][]).map(([section, items]) => (
-                      <div key={section} style={{ marginBottom: 12 }}>
-                        <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", fontWeight: 600, color: C.grey, letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 20px 6px" }}>{section}</p>
-                        {items.map((item) => (
-                          <button key={item.id} onClick={() => handleSpotSelect(item)}
-                            style={{ width: "100%", textAlign: "left", padding: "9px 20px", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, fontFamily: "'Geist', Inter, sans-serif" }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = C.offCream; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
-                          >
-                            <span style={{ fontSize: "0.875rem", color: C.navy }}>{item.label}</span>
-                            <span style={{ fontSize: "0.75rem", color: C.grey }}>{item.sub}</span>
-                          </button>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Footer hints */}
-              <div style={{ padding: "10px 20px", borderTop: `1px solid ${C.offCream}`, display: "flex", gap: 16, fontSize: "0.7rem", fontFamily: "'Geist Mono', monospace", color: C.grey }}>
-                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>↑↓</kbd>navigate</span>
-                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>↵</kbd>open</span>
-                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>Esc</kbd>close</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── FOOTER — DO NOT MODIFY ───────────────────────────────────────────── */}
-      <footer className="bg-[#0F172A] text-[#FAF6E8] pt-20 pb-12 px-6">
+      <footer id="contact" className="bg-[#0F172A] text-[#FAF6E8] pt-20 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
             <div className="text-4xl font-bold tracking-tighter">kindd</div>
@@ -1283,15 +922,17 @@ export default function Home() {
 
       {/* ── GO TO TOP ────────────────────────────────────────────────────────── */}
       <AnimatePresence>
-        {scrolled && (
-          <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+        {showTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => scrollTo("home")}
-            style={{ position: "fixed", bottom: 32, right: 32, padding: 12, background: C.cream, border: `1px solid ${C.breeze}80`, borderRadius: "50%", boxShadow: "0 2px 12px rgba(15,23,42,0.1)", cursor: "pointer", color: C.navy, zIndex: 50 }}
+            style={{ position: "fixed", bottom: 32, right: 32, width: 48, height: 48, borderRadius: "50%", background: C.white, border: "none", boxShadow: "0 2px 12px rgba(15,23,42,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, color: C.navy }}
           >
             <ArrowUp style={{ width: 20, height: 20 }} />
           </motion.button>
         )}
       </AnimatePresence>
+
     </div>
   );
 }

@@ -6,585 +6,575 @@ export interface GuideLink {
 export interface Guide {
   name: string;
   description: string;
-  lastUpdated: string;
   links: GuideLink[];
 }
 
 export interface Cluster {
+  id: string;
   name: string;
-  desc: string;
-  icon: string;
+  color: string;
+  description: string;
   guides: Guide[];
 }
 
 export const clusters: Cluster[] = [
   {
+    id: "money",
     name: "Money and Work",
-    desc: "Tax, income, super, consumer rights.",
-    icon: "money",
+    color: "#F59E0B",
+    description: "Tax, superannuation, consumer rights, and income.",
     guides: [
       {
         name: "Tax Basics",
-        description: "How the Australian tax system works, when and how to lodge a tax return, and what deductions you may be entitled to. Good first stop if you have never lodged before or are unsure where to start.",
-        lastUpdated: "May 2026",
+        description: "Covers income tax, how the PAYG system works, what a tax return is, and when you need to lodge one. Covers both employees and sole traders.",
         links: [
-          { label: "ATO — Lodge your tax return", url: "https://www.ato.gov.au/individuals-and-families/lodging-your-tax-return" },
-          { label: "ATO — Income tax rates", url: "https://www.ato.gov.au/rates/individual-income-tax-rates" },
-          { label: "ATO — myTax", url: "https://www.ato.gov.au/online-services/mytax" },
+          { label: "ATO Lodge a Tax Return", url: "https://www.ato.gov.au/individuals-and-families/lodging-your-tax-return" },
+          { label: "MyTax", url: "https://my.gov.au" },
         ],
       },
       {
         name: "Side Income and Gig Work",
-        description: "How income from platforms like Uber, Airtasker, or selling goods online is treated for tax. Covers GST thresholds, record-keeping, and what to declare.",
-        lastUpdated: "May 2026",
+        description: "If you earn money from Uber, Airtasker, Etsy, markets, or any platform, that income is taxable. Covers ABN requirements, declaring income, and GST thresholds.",
         links: [
-          { label: "ATO — Sharing economy and gig work", url: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/the-sharing-economy-and-tax" },
-          { label: "ATO — GST for small business", url: "https://www.ato.gov.au/business/gst" },
+          { label: "ATO Gig Economy", url: "https://www.ato.gov.au/businesses-and-organisations/gig-economy" },
+          { label: "ABN Registration", url: "https://www.abr.gov.au" },
         ],
       },
       {
         name: "Money and Super",
-        description: "Superannuation basics — how it accumulates, how to find lost super, and what happens when you change jobs. Also includes links to financial hardship support.",
-        lastUpdated: "May 2026",
+        description: "Superannuation basics, how to find lost super, what your employer must pay, and how to check your balance. Covers MoneySmart tools.",
         links: [
-          { label: "ATO — Super for individuals", url: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families" },
-          { label: "ATO — Find your lost super", url: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/find-lost-super" },
-          { label: "MoneySmart — Superannuation", url: "https://moneysmart.gov.au/grow-your-super" },
+          { label: "MoneySmart Super", url: "https://moneysmart.gov.au/superannuation" },
+          { label: "ATO Super", url: "https://www.ato.gov.au/super" },
+          { label: "ATO Lost Super", url: "https://www.ato.gov.au/calculators-and-tools/find-your-lost-super" },
         ],
       },
       {
         name: "Consumer Rights",
-        description: "Your rights when buying goods or services — refunds, warranties, and what to do if a business does not cooperate. Covers the Australian Consumer Law.",
-        lastUpdated: "May 2026",
+        description: "What you are entitled to when something you buy is broken, not fit for purpose, or not as described. Covers refunds, replacements, and your rights under Australian Consumer Law.",
         links: [
-          { label: "ACCC — Consumer rights", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees" },
-          { label: "ACCC — Complaints and returns", url: "https://www.accc.gov.au/consumers/complaints-and-returns" },
+          { label: "ACCC", url: "https://www.accc.gov.au/consumers" },
+          { label: "NSW Fair Trading", url: "https://www.fairtrading.nsw.gov.au" },
         ],
       },
     ],
   },
   {
+    id: "home",
     name: "Home and Renting",
-    desc: "Where you live, who you live near, what it costs.",
-    icon: "home",
+    color: "#6B8F71",
+    description: "Tenancy rights, neighbours, councils, and utilities.",
     guides: [
       {
         name: "Renting and Tenancy",
-        description: "Your rights as a tenant — bond, repairs, entry by the landlord, rent increases, and how to dispute an unfair eviction. Links to your state's tenancy authority.",
-        lastUpdated: "May 2026",
+        description: "Covers your rights as a tenant including bond, repairs, entry by the landlord, rent increases, and how to dispute an unfair eviction. Links to your state tenancy authority.",
         links: [
-          { label: "NSW Fair Trading — Tenancy", url: "https://www.fairtrading.nsw.gov.au/housing-and-property/renting" },
-          { label: "Consumer Affairs Victoria — Renting", url: "https://www.consumer.vic.gov.au/housing/renting" },
-          { label: "Tenants Queensland", url: "https://tenantsqld.org.au" },
+          { label: "NSW Fair Trading Tenancy", url: "https://www.fairtrading.nsw.gov.au/housing-and-property" },
+          { label: "Consumer Affairs Victoria", url: "https://www.consumer.vic.gov.au/housing" },
+          { label: "RTA Queensland", url: "https://www.rta.qld.gov.au" },
         ],
       },
       {
         name: "Neighbours and Community",
-        description: "What to do about noise, fences, overhanging trees, and disputes with neighbours. Covers mediation options before escalating to a tribunal.",
-        lastUpdated: "May 2026",
+        description: "What to do about noise complaints, fences, trees, and disputes with neighbours. Covers mediation options and when to involve your council.",
         links: [
-          { label: "NSW Fair Trading — Neighbour disputes", url: "https://www.fairtrading.nsw.gov.au/housing-and-property/building-and-renovating/resolving-building-disputes/neighbour-disputes" },
-          { label: "Community Justice Centres NSW", url: "https://cjc.nsw.gov.au" },
+          { label: "Community Justice Centres NSW", url: "https://www.cjc.nsw.gov.au" },
+          { label: "Dispute Settlement Centre VIC", url: "https://www.disputes.vic.gov.au" },
         ],
       },
       {
         name: "Council and Local Government",
-        description: "How local councils work, what they are responsible for, how to report issues like potholes or illegal dumping, and how to have your say on local decisions.",
-        lastUpdated: "May 2026",
+        description: "What your council is responsible for, how to find yours, how to report local issues, and how to participate in council decisions.",
         links: [
-          { label: "ALGA — What is local government", url: "https://www.alga.com.au/about-local-government/what-is-local-government" },
-          { label: "DLGSC — Find your council (WA)", url: "https://www.dlgsc.wa.gov.au/local-government/local-governments" },
+          { label: "australia.gov.au/councils", url: "https://www.australia.gov.au/councils" },
         ],
       },
       {
         name: "Utilities and Cost of Living",
-        description: "How to compare electricity and gas providers, what to do if you cannot pay a bill, and what hardship programs energy retailers must offer under the law.",
-        lastUpdated: "May 2026",
+        description: "How to compare energy providers, what to do if you cannot pay a bill, hardship programs available from utilities, and telco complaints.",
         links: [
-          { label: "AER — Energy Made Easy", url: "https://www.energymadeeasy.gov.au" },
-          { label: "MoneySmart — Dealing with debt", url: "https://moneysmart.gov.au/debt" },
+          { label: "Energy Made Easy", url: "https://www.energymadeeasy.gov.au" },
+          { label: "Telecommunications Industry Ombudsman", url: "https://www.tio.com.au" },
         ],
       },
     ],
   },
   {
+    id: "health",
     name: "Health and Family",
-    desc: "Bodies, minds, kids, carers.",
-    icon: "health",
+    color: "#C0635A",
+    description: "Medicare, mental health, families, and disability support.",
     guides: [
       {
         name: "Health and Medicare",
-        description: "How Medicare works, what it covers, how to get a Medicare card, bulk billing, and what to do if you need care but are unsure of costs.",
-        lastUpdated: "May 2026",
+        description: "How Medicare works, how to enrol, what is covered, what is not, and how to find a bulk-billing GP near you.",
         links: [
-          { label: "Services Australia — Medicare", url: "https://www.servicesaustralia.gov.au/medicare" },
-          { label: "Healthdirect — Find a GP", url: "https://www.healthdirect.gov.au/australian-health-services" },
-          { label: "Services Australia — Enrol in Medicare", url: "https://www.servicesaustralia.gov.au/how-to-enrol-in-medicare" },
+          { label: "Services Australia Medicare", url: "https://www.servicesaustralia.gov.au/medicare" },
+          { label: "Healthdirect GP Finder", url: "https://www.healthdirect.gov.au/gp-and-health-services-finder" },
         ],
       },
       {
         name: "Mental Health and Wellbeing",
-        description: "Free and low-cost mental health services in Australia, including the Better Access scheme for subsidised psychology sessions, crisis lines, and online tools.",
-        lastUpdated: "May 2026",
+        description: "Free and low-cost mental health support in Australia. Covers GP Mental Health Plans, crisis lines, and community services.",
         links: [
           { label: "Beyond Blue", url: "https://www.beyondblue.org.au" },
-          { label: "Head to Health", url: "https://www.headtohealth.gov.au" },
-          { label: "Lifeline — 13 11 14", url: "https://www.lifeline.org.au" },
+          { label: "Lifeline", url: "https://www.lifeline.org.au" },
+          { label: "Headspace", url: "https://www.headspace.org.au" },
         ],
       },
       {
         name: "Kids and Families",
-        description: "Child Care Subsidy, Family Tax Benefit, parenting payments, and where to find free or low-cost activities and support for families.",
-        lastUpdated: "May 2026",
+        description: "Family payments, parental leave, child care subsidies, school enrolment, and where to find free activities for children.",
         links: [
-          { label: "Services Australia — Family payments", url: "https://www.servicesaustralia.gov.au/families" },
-          { label: "Services Australia — Child Care Subsidy", url: "https://www.servicesaustralia.gov.au/child-care-subsidy" },
-          { label: "Raising Children Network", url: "https://raisingchildren.net.au" },
+          { label: "Services Australia Families", url: "https://www.servicesaustralia.gov.au/families" },
+          { label: "Playgroup Australia", url: "https://www.playgroupaustralia.com.au" },
         ],
       },
       {
         name: "Disability and Carer Support",
-        description: "An overview of the NDIS, Carer Payment, Carer Allowance, and how to access disability support services. Includes links to advocacy organisations.",
-        lastUpdated: "May 2026",
+        description: "NDIS eligibility, how to apply, what it funds, and support for carers including Carer Payment and Carer Allowance.",
         links: [
-          { label: "NDIS — How to access", url: "https://www.ndis.gov.au/applying-access-ndis/how-apply" },
-          { label: "Services Australia — Carer Payment", url: "https://www.servicesaustralia.gov.au/carer-payment" },
+          { label: "NDIS", url: "https://www.ndis.gov.au" },
           { label: "Carers Australia", url: "https://www.carersaustralia.com.au" },
         ],
       },
     ],
   },
   {
+    id: "civic",
     name: "Civic and Legal",
-    desc: "Voting, legal basics, safety, and your rights online.",
-    icon: "civic",
+    color: "#4F6FA0",
+    description: "Voting, legal help, safety, online rights, and fraud.",
     guides: [
       {
         name: "Voting and Civic Life",
-        description: "How to enrol to vote, how preferential voting works, and what your civic responsibilities are as an Australian resident or citizen.",
-        lastUpdated: "May 2026",
+        description: "Electoral roll enrolment, how federal and state elections work, compulsory voting rules, and how to vote if you are overseas.",
         links: [
-          { label: "AEC — Enrol to vote", url: "https://www.aec.gov.au/enrol" },
-          { label: "AEC — How to vote", url: "https://www.aec.gov.au/Voting" },
+          { label: "AEC", url: "https://www.aec.gov.au" },
+          { label: "AEC Enrolment", url: "https://www.aec.gov.au/enrol" },
         ],
       },
       {
         name: "Legal Basics",
-        description: "Free and low-cost legal help in Australia — community legal centres, Legal Aid, and what to expect if you receive a letter from a court or debt collector.",
-        lastUpdated: "May 2026",
+        description: "Free and low-cost legal help in Australia. Community legal centres, Legal Aid, and what to expect if you receive a letter from a court or debt collector.",
         links: [
-          { label: "Law Access NSW", url: "https://www.legalaid.nsw.gov.au/lawaccess" },
-          { label: "Find a Community Legal Centre", url: "https://clcs.org.au/find-a-clc" },
-          { label: "MoneySmart — Debt collectors", url: "https://moneysmart.gov.au/debt/debt-collectors" },
+          { label: "Law Access NSW", url: "https://www.lawaccess.nsw.gov.au" },
+          { label: "Legal Aid NSW", url: "https://www.legalaid.nsw.gov.au" },
+          { label: "Community Legal Centres", url: "https://clcs.org.au" },
         ],
       },
       {
         name: "Safety and Family Violence",
-        description: "Immediate safety resources, what counts as family violence under Australian law, and how to access emergency support, housing, and legal protection orders.",
-        lastUpdated: "May 2026",
+        description: "If you or someone you know is not safe at home. Covers what to do, who to call, and your legal options including AVOs.",
         links: [
-          { label: "1800RESPECT — 1800 737 732", url: "https://www.1800respect.org.au" },
-          { label: "Safe Steps — Victoria", url: "https://www.safesteps.org.au" },
-          { label: "AG — Family safety resources", url: "https://www.ag.gov.au/families-and-marriage/families/family-violence" },
+          { label: "1800RESPECT", url: "https://www.1800respect.org.au" },
+          { label: "Safe Steps VIC", url: "https://www.safesteps.org.au" },
         ],
       },
       {
         name: "Online Abuse and Your Rights",
-        description: "If someone is harassing, threatening, or humiliating you online, you have legal recourse in Australia. The Online Safety Act 2021 gives the eSafety Commissioner power to have harmful content removed. Report directly at esafety.gov.au. For serious threats, contact police.",
-        lastUpdated: "May 2026",
+        description: "If someone is harassing, threatening, or humiliating you online, you have legal options. The Online Safety Act 2021 gives the eSafety Commissioner power to have harmful content removed.",
         links: [
           { label: "eSafety Commissioner", url: "https://www.esafety.gov.au" },
-          { label: "1800RESPECT", url: "https://www.1800respect.org.au" },
-          { label: "Report to police", url: "https://www.police.gov.au" },
+          { label: "Report Cyberbullying", url: "https://www.esafety.gov.au/report" },
         ],
       },
       {
         name: "Cybercrime and Financial Fraud",
-        description: "If your credit card was used without your permission or you lost money to a scam, act in this order: contact your bank immediately and request a fraud hold; report to ReportCyber at cyber.gov.au/report; contact IDCARE at idcare.org; and lodge a report with local police for a reference number. You may be entitled to a chargeback. Do not delay.",
-        lastUpdated: "May 2026",
+        description: "If your card was used without permission or you lost money to a scam, act in this order: contact your bank immediately, report to ReportCyber, contact IDCARE, lodge a police report for a reference number.",
         links: [
-          { label: "ReportCyber — cyber.gov.au/report", url: "https://www.cyber.gov.au/report" },
-          { label: "IDCARE — idcare.org", url: "https://www.idcare.org" },
-          { label: "Scamwatch — ACCC", url: "https://www.scamwatch.gov.au" },
+          { label: "ReportCyber", url: "https://www.cyber.gov.au/report" },
+          { label: "IDCARE", url: "https://www.idcare.org" },
+          { label: "AFCA", url: "https://www.afca.org.au" },
+          { label: "Scamwatch", url: "https://www.scamwatch.gov.au" },
         ],
       },
     ],
   },
   {
+    id: "new",
     name: "New to Australia",
-    desc: "If you arrived recently, start here.",
-    icon: "compass",
+    color: "#2A9D8F",
+    description: "Settling in, banking, schools, community, and qualifications.",
     guides: [
       {
         name: "Settling In",
-        description: "Getting a Tax File Number, opening a bank account, understanding the healthcare system, and finding community support for people new to Australia.",
-        lastUpdated: "May 2026",
+        description: "First steps after arriving. Medicare enrolment, bank account setup, TFN application, finding a GP, and connecting with local settlement services.",
         links: [
-          { label: "ATO — Apply for a TFN", url: "https://www.ato.gov.au/individuals-and-families/tax-file-number/apply-for-a-tfn" },
-          { label: "Services Australia — New arrivals", url: "https://www.servicesaustralia.gov.au/new-migrants" },
+          { label: "Services Australia", url: "https://www.servicesaustralia.gov.au" },
+          { label: "Settlement Services International", url: "https://www.ssi.org.au" },
         ],
       },
       {
         name: "Health",
-        description: "Medicare eligibility for new arrivals, reciprocal health agreements, and how to find GPs, hospitals, and interpreting services.",
-        lastUpdated: "May 2026",
+        description: "How to get a Medicare card as a new arrival, what is covered, and how to find community health services near you.",
         links: [
-          { label: "Services Australia — Medicare for new arrivals", url: "https://www.servicesaustralia.gov.au/enrolling-medicare" },
-          { label: "Healthdirect — Find a health service", url: "https://www.healthdirect.gov.au/australian-health-services" },
+          { label: "Services Australia Medicare", url: "https://www.servicesaustralia.gov.au/medicare" },
         ],
       },
       {
         name: "Banking",
-        description: "How to open a bank account in Australia, what ID you need, and the difference between a savings account and a transaction account.",
-        lastUpdated: "May 2026",
+        description: "How to open an Australian bank account, what ID you need, and what to look for in a transaction account.",
         links: [
-          { label: "MoneySmart — Banking basics", url: "https://moneysmart.gov.au/banking" },
-          { label: "ASIC — Choosing a bank account", url: "https://moneysmart.gov.au/banking/bank-accounts" },
+          { label: "ASIC MoneySmart Banking", url: "https://moneysmart.gov.au/banking" },
         ],
       },
       {
         name: "Schools",
-        description: "How to enrol a child in school, what types of schools exist, and what financial support is available for families with school-age children.",
-        lastUpdated: "May 2026",
+        description: "How to enrol your child in a government school, what documentation is needed, and how the Australian school year works.",
         links: [
-          { label: "Australian Curriculum", url: "https://www.australiancurriculum.edu.au" },
-          { label: "Services Australia — School enrolment support", url: "https://www.servicesaustralia.gov.au/families" },
+          { label: "Australia.gov.au Education", url: "https://www.australia.gov.au/education" },
         ],
       },
       {
         name: "Community",
-        description: "Finding multicultural community organisations, settlement services, language support, and social connection for people new to Australia.",
-        lastUpdated: "May 2026",
+        description: "Finding community organisations, cultural groups, and settlement support in your area.",
         links: [
-          { label: "Settlement Services International", url: "https://www.ssi.org.au" },
-          { label: "FECCA — Federation of Ethnic Communities", url: "https://fecca.org.au" },
+          { label: "Settling in Australia", url: "https://www.settlingaustralia.com.au" },
         ],
       },
       {
         name: "Qualifications",
-        description: "How to get overseas qualifications recognised in Australia, which bodies assess which professions, and pathways for skilled migrants.",
-        lastUpdated: "May 2026",
+        description: "How to get your overseas qualifications recognised in Australia for work and study.",
         links: [
-          { label: "NOOSR — Overseas qualifications", url: "https://www.education.gov.au/overseas-qualifications-unit" },
-          { label: "AQF — Australian qualifications framework", url: "https://www.aqf.edu.au" },
+          { label: "NOOSR", url: "https://noosr.education.gov.au" },
+          { label: "VETASSESS", url: "https://www.vetassess.com.au" },
         ],
       },
     ],
   },
   {
+    id: "business",
     name: "Business Setup",
-    desc: "Sole trader, company, ABN, ASIC, GST. What to register and when.",
-    icon: "briefcase",
+    color: "#4A6580",
+    description: "ABN, company registration, GST, and business names.",
     guides: [
       {
         name: "Business Structures Explained",
-        description: "The main business structures in Australia — sole trader, partnership, company, and trust. What each means for your personal liability and tax obligations before you register anything.",
-        lastUpdated: "May 2026",
+        description: "Sole trader, partnership, company, and trust. What each means for tax, liability, and setup cost. Not advice. A plain-language comparison to help you ask better questions.",
         links: [
-          { label: "business.gov.au — Business structures", url: "https://business.gov.au/registrations/register-a-business" },
-          { label: "ATO — Business structures", url: "https://www.ato.gov.au/business/starting-and-closing-a-business/before-you-start/business-structures" },
+          { label: "business.gov.au", url: "https://business.gov.au/registrations/register-a-business" },
         ],
       },
       {
         name: "Registering Your ABN",
-        description: "What an Australian Business Number is, who needs one, and how to apply through the Australian Business Register. Free to apply. Usually granted immediately.",
-        lastUpdated: "May 2026",
+        description: "Who needs an ABN, how to apply, and what to do if your application is rejected.",
         links: [
-          { label: "ABR — Apply for an ABN", url: "https://www.abr.gov.au/business-super-funds-charities/applying-abn" },
-          { label: "ATO — ABN eligibility", url: "https://www.ato.gov.au/business/registering-for-taxes/registering-for-an-abn" },
+          { label: "ABN Registration", url: "https://www.abr.gov.au" },
         ],
       },
       {
         name: "Setting Up a Company via ASIC",
-        description: "How to register a company through ASIC, what documents you need, what ongoing obligations a company director has, and what it costs annually.",
-        lastUpdated: "May 2026",
+        description: "What ASIC does, what registering a company involves, annual fees, and reporting obligations.",
         links: [
-          { label: "ASIC — Register a company", url: "https://asic.gov.au/for-business/registering-a-company" },
-          { label: "ASIC — Company director obligations", url: "https://asic.gov.au/for-business/running-a-company/company-officeholders" },
+          { label: "ASIC Register a Company", url: "https://asic.gov.au/for-business/registering-a-company" },
         ],
       },
       {
         name: "GST and BAS Basics",
-        description: "When you need to register for GST (once turnover exceeds $75,000), what a Business Activity Statement is, and how often you lodge. The ATO has a free tool to help.",
-        lastUpdated: "May 2026",
+        description: "When you must register for GST, how BAS works, and quarterly lodgement basics.",
         links: [
-          { label: "ATO — GST", url: "https://www.ato.gov.au/business/gst" },
-          { label: "ATO — Business activity statements", url: "https://www.ato.gov.au/businesses-and-organisations/preparing-lodging-and-paying/business-activity-statements-bas" },
+          { label: "ATO GST", url: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst" },
         ],
       },
       {
         name: "Business Name Registration",
-        description: "The difference between a trading name, a business name, and a company name. How to register a business name via ASIC and what it costs per year.",
-        lastUpdated: "May 2026",
+        description: "How to register a business name, check availability, and renew annually.",
         links: [
-          { label: "ASIC — Register a business name", url: "https://asic.gov.au/for-business/registering-a-business-name" },
-          { label: "business.gov.au — Business names", url: "https://business.gov.au/registrations/register-a-business-name" },
+          { label: "ASIC Business Names", url: "https://asic.gov.au/for-business/registering-a-business/business-names" },
         ],
       },
     ],
   },
   {
+    id: "employment",
     name: "Employment and Workplace",
-    desc: "Fair Work, job types, pay rates, your rights at work.",
-    icon: "employment",
+    color: "#7B5EA7",
+    description: "Pay, contracts, rights, dismissal, and wage theft.",
     guides: [
       {
         name: "Job Types and Contracts",
-        description: "The difference between full-time, part-time, casual, and fixed-term employment in Australia, and what each means for your entitlements and notice periods.",
-        lastUpdated: "May 2026",
+        description: "Full-time, part-time, casual, fixed-term, and contractor. What each means for leave entitlements, tax, and super.",
         links: [
-          { label: "Fair Work — Employment types", url: "https://www.fairwork.gov.au/employment-conditions/types-of-employees" },
-          { label: "Fair Work — Contracts", url: "https://www.fairwork.gov.au/employment-conditions/contracts" },
+          { label: "Fair Work Types of Employees", url: "https://www.fairwork.gov.au/employment-conditions/types-of-employees" },
         ],
       },
       {
         name: "Your Pay and Entitlements",
-        description: "The National Minimum Wage, penalty rates, leave entitlements, and how to use the Pay and Conditions Tool to check what you should be earning.",
-        lastUpdated: "May 2026",
+        description: "National Minimum Wage, penalty rates, overtime, and leave. How to check if you are being paid correctly.",
         links: [
-          { label: "Fair Work — Minimum wage", url: "https://www.fairwork.gov.au/pay-and-wages/minimum-wages" },
-          { label: "Fair Work — Pay and Conditions Tool", url: "https://calculate.fairwork.gov.au" },
+          { label: "Fair Work Pay Calculator", url: "https://calculate.fairwork.gov.au" },
         ],
       },
       {
         name: "Workplace Rights and Safety",
-        description: "Your right to a safe workplace, how to report safety issues, and what WorkSafe and Safe Work Australia are responsible for in your state.",
-        lastUpdated: "May 2026",
+        description: "Your right to a safe workplace, how to report unsafe conditions, and what WorkSafe covers.",
         links: [
           { label: "Safe Work Australia", url: "https://www.safeworkaustralia.gov.au" },
-          { label: "Fair Work — Workplace rights", url: "https://www.fairwork.gov.au/workplace-rights" },
+          { label: "Fair Work", url: "https://www.fairwork.gov.au" },
         ],
       },
       {
         name: "Unfair Dismissal Basics",
-        description: "What counts as unfair dismissal, who is eligible to apply, the 21-day deadline to lodge a claim, and what the Fair Work Commission process looks like.",
-        lastUpdated: "May 2026",
+        description: "What counts as unfair dismissal, the 21-day window to lodge a claim, and what the process looks like.",
         links: [
-          { label: "Fair Work Commission — Unfair dismissal", url: "https://www.fwc.gov.au/termination-of-employment/unfair-dismissal" },
-          { label: "Fair Work — Dismissal basics", url: "https://www.fairwork.gov.au/ending-employment/unfair-dismissal" },
+          { label: "Fair Work Commission", url: "https://www.fwc.gov.au" },
         ],
       },
       {
         name: "Wage Theft and Underpayment",
-        description: "Underpaying a worker is not a grey area — it is a crime in Australia. If your employer is paying below minimum wage, not paying penalty rates, or asking you to work off the clock, you can report it. Fair Work takes anonymous reports. You cannot be fired for reporting.",
-        lastUpdated: "May 2026",
+        description: "Underpaying a worker is a crime in Australia. If your employer is paying below the minimum wage, not paying penalty rates, or asking you to work off the clock, you can report it. Fair Work takes anonymous reports. You cannot be fired for reporting. Your visa status does not affect your workplace rights.",
         links: [
-          { label: "Fair Work — Pay complaints", url: "https://www.fairwork.gov.au/pay-and-wages/pay-problems" },
-          { label: "Fair Work — Anonymous tip-off", url: "https://www.fairwork.gov.au/about-us/contact-us" },
+          { label: "Fair Work Anonymous Report", url: "https://www.fairwork.gov.au/about-us/contact-us" },
         ],
       },
     ],
   },
   {
+    id: "consumer",
     name: "Consumer and Fair Trade",
-    desc: "Refunds, scams, debt collectors, product recalls.",
-    icon: "shield",
+    color: "#B5651D",
+    description: "Refunds, scams, debt collectors, and product recalls.",
     guides: [
       {
         name: "Refunds and Warranties",
-        description: "Under the Australian Consumer Law you have automatic guarantees on goods and services. Businesses cannot refuse a refund for a major fault, regardless of their store policy.",
-        lastUpdated: "May 2026",
+        description: "Under Australian Consumer Law you have automatic rights when something you buy fails. No receipt required for many claims. Covers refund, repair, and replacement rights.",
         links: [
-          { label: "ACCC — Consumer guarantees", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees" },
-          { label: "ACCC — Warranties and refunds", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees/warranties" },
+          { label: "ACCC Consumer Rights", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees" },
         ],
       },
       {
         name: "Dealing with Scams",
-        description: "How to recognise common scams targeting Australians, how to report them to Scamwatch, and what to do if you have already lost money.",
-        lastUpdated: "May 2026",
+        description: "How to identify common scams, what to do if you have been targeted, and how to report.",
         links: [
-          { label: "Scamwatch — Report a scam", url: "https://www.scamwatch.gov.au/report-a-scam" },
-          { label: "ACCC — Scams", url: "https://www.accc.gov.au/consumers/scams" },
+          { label: "Scamwatch", url: "https://www.scamwatch.gov.au" },
+          { label: "ACCC Little Black Book of Scams", url: "https://www.accc.gov.au/media-and-publications/publications/the-little-black-book-of-scams" },
         ],
       },
       {
         name: "Debt Collectors and Your Rights",
-        description: "What a debt collector can and cannot do under Australian law, how often they can contact you, and how to dispute a debt you do not believe you owe.",
-        lastUpdated: "May 2026",
+        description: "What a debt collector can and cannot do, your right to request verification, and how to dispute a debt.",
         links: [
-          { label: "MoneySmart — Debt collectors", url: "https://moneysmart.gov.au/debt/debt-collectors" },
-          { label: "ACCC — Debt collection practices", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees/debt-collection" },
+          { label: "ACCC Debt Collection", url: "https://www.accc.gov.au" },
+          { label: "ASIC MoneySmart", url: "https://moneysmart.gov.au" },
         ],
       },
       {
         name: "Product Recalls",
-        description: "How to check if a product you own has been recalled and how to report an unsafe product to the ACCC's Product Safety Australia.",
-        lastUpdated: "May 2026",
+        description: "How to check if something you own has been recalled and what to do.",
         links: [
-          { label: "Product Safety Australia — Recalls", url: "https://www.productsafety.gov.au/recalls" },
-          { label: "ACCC — Report an unsafe product", url: "https://www.accc.gov.au/consumers/consumer-rights-guarantees/product-safety" },
+          { label: "Product Safety Australia", url: "https://www.productsafety.gov.au/recalls" },
         ],
       },
       {
         name: "Price Gouging",
-        description: "When a business charges prices that are unconscionable during an emergency or shortage, the ACCC has powers to act. What to report and how.",
-        lastUpdated: "May 2026",
+        description: "When price increases become illegal, who regulates them, and how to report excessive pricing.",
         links: [
-          { label: "ACCC — Price gouging", url: "https://www.accc.gov.au/consumers/prices-and-price-rises" },
-          { label: "ACCC — Make a complaint", url: "https://www.accc.gov.au/contact-us/contact-the-accc/report-a-consumer-issue" },
+          { label: "ACCC", url: "https://www.accc.gov.au" },
         ],
       },
     ],
   },
   {
+    id: "education",
     name: "Education and Training",
-    desc: "TAFE, apprenticeships, skills recognition, mature age options.",
-    icon: "graduation",
+    color: "#3A6B35",
+    description: "TAFE, apprenticeships, skills recognition, and VET.",
     guides: [
       {
         name: "TAFE by State",
-        description: "TAFE delivers government-subsidised vocational training in every state. Fees and course availability vary. Each state has its own TAFE provider and eligibility rules for concessions.",
-        lastUpdated: "May 2026",
+        description: "TAFE is Australia's national vocational education network. Covers how to find your nearest TAFE, how to enrol, and what courses are available.",
         links: [
           { label: "TAFE NSW", url: "https://www.tafensw.edu.au" },
-          { label: "TAFE Victoria", url: "https://www.tafe.vic.gov.au" },
-          { label: "TAFE Queensland", url: "https://tafeqld.edu.au" },
+          { label: "TAFE VIC", url: "https://www.tafe.vic.gov.au" },
+          { label: "TAFE QLD", url: "https://www.tafeqld.edu.au" },
         ],
       },
       {
         name: "Apprenticeships and Traineeships",
-        description: "How apprenticeships and traineeships work in Australia, who is eligible, what pay applies, and which government subsidies are available for employers and apprentices.",
-        lastUpdated: "May 2026",
+        description: "How to find an apprenticeship, what an Australian Apprenticeship entails, and what financial support is available.",
         links: [
           { label: "Australian Apprenticeships", url: "https://www.australianapprenticeships.gov.au" },
-          { label: "Fair Work — Apprentice pay rates", url: "https://www.fairwork.gov.au/pay-and-wages/minimum-wages/apprentice-pay-rates" },
         ],
       },
       {
         name: "Skills Recognition for Migrants",
-        description: "How to get overseas qualifications and work experience recognised in Australia. Different professions use different assessment bodies. Start with the general framework.",
-        lastUpdated: "May 2026",
+        description: "How to get overseas qualifications assessed for use in Australia.",
         links: [
-          { label: "NOOSR — Overseas qualifications", url: "https://www.education.gov.au/overseas-qualifications-unit" },
-          { label: "Skills Shortage List", url: "https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list" },
+          { label: "VETASSESS", url: "https://www.vetassess.com.au" },
+          { label: "Engineers Australia", url: "https://www.engineersaustralia.org.au/skills-assessment" },
         ],
       },
       {
         name: "Mature Age and Career Change",
-        description: "Programs and subsidies for Australians over 45 looking to retrain or change careers, including wage subsidies available to employers who hire mature age workers.",
-        lastUpdated: "May 2026",
+        description: "Programs and support specifically for Australians over 45 re-entering the workforce or changing careers.",
         links: [
-          { label: "Services Australia — Employment assistance", url: "https://www.servicesaustralia.gov.au/employment-services" },
-          { label: "National Careers Institute", url: "https://www.nationalcareers.edu.au" },
+          { label: "Workforce Australia", url: "https://www.workforceaustralia.gov.au" },
         ],
       },
       {
         name: "VET Student Loans",
-        description: "VET Student Loans help eligible students pay tuition fees for approved higher-level vocational courses. Not all courses qualify. Check eligibility before enrolling.",
-        lastUpdated: "May 2026",
+        description: "What VET Student Loans cover, which courses qualify, and how repayment works.",
         links: [
-          { label: "VET Student Loans — education.gov.au", url: "https://www.education.gov.au/vet-student-loans" },
-          { label: "StudyAssist — VET information", url: "https://www.studyassist.gov.au" },
+          { label: "VET Student Loans", url: "https://www.dese.gov.au/vet-student-loans" },
         ],
       },
     ],
   },
   {
+    id: "govjobs",
     name: "Government Jobs",
-    desc: "The job boards most people do not know exist.",
-    icon: "building",
+    color: "#1E3A5F",
+    description: "Federal and state public sector job boards.",
     guides: [
       {
-        name: "APSJobs (Federal)",
-        description: "The central job board for Australian Public Service positions across all federal agencies. Roles range from entry-level to senior executive. Most applications are via APSJobs portal.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "APSJobs", url: "https://www.apsjobs.gov.au" },
-          { label: "APS — Working in the APS", url: "https://www.aps.gov.au/working-in-the-aps" },
-        ],
+        name: "APSJobs Federal",
+        description: "The official federal government job board. All APS roles listed here.",
+        links: [{ label: "APSJobs", url: "https://www.apsjobs.gov.au" }],
       },
       {
         name: "I Work for NSW",
-        description: "The official job portal for NSW Government roles including health, education, transport, and the public service. Some agencies post separately so check both.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "I Work for NSW", url: "https://iworkfor.nsw.gov.au" },
-        ],
+        description: "NSW government job listings across all agencies.",
+        links: [{ label: "iworkfor.nsw.gov.au", url: "https://iworkfor.nsw.gov.au" }],
       },
       {
         name: "Jobs Victoria",
-        description: "Victorian Government jobs portal covering the public service, health, education, and specialist agencies including Victoria Police and the courts.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "Jobs Victoria", url: "https://www.jobs.vic.gov.au" },
-        ],
+        description: "Victorian government jobs across health, education, and public service.",
+        links: [{ label: "jobs.vic.gov.au", url: "https://jobs.vic.gov.au" }],
       },
       {
         name: "Queensland Government Careers",
-        description: "Smart Jobs and Careers is the Queensland Government's job portal. Covers the Queensland Public Service, Queensland Health, and Queensland Education.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "Smart Jobs and Careers", url: "https://smartjobs.qld.gov.au" },
-        ],
+        description: "All Queensland Government roles across departments.",
+        links: [{ label: "smartjobs.qld.gov.au", url: "https://smartjobs.qld.gov.au" }],
       },
       {
         name: "WA Government Jobs",
-        description: "Jobs WA is the official portal for Western Australian Government positions across the public sector, health, education, and emergency services.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "Jobs WA", url: "https://www.jobs.wa.gov.au" },
-        ],
+        description: "Western Australian public sector jobs.",
+        links: [{ label: "jobs.wa.gov.au", url: "https://jobs.wa.gov.au" }],
       },
       {
         name: "SA Government Careers",
-        description: "The South Australian Government's career portal covering the public service, SA Health, and Department for Education. Uses the iRecruitment platform.",
-        lastUpdated: "May 2026",
-        links: [
-          { label: "SA Government Careers", url: "https://www.sagovcareers.sa.gov.au" },
-        ],
+        description: "South Australian Government roles.",
+        links: [{ label: "iworkfor.sa.gov.au", url: "https://iworkfor.sa.gov.au" }],
       },
     ],
   },
   {
+    id: "students",
     name: "Students",
-    desc: "Your rights as a student worker. Exploitation is not normal.",
-    icon: "book",
+    color: "#E07A5F",
+    description: "Student rights, wage theft, visas, and mental health.",
     guides: [
       {
         name: "Student Workplace Rights",
-        description: "Student workers — including international students and those on working holiday visas — have the same minimum wage and penalty rate protections as any other worker in Australia. Your visa does not reduce your rights.",
-        lastUpdated: "May 2026",
+        description: "As a student worker you have the same rights as any other employee in Australia. Visa conditions do not change your minimum wage entitlements.",
         links: [
-          { label: "Fair Work — Young workers", url: "https://www.fairwork.gov.au/find-help-for/young-workers-and-students" },
-          { label: "Fair Work — Pay check tool", url: "https://calculate.fairwork.gov.au" },
+          { label: "Fair Work Students", url: "https://www.fairwork.gov.au/pay-and-wages/minimum-wages/student-and-apprentice-pay" },
         ],
       },
       {
         name: "Underpayment and Wage Theft",
-        description: "Underpaying a worker is not a grey area. It is a crime in Australia. If your employer is paying you below the minimum wage, not paying penalty rates, or asking you to work off the clock, you can report it. Fair Work takes anonymous reports. You cannot be fired for reporting. Your visa status does not affect your workplace rights.",
-        lastUpdated: "May 2026",
+        description: "If you are being paid below the minimum wage, asked to work for free, or not receiving your super, that is wage theft. It is illegal. Report it anonymously.",
         links: [
-          { label: "Fair Work — Pay complaints", url: "https://www.fairwork.gov.au/pay-and-wages/pay-problems" },
-          { label: "Fair Work — Anonymous tip-off", url: "https://www.fairwork.gov.au/about-us/contact-us" },
+          { label: "Fair Work Anonymous Report", url: "https://www.fairwork.gov.au/about-us/contact-us" },
         ],
       },
       {
         name: "International Student Work Rights",
-        description: "International students on a student visa can generally work up to 48 hours per fortnight while their course is in session. During breaks you may work unlimited hours. Check your visa conditions via VEVO.",
-        lastUpdated: "May 2026",
+        description: "Work hour limits on student visas, what happens if you breach them, and how to check your entitlements.",
         links: [
-          { label: "Home Affairs — Student visa work rights", url: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/student-500/temporary-relaxation-of-working-hours-for-student-visa-holders" },
-          { label: "VEVO — Check visa conditions", url: "https://immi.homeaffairs.gov.au/visas/already-have-a-visa/check-visa-details-and-conditions/check-conditions-online" },
+          { label: "Home Affairs Student Visa", url: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/student-500" },
         ],
       },
       {
         name: "Where to Report Exploitation",
-        description: "If you have been exploited, underpaid, or threatened at work, multiple agencies can help. You do not need to be a permanent resident to make a report. Anonymity is available.",
-        lastUpdated: "May 2026",
+        description: "Who to contact if you are being exploited as a student worker, including the national Student Visa and Temporary Graduate Visa program.",
         links: [
-          { label: "Fair Work — Make a complaint", url: "https://www.fairwork.gov.au/about-us/contact-us/call-us" },
-          { label: "Wage Theft — Victoria Police", url: "https://www.police.vic.gov.au/wage-theft" },
+          { label: "Fair Work", url: "https://www.fairwork.gov.au" },
+          { label: "Study Australia", url: "https://www.studyaustralia.gov.au" },
         ],
       },
       {
         name: "Mental Health Support for Students",
-        description: "University and TAFE counselling services, national crisis lines, and headspace centres — free and low-cost mental health support specifically for students.",
-        lastUpdated: "May 2026",
+        description: "Free and low-cost mental health support specifically for students. University counselling, headspace, and beyond.",
         links: [
-          { label: "headspace — Find a centre", url: "https://headspace.org.au/headspace-centres" },
-          { label: "Beyond Blue", url: "https://www.beyondblue.org.au" },
-          { label: "Lifeline — 13 11 14", url: "https://www.lifeline.org.au" },
+          { label: "Headspace", url: "https://www.headspace.org.au" },
+          { label: "Beyond Blue Student Wellbeing", url: "https://www.beyondblue.org.au" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "volunteering",
+    name: "Volunteering",
+    color: "#00843D",
+    description: "Finding roles, rights, visa conditions, and career value.",
+    guides: [
+      {
+        name: "Finding Volunteer Opportunities",
+        description: "How to find volunteering roles in your area and why volunteering counts as experience for job applications and visa purposes.",
+        links: [
+          { label: "Volunteering Australia", url: "https://www.volunteeringaustralia.org" },
+          { label: "Go Volunteer", url: "https://www.govolunteer.com.au" },
+        ],
+      },
+      {
+        name: "Volunteer Rights and Protections",
+        description: "What protections volunteers have in Australia, insurance coverage, and what organisations are required to provide.",
+        links: [
+          { label: "Volunteering Australia Standards", url: "https://www.volunteeringaustralia.org/framework/national-standards" },
+        ],
+      },
+      {
+        name: "Volunteering and Visa Holders",
+        description: "Whether you can volunteer on a student visa or temporary visa, and what conditions apply.",
+        links: [
+          { label: "Home Affairs", url: "https://www.homeaffairs.gov.au" },
+        ],
+      },
+      {
+        name: "Volunteering for Career Development",
+        description: "How to use volunteering to build Australian work experience, references, and professional networks.",
+        links: [
+          { label: "Seek Volunteer", url: "https://www.volunteer.com.au" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "citizenship",
+    name: "Citizenship and Coming to Australia",
+    color: "#C9A84C",
+    description: "Eligibility, the test, applications, and what comes after.",
+    guides: [
+      {
+        name: "Eligibility for Citizenship",
+        description: "You generally need to have been a permanent resident for at least four years, including one year as a permanent resident immediately before applying. Good character requirement applies.",
+        links: [
+          { label: "Home Affairs Citizenship", url: "https://www.homeaffairs.gov.au/citizenship" },
+        ],
+      },
+      {
+        name: "The Citizenship Test",
+        description: "The Australian Citizenship Test is 20 questions. You need 75 percent to pass. It covers Australian values, history, government, and rights and responsibilities.",
+        links: [
+          { label: "Citizenship Test Practice", url: "https://citizenshiptest.homeaffairs.gov.au" },
+          { label: "Official Preparation Podcast", url: "https://www.homeaffairs.gov.au/citizenship/test-and-interview/prepare-for-test" },
+        ],
+      },
+      {
+        name: "Applying via ImmiAccount",
+        description: "You apply online through ImmiAccount. The application fee as of 2026 is $490 for adults. You will need identity documents, proof of residence, and passport photos.",
+        links: [
+          { label: "ImmiAccount", url: "https://immi.homeaffairs.gov.au/immiaccount" },
+          { label: "DFAT Document Certification", url: "https://www.dfat.gov.au" },
+        ],
+      },
+      {
+        name: "The Citizenship Ceremony",
+        description: "If approved you will be invited to an Australian Citizenship Ceremony. You will make the Australian Citizenship Pledge and receive your certificate. Ceremonies are run by local councils.",
+        links: [
+          { label: "Home Affairs Ceremony", url: "https://www.homeaffairs.gov.au/citizenship/ceremony" },
         ],
       },
     ],
