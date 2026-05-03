@@ -1408,6 +1408,31 @@ export default function Home() {
             )}
           </div>
 
+          {/* ── Live count summary ──────────────────────────────────────── */}
+          {(() => {
+            const totalGuides = clusters.reduce((n, c) => n + c.guides.length, 0);
+            const q = query.trim().toLowerCase();
+            const byCluster = activeCluster ? clusters.filter((c) => c.id === activeCluster) : clusters;
+            const matched = q === ""
+              ? byCluster
+              : byCluster
+                  .map((c) => {
+                    if (c.name.toLowerCase().includes(q)) return c;
+                    const g = c.guides.filter((g) => g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q));
+                    return g.length > 0 ? { ...c, guides: g } : null;
+                  })
+                  .filter((c): c is Cluster => c !== null);
+            const visibleGuides = matched.reduce((n, c) => n + c.guides.length, 0);
+            const isFiltered = q !== "" || activeCluster !== null;
+            return (
+              <p style={{ fontFamily: MONO, fontSize: 12, color: C.grey, textAlign: "center", marginBottom: 16 }}>
+                {isFiltered
+                  ? `Showing ${visibleGuides} of ${totalGuides} guides`
+                  : `${totalGuides} guides across ${clusters.length} clusters`}
+              </p>
+            );
+          })()}
+
           {/* ── Cluster filter pills ─────────────────────────────────────── */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 40 }}>
             {/* All pill */}
@@ -1795,24 +1820,11 @@ export default function Home() {
           </div>
           <div className="space-y-8 mb-16">
             <div className="text-sm text-[#6B6B5E] leading-relaxed">
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">compyr</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">alertss</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">turnd</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">yourrr</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">novlit</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">sharpend</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">moodframe</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">the outside eye</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">rostrr</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">platd</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">sortd</a> <span className="mx-2">·</span>
-              <a href="#" className="hover:text-[#B8D4E8] transition-colors">earnt</a>
-            </div>
-            <div className="text-sm text-[#6B6B5E] leading-relaxed">
               <a href="https://tbcworldwide.com" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">tbcworldwide.com</a> <span className="mx-2">·</span>
+              <a href="https://techbrandcraft.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">techbrandcraft.com.au</a> <span className="mx-2">·</span>
               <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">brezaplusyou.com.au</a> <span className="mx-2">·</span>
               <a href="https://taracollective.org" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">taracollective.org</a> <span className="mx-2">·</span>
-              <a href="https://celes13.com" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">celes13.com</a>
+              <a href="https://celes.13.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">celes.13.com.au</a>
             </div>
             <div>
               <a href="mailto:connect@tbcworldwide.com" className="text-sm text-[#B8D4E8] hover:opacity-80 transition-opacity">connect@tbcworldwide.com</a>
