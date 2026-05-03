@@ -1,0 +1,36 @@
+Targeted fix to the About Australia section only. Do not touch anything else.
+REMOVE the inline expand mechanic from all six reference tiles. Cards no longer expand in place. "Read more" no longer triggers a height animation inside the grid.
+MAKE ALL SIX CARDS FIXED HEIGHT. 220px. Same height. No exceptions. Content inside each card: icon stripe top, tile heading, one-line description, "Read more" link. Nothing else visible on the card itself.
+BUILD A MODAL OVERLAY COMPONENT.
+When "Read more" is clicked on any tile, a modal opens. Framer Motion AnimatePresence. Fade in backdrop, scale in panel.
+Backdrop: fixed, full viewport, background rgba(15,23,42,0.72). z-index 50. Click backdrop to close.
+Panel: fixed, centred vertically and horizontally. Width 640px desktop, 92vw mobile. Max-height 80vh. Overflow-y auto. Background white #FFFFFF. Border-radius 20px. Padding 40px. Box-shadow 0 8px 48px rgba(15,23,42,0.22). z-index 51.
+Panel top: coloured stripe 4px, full width, matches that tile's stripe colour. Border-radius 20px 20px 0 0.
+X button: absolute top-right 20px. Lucide X icon. 20x20px. Midnight Navy. No background. Cursor pointer. Closes modal.
+Modal heading: DM Serif Display 32px Midnight Navy. Margin-bottom 8px.
+Modal body text: DM Sans 400 15px warm grey #6B6B5E. Line-height 1.75. Margin-bottom 16px.
+Source credit: Geist Mono 12px #9CA3AF. Margin-top 16px.
+Scroll locks body when modal is open. Unlocks on close.
+Escape key closes modal.
+MODAL CONTENT PER TILE.
+Tile one. Australia at a Glance. Stripe Amber.
+Body: Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Currency: Australian dollar (AUD). Official language: None legislated. English is the de facto language. Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Governor-General appointed by the King on advice of the Prime Minister. Head of Government: Prime Minister.
+Source: australia.gov.au.
+Tile two. States and Territories. Stripe Teal.
+Body: Six states: New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), South Australia (Adelaide), Western Australia (Perth), Tasmania (Hobart). Two self-governing territories: Australian Capital Territory (Canberra), Northern Territory (Darwin). Seven external territories: Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands. Most Australians cannot name all seven external territories. Now you can.
+Source: australia.gov.au.
+Tile three. National Anthem. Stripe Sage.
+Body: Title: Advance Australia Fair. Adopted 1984. Modified January 2021. The word "young" was changed to "one" to better reflect Australia's Indigenous history.
+Verse one: Australians all let us rejoice, For we are one and free, With golden soil and wealth for toil, Our home is girt by sea, Our land abounds in nature's gifts, Of beauty rich and rare, In history's page let every stage, Advance Australia Fair. In joyful strains then let us sing, Advance Australia Fair.
+Verse two: Beneath our radiant Southern Cross, We'll toil with hearts and hands, To make this Commonwealth of ours, Renowned of all the lands, For those who've come across the seas, We've boundless plains to share, With courage let us all combine, To advance Australia Fair. In joyful strains then let us sing, Advance Australia Fair.
+Display both verses in DM Serif Display italic 18px Midnight Navy. Line-height 2. Indented 16px.
+Source: pmc.gov.au.
+Tile four. Australian Values. Stripe Indigo.
+Body: Sourced directly from homeaffairs.gov.au. The Australian values include respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.
+Source: homeaffairs.gov.au.
+Tile five. Time Zones. Stripe Copper.
+Body: Australia spans five main time zones. AEST UTC+10: NSW, VIC, QLD, TAS, ACT. AEDT UTC+11: NSW, VIC, TAS, ACT during daylight saving. ACST UTC+9:30: SA and NT. ACDT UTC+10:30: SA during daylight saving. AWST UTC+8: WA. No daylight saving in WA, QLD, or NT. Lord Howe Island observes UTC+10:30 in winter and UTC+11 in summer.
+Source: bom.gov.au.
+Tile six. Daylight Saving. Stripe Coral.
+Body: Daylight saving runs from the first Sunday in October to the first Sunday in April. Clocks go forward one hour in October. Back one hour in April. States that observe it: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. Queensland held referendums in 1992 and 2010 and voted no both times.
+Source: australia.gov.au.

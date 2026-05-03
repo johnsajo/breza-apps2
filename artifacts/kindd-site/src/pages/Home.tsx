@@ -753,34 +753,157 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
   );
 }
 
-// ─── Reference tile card ──────────────────────────────────────────────────────
-function RefTileCard({ tile }: { tile: RefTileData }) {
-  const [open, setOpen] = useState(false);
+// ─── Modal body content per tile ─────────────────────────────────────────────
+const TILE_MODAL_BODY: Record<string, React.ReactNode> = {
+  glance: (
+    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
+      Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Currency: Australian dollar (AUD). Official language: None legislated. English is the de facto language. Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Governor-General appointed by the King on advice of the Prime Minister. Head of Government: Prime Minister.
+    </p>
+  ),
+  states: (
+    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
+      Six states: New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), South Australia (Adelaide), Western Australia (Perth), Tasmania (Hobart). Two self-governing territories: Australian Capital Territory (Canberra), Northern Territory (Darwin). Seven external territories: Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands. Most Australians cannot name all seven external territories.
+    </p>
+  ),
+  anthem: (
+    <div>
+      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75, marginBottom: 20 }}>
+        Title: Advance Australia Fair. Adopted 1984. Modified January 2021. The word &ldquo;young&rdquo; was changed to &ldquo;one&rdquo; to better reflect Australia&rsquo;s Indigenous history.
+      </p>
+      <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse one</p>
+      <p style={{ fontFamily: `${SERIF}`, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16, marginBottom: 24 }}>
+        Australians all let us rejoice,<br/>
+        For we are one and free,<br/>
+        With golden soil and wealth for toil,<br/>
+        Our home is girt by sea,<br/>
+        Our land abounds in nature&rsquo;s gifts,<br/>
+        Of beauty rich and rare,<br/>
+        In history&rsquo;s page let every stage,<br/>
+        Advance Australia Fair.<br/>
+        In joyful strains then let us sing,<br/>
+        Advance Australia Fair.
+      </p>
+      <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse two</p>
+      <p style={{ fontFamily: `${SERIF}`, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16 }}>
+        Beneath our radiant Southern Cross,<br/>
+        We&rsquo;ll toil with hearts and hands,<br/>
+        To make this Commonwealth of ours,<br/>
+        Renowned of all the lands,<br/>
+        For those who&rsquo;ve come across the seas,<br/>
+        We&rsquo;ve boundless plains to share,<br/>
+        With courage let us all combine,<br/>
+        To advance Australia Fair.<br/>
+        In joyful strains then let us sing,<br/>
+        Advance Australia Fair.
+      </p>
+    </div>
+  ),
+  values: (
+    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
+      Sourced directly from homeaffairs.gov.au. The Australian values include respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.
+    </p>
+  ),
+  timezones: (
+    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
+      Australia spans five main time zones. AEST UTC+10: NSW, VIC, QLD, TAS, ACT. AEDT UTC+11: NSW, VIC, TAS, ACT during daylight saving. ACST UTC+9:30: SA and NT. ACDT UTC+10:30: SA during daylight saving. AWST UTC+8: WA. No daylight saving in WA, QLD, or NT. Lord Howe Island observes UTC+10:30 in winter and UTC+11 in summer.
+    </p>
+  ),
+  daylightsaving: (
+    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
+      Daylight saving runs from the first Sunday in October to the first Sunday in April. Clocks go forward one hour in October. Back one hour in April. States that observe it: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. Queensland held referendums in 1992 and 2010 and voted no both times.
+    </p>
+  ),
+};
+
+const TILE_MODAL_SOURCE: Record<string, string> = {
+  glance:        "Source: australia.gov.au",
+  states:        "Source: australia.gov.au",
+  anthem:        "Source: pmc.gov.au",
+  values:        "Source: homeaffairs.gov.au",
+  timezones:     "Source: bom.gov.au",
+  daylightsaving:"Source: australia.gov.au",
+};
+
+// ─── Reference tile modal ─────────────────────────────────────────────────────
+function RefModal({ tile, onClose }: { tile: RefTileData | null; onClose: () => void }) {
+  useEffect(() => {
+    if (!tile) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [tile, onClose]);
+
   return (
-    <div style={{ background: C.navy, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.18)", overflow: "hidden" }}>
-      <div style={{ height: 4, background: tile.stripe }} />
-      <div style={{ padding: 28 }}>
-        <h3 style={{ fontFamily: SERIF, fontSize: 22, color: "#FAF6E8", lineHeight: 1.2 }}>{tile.title}</h3>
-        <p style={{ fontFamily: SANS, fontSize: 13, color: C.darkSec, marginTop: 6, lineHeight: 1.5 }}>{tile.description}</p>
-        <button
-          onClick={() => setOpen(!open)}
-          style={{ display: "inline-flex", alignItems: "center", gap: 4, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, background: "none", border: "none", cursor: "pointer", marginTop: 16, padding: 0 }}
-        >
-          {open ? "Read less" : "Read more"}
-          <ChevronDown style={{ width: 14, height: 14, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
-        </button>
-        <AnimatePresence>
-          {open && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} style={{ overflow: "hidden" }}>
-              <div style={{ marginTop: 16 }}>
-                <p style={{ fontFamily: SANS, fontSize: 14, color: C.darkSec, lineHeight: 1.75, whiteSpace: "pre-line" }}>{tile.content}</p>
-                {tile.source && (
-                  <p style={{ fontFamily: MONO, fontSize: 11, color: "#6B6B5E", marginTop: 14 }}>{tile.source}</p>
-                )}
+    <AnimatePresence>
+      {tile && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.72)", zIndex: 50 }}
+          />
+          {/* Panel */}
+          <motion.div
+            key="panel"
+            initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.94 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+              width: "min(640px, 92vw)", maxHeight: "80vh", overflowY: "auto",
+              background: "#FFFFFF", borderRadius: 20,
+              boxShadow: "0 8px 48px rgba(15,23,42,0.22)", zIndex: 51,
+            }}
+          >
+            {/* Coloured stripe */}
+            <div style={{ height: 4, background: tile.stripe, borderRadius: "20px 20px 0 0" }} />
+            {/* Content */}
+            <div style={{ padding: 40, position: "relative" }}>
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", cursor: "pointer", color: C.navy, padding: 4, display: "flex", alignItems: "center", justifyContent: "center" }}
+                aria-label="Close"
+              >
+                <X style={{ width: 20, height: 20 }} />
+              </button>
+              <h2 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 8, marginRight: 32, lineHeight: 1.15 }}>{tile.title}</h2>
+              <div style={{ marginBottom: 16 }}>
+                {TILE_MODAL_BODY[tile.id]}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              {TILE_MODAL_SOURCE[tile.id] && (
+                <p style={{ fontFamily: MONO, fontSize: 12, color: "#9CA3AF", marginTop: 16 }}>{TILE_MODAL_SOURCE[tile.id]}</p>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Reference tile card — fixed height 220px ────────────────────────────────
+function RefTileCard({ tile, onReadMore }: { tile: RefTileData; onReadMore: () => void }) {
+  return (
+    <div style={{ background: C.navy, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.18)", overflow: "hidden", height: 220, display: "flex", flexDirection: "column" }}>
+      <div style={{ height: 4, background: tile.stripe, flexShrink: 0 }} />
+      <div style={{ padding: 28, display: "flex", flexDirection: "column", flex: 1 }}>
+        <h3 style={{ fontFamily: SERIF, fontSize: 22, color: "#FAF6E8", lineHeight: 1.2, margin: 0 }}>{tile.title}</h3>
+        <p style={{ fontFamily: SANS, fontSize: 13, color: C.darkSec, marginTop: 8, lineHeight: 1.5, flex: 1, overflow: "hidden" }}>{tile.description}</p>
+        <button
+          onClick={onReadMore}
+          style={{ display: "inline-flex", alignItems: "center", gap: 4, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 12, alignSelf: "flex-start" }}
+        >
+          Read more
+          <ChevronDown style={{ width: 14, height: 14 }} />
+        </button>
       </div>
     </div>
   );
@@ -791,6 +914,7 @@ export default function Home() {
   const [scrollY, setScrollY]       = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openCit, setOpenCit]       = useState<number | null>(null);
+  const [modalTile, setModalTile]   = useState<RefTileData | null>(null);
 
   useEffect(() => {
     const h = () => setScrollY(window.scrollY);
@@ -1089,9 +1213,12 @@ export default function Home() {
           {/* Reference tiles — 6 tiles, 3 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 24 }}>
             {referenceTiles.map((tile) => (
-              <RefTileCard key={tile.id} tile={tile} />
+              <RefTileCard key={tile.id} tile={tile} onReadMore={() => setModalTile(tile)} />
             ))}
           </div>
+
+          {/* Reference tile modal */}
+          <RefModal tile={modalTile} onClose={() => setModalTile(null)} />
         </div>
       </section>
 
