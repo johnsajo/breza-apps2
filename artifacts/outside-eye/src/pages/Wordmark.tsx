@@ -11,10 +11,41 @@ import FeedbackRow from "@/components/FeedbackRow";
 
 const styles = ["Minimal", "Bold", "Geometric", "Editorial", "Handcrafted"];
 
+const STYLE_DEFINITIONS: Record<string, string> = {
+  Minimal: "Use thin or light weights (200–400). Generous letter-spacing. Clean geometric sans or refined hairline serif. Restrained and airy. No decorative elements.",
+  Bold: "Use heavy or black weights (700–900). Tight or negative tracking. Condensed or display typefaces. Maximum visual presence and authority.",
+  Geometric: "Use typefaces built on mathematical forms — circles, squares, grids. Think Futura, Bauhaus influence. Precise, structured, modernist.",
+  Editorial: "Use high-contrast serifs or sophisticated editorial sans. Think magazine mastheads. Refined, timeless, cultured. Medium weights only.",
+  Handcrafted: "Use script, calligraphic, or organically irregular typefaces. Warm, imperfect, artisan. Suggests something made by hand.",
+};
+
 interface Concept {
   conceptName: string; font: string; weight: string; letterSpacing: string;
   caseStyle: "uppercase" | "lowercase" | "titlecase";
   textColour: string; backgroundColour: string; reasoning: string; personality: string;
+}
+
+function normalizeConcept(raw: Record<string, unknown>): Concept {
+  const str = (keys: string[], fallback = ""): string => {
+    for (const k of keys) if (typeof raw[k] === "string" && raw[k]) return raw[k] as string;
+    return fallback;
+  };
+  const caseRaw = str(["caseStyle", "case", "textCase", "letterCase", "case_style"], "lowercase");
+  const caseStyle: Concept["caseStyle"] =
+    caseRaw === "uppercase" || caseRaw === "upper" ? "uppercase"
+    : caseRaw === "titlecase" || caseRaw === "title" || caseRaw === "titleCase" ? "titlecase"
+    : "lowercase";
+  return {
+    conceptName: str(["conceptName", "concept_name", "name", "title", "conceptTitle"]),
+    font: str(["font", "fontFamily", "font_family", "typeface"]),
+    weight: str(["weight", "fontWeight", "font_weight"], "400"),
+    letterSpacing: str(["letterSpacing", "letter_spacing", "tracking"], "0"),
+    caseStyle,
+    textColour: str(["textColour", "textColor", "text_color", "text_colour", "color", "foreground", "fg"], "#1A1A1A"),
+    backgroundColour: str(["backgroundColour", "backgroundColor", "background_color", "background", "bg", "bgColor"], "#FAF8F4"),
+    reasoning: str(["reasoning", "rationale", "description", "reason", "explanation"]),
+    personality: str(["personality", "feel", "vibe", "mood", "character", "characterDescription"]),
+  };
 }
 
 function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: string }) {
@@ -66,7 +97,26 @@ function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: str
   );
 }
 
-const SYSTEM = `You are a typographic designer. Return three distinct wordmark concepts using only Google Fonts that are freely available. Each must feel genuinely different in personality. Justify each choice specifically. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
+const SYSTEM = `You are a typographic designer. Return three distinct wordmark concepts using only Google Fonts. ALL THREE concepts must strictly follow the style direction specified — do not deviate or mix in other styles. Each concept must differ in typeface and weight, but all must stay within the requested style territory. Justify each choice in one or two sentences.
+
+Return ONLY a raw JSON object with exactly this shape:
+{
+  "concepts": [
+    {
+      "conceptName": "Short name for this concept",
+      "font": "Google Font name exactly as used in Google Fonts URL",
+      "weight": "400",
+      "letterSpacing": "0.02em",
+      "caseStyle": "lowercase",
+      "textColour": "#1A1A1A",
+      "backgroundColour": "#FAF8F4",
+      "reasoning": "Why this font and treatment matches the brand and style direction.",
+      "personality": "Two or three words describing the feel"
+    }
+  ]
+}
+
+No markdown. No backticks. No extra keys. Valid JSON only.`;
 
 export default function Wordmark() {
   const [brandName, setBrandName] = useState("");
@@ -129,21 +179,26 @@ export default function Wordmark() {
   async function handleSubmit() {
     setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
     markVisited("wordmark");
+    const styleDef = STYLE_DEFINITIONS[styleDir] ?? "";
     const parts = [
       `Brand name: "${brandName}".`,
-      `Personality word: "${personality}".`,
-      `Style direction: ${styleDir}.`,
+      `Brand personality in one word: "${personality}".`,
+      `Style direction: ${styleDir}. Definition: ${styleDef}`,
+      `All three concepts MUST strictly follow the "${styleDir}" style direction. Do not stray into other style territories.`,
     ];
     if (inspirationUrl.trim()) parts.push(`Inspiration/reference: ${inspirationUrl}`);
     const prompt = parts.join(" ");
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
-      const data = JSON.parse(raw);
-      const toArr = (v: unknown) =>
-        Array.isArray(v) ? v : v && typeof v === "object" ? Object.values(v as object) : [];
-      data.concepts = toArr(data.concepts);
-      setOutput(data);
-      saveSession("wordmark", data, false);
+      const data = JSON.parse(raw) as Record<string, unknown>;
+      const rawConcepts = Array.isArray(data.concepts)
+        ? data.concepts
+        : data.concepts && typeof data.concepts === "object"
+        ? Object.values(data.concepts as object)
+        : [];
+      const normalised = { concepts: (rawConcepts as Record<string, unknown>[]).map(normalizeConcept) };
+      setOutput(normalised);
+      saveSession("wordmark", normalised as unknown as Record<string, unknown>, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
