@@ -897,6 +897,73 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
   );
 }
 
+// ─── Anthem modal (needs local state for verse toggle) ───────────────────────
+function AnthemModalBody() {
+  const [showTwo, setShowTwo] = useState(false);
+  return (
+    <div>
+      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75, marginBottom: 20 }}>
+        Title: Advance Australia Fair. Adopted 1984. Modified January 2021. The word &ldquo;young&rdquo; was changed to &ldquo;one&rdquo; to better reflect Australia&rsquo;s Indigenous history.
+      </p>
+      <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse one</p>
+      <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16, marginBottom: 24 }}>
+        Australians all let us rejoice,<br/>
+        For we are one and free,<br/>
+        With golden soil and wealth for toil,<br/>
+        Our home is girt by sea,<br/>
+        Our land abounds in nature&rsquo;s gifts,<br/>
+        Of beauty rich and rare,<br/>
+        In history&rsquo;s page let every stage,<br/>
+        Advance Australia Fair.<br/>
+        In joyful strains then let us sing,<br/>
+        Advance Australia Fair.
+      </p>
+      <button
+        onClick={() => setShowTwo((v) => !v)}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          padding: "8px 16px", borderRadius: 24,
+          border: `1.5px solid ${C.cerulean}`, color: C.cerulean,
+          background: showTwo ? `${C.cerulean}12` : "transparent",
+          fontFamily: SANS, fontWeight: 500, fontSize: 13,
+          cursor: "pointer", marginBottom: 20, transition: "background 0.2s",
+        }}
+      >
+        <ChevronDown
+          style={{ width: 14, height: 14, transition: "transform 0.25s", transform: showTwo ? "rotate(180deg)" : "rotate(0deg)" }}
+        />
+        {showTwo ? "Hide second verse" : "Show second verse"}
+      </button>
+      <AnimatePresence initial={false}>
+        {showTwo && (
+          <motion.div
+            key="verse-two"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            style={{ overflow: "hidden" }}
+          >
+            <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse two</p>
+            <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16 }}>
+              Beneath our radiant Southern Cross,<br/>
+              We&rsquo;ll toil with hearts and hands,<br/>
+              To make this Commonwealth of ours,<br/>
+              Renowned of all the lands,<br/>
+              For those who&rsquo;ve come across the seas,<br/>
+              We&rsquo;ve boundless plains to share,<br/>
+              With courage let us all combine,<br/>
+              To advance Australia Fair.<br/>
+              In joyful strains then let us sing,<br/>
+              Advance Australia Fair.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Modal body content per tile ─────────────────────────────────────────────
 const TILE_MODAL_BODY: Record<string, React.ReactNode> = {
   glance: (
@@ -934,39 +1001,7 @@ const TILE_MODAL_BODY: Record<string, React.ReactNode> = {
       ))}
     </div>
   ),
-  anthem: (
-    <div>
-      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75, marginBottom: 20 }}>
-        Title: Advance Australia Fair. Adopted 1984. Modified January 2021. The word &ldquo;young&rdquo; was changed to &ldquo;one&rdquo; to better reflect Australia&rsquo;s Indigenous history.
-      </p>
-      <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse one</p>
-      <p style={{ fontFamily: `${SERIF}`, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16, marginBottom: 24 }}>
-        Australians all let us rejoice,<br/>
-        For we are one and free,<br/>
-        With golden soil and wealth for toil,<br/>
-        Our home is girt by sea,<br/>
-        Our land abounds in nature&rsquo;s gifts,<br/>
-        Of beauty rich and rare,<br/>
-        In history&rsquo;s page let every stage,<br/>
-        Advance Australia Fair.<br/>
-        In joyful strains then let us sing,<br/>
-        Advance Australia Fair.
-      </p>
-      <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>Verse two</p>
-      <p style={{ fontFamily: `${SERIF}`, fontStyle: "italic", fontSize: 18, color: C.navy, lineHeight: 2, paddingLeft: 16 }}>
-        Beneath our radiant Southern Cross,<br/>
-        We&rsquo;ll toil with hearts and hands,<br/>
-        To make this Commonwealth of ours,<br/>
-        Renowned of all the lands,<br/>
-        For those who&rsquo;ve come across the seas,<br/>
-        We&rsquo;ve boundless plains to share,<br/>
-        With courage let us all combine,<br/>
-        To advance Australia Fair.<br/>
-        In joyful strains then let us sing,<br/>
-        Advance Australia Fair.
-      </p>
-    </div>
-  ),
+  anthem: <AnthemModalBody />,
   values: (
     <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
       Sourced directly from homeaffairs.gov.au. The Australian values include respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need.
