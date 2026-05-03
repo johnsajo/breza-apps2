@@ -1,4 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/Layout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Home from "@/pages/Home";
@@ -21,28 +22,40 @@ import About from "@/pages/About";
 import FeedbackSummary from "@/pages/FeedbackSummary";
 
 function Router() {
+  const [location] = useLocation();
+  
   return (
     <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/critique" component={Critique} />
-        <Route path="/brief" component={Brief} />
-        <Route path="/bridge" component={Bridge} />
-        <Route path="/translate" component={Translate} />
-        <Route path="/jury" component={Jury} />
-        <Route path="/colour" component={Colour} />
-        <Route path="/wordmark" component={Wordmark} />
-        <Route path="/library" component={Library} />
-        <Route path="/spark" component={Spark} />
-        <Route path="/tone" component={ToneOfVoice} />
-        <Route path="/trophy" component={Trophy} />
-        <Route path="/insight" component={Insight} />
-        <Route path="/lineage" component={Lineage} />
-        <Route path="/howitworks" component={HowItWorks} />
-        <Route path="/settings" component={Settings} />
-        <Route path="/about" component={About} />
-        <Route path="/feedback-summary" component={FeedbackSummary} />
-      </Switch>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location}
+          initial={{ opacity: 0, backgroundColor: "#000000" }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, backgroundColor: "#000000" }}
+          transition={{ duration: 0.3 }}
+        >
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/critique" component={Critique} />
+            <Route path="/brief" component={Brief} />
+            <Route path="/bridge" component={Bridge} />
+            <Route path="/translate" component={Translate} />
+            <Route path="/jury" component={Jury} />
+            <Route path="/colour" component={Colour} />
+            <Route path="/wordmark" component={Wordmark} />
+            <Route path="/library" component={Library} />
+            <Route path="/spark" component={Spark} />
+            <Route path="/tone" component={ToneOfVoice} />
+            <Route path="/trophy" component={Trophy} />
+            <Route path="/insight" component={Insight} />
+            <Route path="/lineage" component={Lineage} />
+            <Route path="/howitworks" component={HowItWorks} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/about" component={About} />
+            <Route path="/feedback-summary" component={FeedbackSummary} />
+          </Switch>
+        </motion.div>
+      </AnimatePresence>
     </Layout>
   );
 }
