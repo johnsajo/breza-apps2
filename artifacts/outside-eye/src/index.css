@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@theme {
+  --color-darkroom: #0D0D0D;
+  --color-surface1: #141414;
+  --color-surface2: #1C1C1C;
+  --color-hairline: #2A2A2A;
+  --color-warm-white: #F5F0E8;
+  --color-warm-grey: #B8B2A8;
+  --color-amber: #F5A623;
+  --color-amber-deep: #C47D0E;
+  --color-signal: #A3E635;
+  --color-pulse: #F87171;
+  --color-navy: #0F172A;
+  --color-moonlight: #F0F4F8;
+  --color-drift: #94A3B8;
+  --color-breeze: #B8D4E8;
+
+  --font-fraunces: 'Fraunces', Georgia, serif;
+  --font-mono: 'Departure Mono', 'Courier New', monospace;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --max-width-content: 740px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background-color: #0D0D0D;
+  }
+
+  body {
+    background-color: #0D0D0D;
+    color: #F5F0E8;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .fraunces-display {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: 'opsz' 72;
+    letter-spacing: -0.02em;
+  }
+
+  .fraunces-label {
+    font-family: 'Fraunces', Georgia, serif;
+  }
+
+  .field-base {
+    background-color: #1C1C1C;
+    border: 1px solid #2A2A2A;
+    border-radius: 0;
+    padding: 14px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    color: #F5F0E8;
+    transition: border-color 150ms ease;
+    width: 100%;
+    outline: none;
+  }
+
+  .field-base::placeholder {
+    color: #B8B2A8;
+  }
+
+  .field-base:focus {
+    border-color: #F5A623;
+  }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    background-color: #F5A623;
+    color: #0D0D0D;
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+    text-align: center;
+  }
+
+  .btn-primary:hover {
+    background-color: #C47D0E;
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .toggle-btn {
+    border: 1px solid #2A2A2A;
+    border-radius: 0;
+    background: transparent;
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B8B2A8;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+
+  .toggle-btn:hover {
+    border-color: #B8B2A8;
+  }
+
+  .toggle-btn.active {
+    background-color: #F5A623;
+    color: #0D0D0D;
+    border-color: #F5A623;
+  }
+
+  .content-width {
+    max-width: 740px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .hr-hairline {
+    border: none;
+    border-top: 1px solid #2A2A2A;
+  }
+
+  .label-mono {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #F5A623;
+  }
+
+  .label-mono-grey {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B8B2A8;
+  }
+}
