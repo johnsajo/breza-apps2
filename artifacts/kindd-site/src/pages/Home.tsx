@@ -36,6 +36,18 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openGuide, setOpenGuide] = useState<string | null>(null);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [contactSent, setContactSent] = useState(false);
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { name, email, subject, message } = contactForm;
+    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+    const mailtoLink = `mailto:connect@tbcworldwide.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+    setContactSent(true);
+    setTimeout(() => setContactSent(false), 4000);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,9 +96,9 @@ export default function Home() {
             <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
               About Breza + You
             </a>
-            <a href="mailto:connect@tbcworldwide.com" className="hover:opacity-70 transition-opacity">
+            <button onClick={() => scrollTo("contact")} className="hover:opacity-70 transition-opacity">
               Contact
-            </a>
+            </button>
             <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="text-accent hover:opacity-80 transition-opacity">
               Part of Breza + You
             </a>
@@ -116,7 +128,7 @@ export default function Home() {
                 <button onClick={() => scrollTo("guides")} className="text-left py-2">Guides</button>
                 <button onClick={() => scrollTo("how-it-works")} className="text-left py-2">How KINDD Works</button>
                 <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="py-2">About Breza + You</a>
-                <a href="mailto:connect@tbcworldwide.com" className="py-2">Contact</a>
+                <button onClick={() => scrollTo("contact")} className="text-left py-2">Contact</button>
                 <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="py-2 text-accent">Part of Breza + You</a>
               </div>
             </motion.div>
@@ -323,7 +335,106 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 8 - FOOTER */}
+      {/* SECTION 8 - CONTACT */}
+      <section id="contact" className="py-32 px-6 bg-background">
+        <div className="max-w-[640px] mx-auto">
+          <h2 className="text-4xl font-medium text-primary mb-4">Get in touch.</h2>
+          <p className="text-lg text-muted-foreground mb-12 leading-relaxed">
+            Questions, feedback, or just want to say hello. Fill in the form and your email client will open with everything pre-filled.
+          </p>
+
+          {contactSent && (
+            <div className="mb-8 px-5 py-4 rounded-lg bg-card border border-accent/40 text-muted-foreground text-sm font-mono">
+              Your email client should be opening now. If nothing happened, write directly to{" "}
+              <a href="mailto:connect@tbcworldwide.com" className="text-ring underline underline-offset-2">
+                connect@tbcworldwide.com
+              </a>.
+            </div>
+          )}
+
+          <form onSubmit={handleContactSubmit} className="space-y-6" data-testid="form-contact">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="contact-name" className="text-sm font-medium text-primary">
+                  Name
+                </label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  required
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                  placeholder="Your name"
+                  className="w-full bg-card border border-accent/40 rounded-lg px-4 py-3 text-primary placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors text-sm"
+                  data-testid="input-contact-name"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="contact-email" className="text-sm font-medium text-primary">
+                  Email
+                </label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  required
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                  placeholder="you@example.com"
+                  className="w-full bg-card border border-accent/40 rounded-lg px-4 py-3 text-primary placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors text-sm"
+                  data-testid="input-contact-email"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="contact-subject" className="text-sm font-medium text-primary">
+                Subject
+              </label>
+              <input
+                id="contact-subject"
+                type="text"
+                required
+                value={contactForm.subject}
+                onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                placeholder="What is this about?"
+                className="w-full bg-card border border-accent/40 rounded-lg px-4 py-3 text-primary placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors text-sm"
+                data-testid="input-contact-subject"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="contact-message" className="text-sm font-medium text-primary">
+                Message
+              </label>
+              <textarea
+                id="contact-message"
+                required
+                rows={6}
+                value={contactForm.message}
+                onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                placeholder="Write your message here."
+                className="w-full bg-card border border-accent/40 rounded-lg px-4 py-3 text-primary placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors text-sm resize-none"
+                data-testid="input-contact-message"
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <p className="text-xs font-mono text-muted-foreground">
+                Sends via your email client to connect@tbcworldwide.com
+              </p>
+              <button
+                type="submit"
+                className="bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-medium hover:bg-ring transition-colors"
+                data-testid="btn-contact-submit"
+              >
+                Open in email client.
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      {/* SECTION 9 - FOOTER */}
       <footer className="bg-[#0F172A] text-[#FAF6E8] pt-20 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
