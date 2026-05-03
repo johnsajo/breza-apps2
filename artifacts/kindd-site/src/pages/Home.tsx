@@ -900,14 +900,39 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
 // ─── Modal body content per tile ─────────────────────────────────────────────
 const TILE_MODAL_BODY: Record<string, React.ReactNode> = {
   glance: (
-    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
-      Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Currency: Australian dollar (AUD). Official language: None legislated. English is the de facto language. Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Governor-General appointed by the King on advice of the Prime Minister. Head of Government: Prime Minister.
-    </p>
+    <div>
+      {[
+        { label: "OFFICIAL NAME",     value: "Commonwealth of Australia" },
+        { label: "CAPITAL",           value: "Canberra" },
+        { label: "POPULATION",        value: "Approximately 27 million (ABS 2024)" },
+        { label: "CURRENCY",          value: "Australian dollar (AUD)" },
+        { label: "OFFICIAL LANGUAGE", value: "None legislated. English is the de facto language." },
+        { label: "GOVERNMENT",        value: "Federal parliamentary constitutional monarchy" },
+        { label: "HEAD OF STATE",     value: "King Charles III" },
+        { label: "GOVERNOR-GENERAL",  value: "Appointed by the King on advice of the Prime Minister" },
+        { label: "HEAD OF GOVERNMENT",value: "Prime Minister" },
+      ].map((row, i, arr) => (
+        <div key={row.label} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{row.label}</span>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.6 }}>{row.value}</span>
+        </div>
+      ))}
+    </div>
   ),
   states: (
-    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
-      Six states: New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), South Australia (Adelaide), Western Australia (Perth), Tasmania (Hobart). Two self-governing territories: Australian Capital Territory (Canberra), Northern Territory (Darwin). Seven external territories: Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands. Most Australians cannot name all seven external territories.
-    </p>
+    <div>
+      {[
+        { label: "SIX STATES",                  value: "New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), South Australia (Adelaide), Western Australia (Perth), Tasmania (Hobart)" },
+        { label: "SELF-GOVERNING TERRITORIES",  value: "Australian Capital Territory (Canberra), Northern Territory (Darwin)" },
+        { label: "EXTERNAL TERRITORIES",        value: "Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands" },
+        { label: "NOTE",                         value: "Most Australians cannot name all seven external territories. Now you can." },
+      ].map((row, i, arr) => (
+        <div key={row.label} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{row.label}</span>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.6 }}>{row.value}</span>
+        </div>
+      ))}
+    </div>
   ),
   anthem: (
     <div>
@@ -948,14 +973,39 @@ const TILE_MODAL_BODY: Record<string, React.ReactNode> = {
     </p>
   ),
   timezones: (
-    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
-      Australia spans five main time zones. AEST UTC+10: NSW, VIC, QLD, TAS, ACT. AEDT UTC+11: NSW, VIC, TAS, ACT during daylight saving. ACST UTC+9:30: SA and NT. ACDT UTC+10:30: SA during daylight saving. AWST UTC+8: WA. No daylight saving in WA, QLD, or NT. Lord Howe Island observes UTC+10:30 in winter and UTC+11 in summer.
-    </p>
+    <div>
+      {[
+        { label: "AEST UTC+10",      value: "New South Wales, Victoria, Queensland, Tasmania, ACT" },
+        { label: "AEDT UTC+11",      value: "New South Wales, Victoria, Tasmania, ACT during daylight saving" },
+        { label: "ACST UTC+9:30",    value: "South Australia, Northern Territory" },
+        { label: "ACDT UTC+10:30",   value: "South Australia during daylight saving" },
+        { label: "AWST UTC+8",       value: "Western Australia" },
+        { label: "NO DAYLIGHT SAVING", value: "Western Australia, Queensland, Northern Territory" },
+        { label: "LORD HOWE ISLAND", value: "UTC+10:30 in winter, UTC+11 in summer" },
+      ].map((row, i, arr) => (
+        <div key={row.label} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{row.label}</span>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.6 }}>{row.value}</span>
+        </div>
+      ))}
+    </div>
   ),
   daylightsaving: (
-    <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.75 }}>
-      Daylight saving runs from the first Sunday in October to the first Sunday in April. Clocks go forward one hour in October. Back one hour in April. States that observe it: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. Queensland held referendums in 1992 and 2010 and voted no both times.
-    </p>
+    <div>
+      {[
+        { label: "PERIOD",              value: "First Sunday in October to first Sunday in April" },
+        { label: "OCTOBER",             value: "Clocks go forward one hour" },
+        { label: "APRIL",               value: "Clocks go back one hour" },
+        { label: "STATES THAT OBSERVE", value: "New South Wales, Victoria, South Australia, Tasmania, ACT" },
+        { label: "STATES THAT DO NOT",  value: "Queensland, Western Australia, Northern Territory" },
+        { label: "QLD REFERENDUMS",     value: "Held in 1992 and 2010. Voted no both times." },
+      ].map((row, i, arr) => (
+        <div key={row.label} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{row.label}</span>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.6 }}>{row.value}</span>
+        </div>
+      ))}
+    </div>
   ),
 };
 
