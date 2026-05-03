@@ -6,6 +6,7 @@ const PULL_QUOTE_FIELDS = new Set([
   "verdict",
   "theLine",
   "overallVerdict",
+  "whatToSteal",
 ]);
 
 function flattenToText(obj: Record<string, unknown>, depth = 0): string {

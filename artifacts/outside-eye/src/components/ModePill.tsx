@@ -37,7 +37,7 @@ export default function ModePill() {
   const [mode, setMode] = useState<Mode>("demo");
   const [hasKey, setHasKey] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipTimer = useRef<ReturnType<typeof setTimeout>>();
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     function sync() {

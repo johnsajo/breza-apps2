@@ -2,6 +2,13 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { getVisited } from "@/lib/visited";
 
+const WHATS_NEW_KEY = "outsideeye_whatsnew_v1";
+const NEW_ROOMS = [
+  { num: "11", name: "The Trophy Room", desc: "The cultural reading behind why awarded work wins.", href: "/trophy" },
+  { num: "12", name: "The Insight Room", desc: "Three possible verdicts on whether your insight is real.", href: "/insight" },
+  { num: "13", name: "The Lineage Room", desc: "Trace a creative idea back to where it actually came from.", href: "/lineage" },
+];
+
 const STEALS = [
   {
     steal: "1990s outdoor won by removing half the words they thought they needed. Take your current headline and cut it by two-thirds. If the idea collapses without the words, it was never an outdoor idea — it was a print ad pretending to be one.",
@@ -68,6 +75,9 @@ const rooms = [
 
 export default function Home() {
   const [visited, setVisited] = useState<string[]>([]);
+  const [newsDismissed, setNewsDismissed] = useState(
+    () => localStorage.getItem(WHATS_NEW_KEY) === "1"
+  );
 
   useEffect(() => {
     setVisited(getVisited());
@@ -75,6 +85,11 @@ export default function Home() {
     window.addEventListener("outsideeye:visited", handler);
     return () => window.removeEventListener("outsideeye:visited", handler);
   }, []);
+
+  function dismissNews() {
+    localStorage.setItem(WHATS_NEW_KEY, "1");
+    setNewsDismissed(true);
+  }
 
   const steal = getCurrentSteal();
 
@@ -293,6 +308,109 @@ export default function Home() {
           );
         })}
       </div>
+
+      {!newsDismissed && (
+        <div
+          style={{
+            marginTop: 40,
+            border: "1px solid #2A2A2A",
+            backgroundColor: "#141414",
+            padding: "24px 28px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <p
+              style={{
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "#F5A623",
+              }}
+            >
+              Just Added
+            </p>
+            <button
+              onClick={dismissNews}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#5A5550",
+                padding: 0,
+                transition: "color 150ms ease",
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#5A5550")}
+            >
+              Got it ×
+            </button>
+          </div>
+          <p
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 14,
+              color: "#B8B2A8",
+              marginBottom: 20,
+              lineHeight: 1.55,
+            }}
+          >
+            Three new rooms added to the collection.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {NEW_ROOMS.map((r) => (
+              <Link key={r.num} href={r.href}>
+                <div
+                  style={{ display: "flex", gap: 16, alignItems: "flex-start", cursor: "pointer" }}
+                  onMouseEnter={(e) => {
+                    const name = (e.currentTarget as HTMLDivElement).querySelector(".new-room-name") as HTMLElement;
+                    if (name) name.style.color = "#F5A623";
+                  }}
+                  onMouseLeave={(e) => {
+                    const name = (e.currentTarget as HTMLDivElement).querySelector(".new-room-name") as HTMLElement;
+                    if (name) name.style.color = "#F5F0E8";
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans', system-ui, sans-serif",
+                      fontSize: 11,
+                      color: "#F5A623",
+                      opacity: 0.5,
+                      flexShrink: 0,
+                      paddingTop: 3,
+                    }}
+                  >
+                    {r.num}
+                  </span>
+                  <div>
+                    <p
+                      className="new-room-name fraunces-label"
+                      style={{ fontSize: 17, fontWeight: 500, color: "#F5F0E8", marginBottom: 2, transition: "color 150ms ease" }}
+                    >
+                      {r.name}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'DM Sans', system-ui, sans-serif",
+                        fontSize: 13,
+                        color: "#B8B2A8",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {r.desc}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 88 }} />
       <hr className="hr-hairline" />

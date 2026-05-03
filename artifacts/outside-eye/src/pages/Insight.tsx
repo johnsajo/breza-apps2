@@ -19,6 +19,23 @@ type InsightData = {
   followUpQuestion: string;
 };
 
+function normalizeInsightData(raw: Record<string, unknown>): InsightData {
+  const verdictRaw = String(
+    raw.verdict ?? raw.judgement ?? raw.classification ?? raw.result ?? "OBSERVED"
+  ).toUpperCase();
+  const verdict: InsightData["verdict"] =
+    verdictRaw === "FELT" ? "FELT"
+    : verdictRaw === "ASSUMED" ? "ASSUMED"
+    : "OBSERVED";
+  const insightStatement = String(
+    raw.insightStatement ?? raw.insight_statement ?? raw.insight ?? raw.statement ?? ""
+  );
+  const followUpQuestion = String(
+    raw.followUpQuestion ?? raw.follow_up_question ?? raw.followUp ?? raw.follow_up ?? raw.question ?? ""
+  );
+  return { verdict, insightStatement, followUpQuestion };
+}
+
 type SavedInsight = {
   observation: string;
   followUpAnswer?: string;
@@ -108,7 +125,7 @@ export default function Insight() {
     setLoading(true);
     try {
       const raw = await callOutsideEye(`Where I first noticed this: "${observation}"`, SYSTEM_R1, undefined, undefined);
-      const parsed = JSON.parse(raw) as InsightData;
+      const parsed = normalizeInsightData(JSON.parse(raw) as Record<string, unknown>);
       setRound1(parsed);
       setIsDemo(false);
       saveSession("insight", { observation, round1: parsed } as unknown as Record<string, unknown>, false);
@@ -142,7 +159,7 @@ export default function Insight() {
     try {
       const prompt = `Original observation: "${observation}". Follow-up answer: "${followUpAnswer}"`;
       const raw = await callOutsideEye(prompt, SYSTEM_R2, undefined, undefined);
-      const parsed = JSON.parse(raw) as InsightData;
+      const parsed = normalizeInsightData(JSON.parse(raw) as Record<string, unknown>);
       setRound2(parsed);
       saveSession("insight", { observation, followUpAnswer, round1, round2: parsed } as unknown as Record<string, unknown>, false);
     } catch (err: unknown) {

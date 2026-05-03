@@ -14,6 +14,29 @@ const SYSTEM = `You are a creative historian and pattern spotter. Given a creati
 type AncestorCard = { year: string; name: string; why: string };
 type LineageData = { oldest: AncestorCard; famous: AncestorCard; uncomfortable: AncestorCard };
 
+function normalizeCard(raw: unknown): AncestorCard {
+  const obj = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
+  return {
+    year: String(obj.year ?? obj.date ?? obj.era ?? obj.period ?? ""),
+    name: String(obj.name ?? obj.title ?? obj.work ?? obj.campaign ?? obj.piece ?? ""),
+    why: String(obj.why ?? obj.reason ?? obj.explanation ?? obj.description ?? obj.note ?? ""),
+  };
+}
+
+function normalizeLineageData(raw: Record<string, unknown>): LineageData {
+  return {
+    oldest: normalizeCard(
+      raw.oldest ?? raw.oldest_one ?? raw.original ?? raw.originalVersion ?? raw.card1
+    ),
+    famous: normalizeCard(
+      raw.famous ?? raw.famous_one ?? raw.wellKnown ?? raw.well_known ?? raw.card2
+    ),
+    uncomfortable: normalizeCard(
+      raw.uncomfortable ?? raw.uncomfortable_one ?? raw.recent ?? raw.tooClose ?? raw.too_close ?? raw.card3
+    ),
+  };
+}
+
 export default function Lineage() {
   const [idea, setIdea] = useState("");
   const [output, setOutput] = useState<LineageData | null>(null);
@@ -83,7 +106,7 @@ export default function Lineage() {
     setLoading(true);
     try {
       const raw = await callOutsideEye(`The creative idea: ${idea}`, SYSTEM, undefined, undefined);
-      const parsed = JSON.parse(raw) as LineageData;
+      const parsed = normalizeLineageData(JSON.parse(raw) as Record<string, unknown>);
       setOutput(parsed);
       setIsDemo(false);
       saveSession("lineage", parsed as unknown as Record<string, unknown>, false);
