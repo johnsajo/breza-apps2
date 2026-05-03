@@ -1,0 +1,222 @@
+You are rebuilding and significantly expanding the KINDD website. This is not a patch. This is a full content and design upgrade on the existing Vite + React 18 + Tailwind + Framer Motion + Lucide React build. Keep what works. Fix what does not. Add what is listed below.
+WHAT TO KEEP WITHOUT TOUCHING.
+Footer. All seven rows are correct. Dark navy background, cream text, app links, ecosystem links, contact, social placeholders, credit line, copyright. Do not touch it.
+Section structure and scroll behaviour. Single page, smooth scroll, sticky nav.
+Accordion mechanic for guides. Framer Motion AnimatePresence. Keep it.
+
+FONT FIX. PRIORITY ONE.
+Current fonts are rendering as system fallback. Fix this first.
+Import Geist Sans and Geist Mono from the Vercel CDN. Add to index.html head:
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+Use Geist as the font family throughout. Geist Mono for stamps, disclaimers, source notes only.
+Headings: weight 700. Nav items: weight 500. Body: weight 400. Subtext: weight 400.
+No Arial. No system fallback. If Geist does not load, fallback is Inter, then sans-serif.
+
+COLOUR REVAMP.
+Site base: warm cream #FAF6E8. Unchanged.
+Primary text: Midnight Navy #0F172A.
+Secondary text: warm grey #6B6B5E.
+Guides section and Tools section background: pure white #FFFFFF. Not cream. White. This makes the cards read and the buttons work.
+Cluster cards: white background, border-radius 16px, soft box-shadow (0 2px 16px rgba(15,23,42,0.07)), no harsh borders.
+Accent Breeze #B8D4E8: nav link colour for "Part of Breza + You" only. Nowhere else on the page.
+Cerulean #007BA7: all button outlines, all guide links, all interactive elements. Hover fills Cerulean with white text.
+Primary CTA buttons (hero, always free section): Midnight Navy fill, cream text, border-radius 32px. Hover shifts to Cerulean fill.
+No Breeze on buttons. Ever.
+
+HERO. REPLACE GRADIENT WITH SUPPLIED IMAGE.
+The hero image file is Kindd_Hero.png. It is a wide painterly illustration of an Australian suburban street. Upper portion is very pale, near-white sky. This is where the content sits.
+Set as full-bleed background-image. object-fit cover. object-position center top.
+Overlay: a gentle gradient from rgba(250,246,232,0.55) at top to rgba(250,246,232,0.15) at centre to transparent at bottom. This ensures the wordmark and hero line read cleanly against the pale sky without killing the illustration.
+Content positioned upper-centre. Wordmark, hero line, subtext, CTA all in the top 45 percent of the hero.
+Scroll-down arrow at bottom centre. Still present. Still fades on scroll.
+Do not use a div placeholder. Use the actual image.
+
+NAVIGATION FIXES.
+Remove the duplicate "Part of Breza + You" if it appears more than once. It belongs as the rightmost nav item only, in Breeze #B8D4E8, linking to brezaplusyou.com.au.
+Nav items: Home, Guides, Tools, Reference, How KINDD Works, Contact, Part of Breza + You.
+Font weight 500. Letter spacing slightly open. Geist Sans. Midnight Navy.
+Mobile hamburger unchanged. Smooth drawer open and close.
+
+SECTION 3. GUIDES. FULL REBUILD.
+Background: white #FFFFFF.
+Section heading: "Guides." Large. Midnight Navy. Geist Sans 700.
+Sub-line: "Plain language. Government sources. Updated monthly."
+Site-wide last updated notice directly below sub-line: "All guides last reviewed May 2026. Always check the official government source linked in each guide for the most current information." Geist Mono. Warm grey. Small. Centred.
+Eleven clusters now. Three-column grid on desktop. Two column on tablet. Single column on mobile. Each cluster is a rounded card, white background, 16px border radius, soft shadow. At the top of each card: a simple SVG icon placeholder. Navy stroke, 32x32, unique per cluster. Below that: cluster heading in Midnight Navy weight 600, one-line description in warm grey, then the guide list as accordion rows.
+Each guide accordion row: Cerulean text, chevron right that rotates on open. Expanded state: indented, soft warm white background #F8F8F5, plain language description two to three sentences, last updated stamp in Geist Mono warm grey small, then government link buttons. Button style: Cerulean outline, Cerulean text, cream fill, border-radius 8px, hover fills Cerulean with white text.
+CLUSTER ONE. Money and Work.
+SVG: coin or dollar symbol, navy stroke.
+Description: Tax, income, super, consumer rights.
+Guides: Tax Basics. Side Income and Gig Work. Money and Super. Consumer Rights.
+CLUSTER TWO. Home and Renting.
+SVG: house outline, navy stroke.
+Description: Where you live, who you live near, what it costs.
+Guides: Renting and Tenancy. Neighbours and Community. Council and Local Government. Utilities and Cost of Living.
+CLUSTER THREE. Health and Family.
+SVG: heart with cross, navy stroke.
+Description: Bodies, minds, kids, carers.
+Guides: Health and Medicare. Mental Health and Wellbeing. Kids and Families. Disability and Carer Support.
+CLUSTER FOUR. Civic and Legal.
+SVG: scales or gavel, navy stroke.
+Description: Voting, legal basics, safety, and your rights online.
+Guides: Voting and Civic Life. Legal Basics. Safety and Family Violence. Online Abuse and Your Rights. Cybercrime and Financial Fraud.
+CLUSTER FIVE. New to Australia.
+SVG: compass or map pin, navy stroke.
+Description: If you arrived recently, start here.
+Guides: Settling In. Health. Banking. Schools. Community. Qualifications.
+CLUSTER SIX. Business Setup.
+SVG: briefcase, navy stroke.
+Description: Sole trader, company, ABN, ASIC, GST. What to register and when.
+Guides: Business Structures Explained. Registering Your ABN. Setting Up a Company via ASIC. GST and BAS Basics. Business Name Registration.
+CLUSTER SEVEN. Employment and Workplace.
+SVG: handshake or ID badge, navy stroke.
+Description: Fair Work, job types, pay rates, your rights at work.
+Guides: Job Types and Contracts. Your Pay and Entitlements. Workplace Rights and Safety. Unfair Dismissal Basics. Wage Theft and Underpayment.
+CLUSTER EIGHT. Consumer and Fair Trade.
+SVG: shield or receipt, navy stroke.
+Description: Refunds, scams, debt collectors, product recalls.
+Guides: Refunds and Warranties. Dealing with Scams. Debt Collectors and Your Rights. Product Recalls. Price Gouging.
+CLUSTER NINE. Education and Training.
+SVG: graduation cap, navy stroke.
+Description: TAFE, apprenticeships, skills recognition, mature age options.
+Guides: TAFE by State. Apprenticeships and Traineeships. Skills Recognition for Migrants. Mature Age and Career Change. VET Student Loans.
+CLUSTER TEN. Government Jobs.
+SVG: building or flag, navy stroke.
+Description: The job boards most people do not know exist.
+Guides: APSJobs (Federal). I Work for NSW. Jobs Victoria. Queensland Government Careers. WA Government Jobs. SA Government Careers.
+CLUSTER ELEVEN. Students.
+SVG: open book, navy stroke.
+Description: Your rights as a student worker. Exploitation is not normal.
+Guides: Student Workplace Rights. Underpayment and Wage Theft. International Student Work Rights. Where to Report Exploitation. Mental Health Support for Students.
+Guide content for new clusters: use the placeholder format. Two to three sentences of plain language description, last updated May 2026 stamp, two to four real government links as CTA buttons. Real URLs from the locked government sources list.
+Special guide content for CLUSTER FOUR additions:
+Online Abuse and Your Rights expanded state: "If someone is harassing, threatening, or humiliating you online, you have legal recourse in Australia. The Online Safety Act 2021 gives the eSafety Commissioner power to have harmful content removed. Report directly at esafety.gov.au. For serious threats, contact police." Links: eSafety Commissioner (esafety.gov.au), 1800RESPECT (1800respect.org.au), Report to police (police.gov.au per state).
+Cybercrime and Financial Fraud expanded state: "If your credit card was used without your permission or you lost money to a scam, act in this order. One: contact your bank immediately and request a fraud hold. Two: report to ReportCyber at cyber.gov.au/report. Three: contact IDCARE at idcare.org, Australia's identity and cyber support service. Four: lodge a report with your local police for a reference number. You may be entitled to a chargeback from your bank. Do not delay. Every hour matters." Links: ReportCyber (cyber.gov.au/report), IDCARE (idcare.org), AFCA (afca.org.au), Scamwatch (scamwatch.gov.au).
+Student cluster, Underpayment and Wage Theft expanded state: "Underpaying a worker is not a grey area. It is a crime in Australia. If your employer is paying you below the minimum wage, not paying penalty rates, or asking you to work off the clock, you can report it. Fair Work takes anonymous reports. You cannot be fired for reporting. Your visa status does not affect your workplace rights." Links: Fair Work (fairwork.gov.au/pay), Wage Theft report (fairwork.gov.au/about-us/contact-us), Student legal help (legalaid.nsw.gov.au).
+
+SECTION 4. TOOLS. NEW SECTION.
+Background: white #FFFFFF.
+Section heading: "Tools." Large. Midnight Navy. Geist Sans 700.
+Sub-line: "Indicators only. Not financial, legal, or tax advice. Every tool tells you exactly what it is."
+Grid: three columns desktop, two tablet, one mobile. Same rounded card treatment as guide clusters.
+Each tool card: SVG icon placeholder top, tool name in Midnight Navy weight 600, one-line description in warm grey, and a "Open tool" button. Cerulean outline button. On click, card expands inline (Framer Motion AnimatePresence). X button top right of expanded state to close. Clean close animation.
+Inside every expanded tool state, before any inputs, show this disclaimer block in Geist Mono warm grey small, soft warm background #F8F8F5, border-radius 8px, padding:
+"This tool gives you an estimate only. It is not financial, legal, or tax advice. For accurate figures, speak to a registered professional or use the official government tool linked below."
+TOOL ONE. Tax Bracket Estimator.
+Description: Enter your annual income. See which bracket you sit in and a rough estimate of what you owe.
+Inputs: Annual income (number field). Resident or non-resident toggle.
+Output: Tax bracket, approximate tax payable, approximate take-home monthly. Shown clearly, not buried.
+Below output: link to ATO tax withheld calculator (ato.gov.au).
+TOOL TWO. Freelance Day Rate Calculator.
+Description: Work out what to charge. Enter your annual target and working pattern.
+Inputs: Annual income target. Weeks working per year (default 48). Days per week (default 5).
+Output: Day rate. Hourly rate (based on 8-hour day). Monthly equivalent.
+TOOL THREE. Loan Repayment Estimator.
+Description: Enter a loan amount, rate, and term. See a rough monthly repayment.
+Inputs: Loan amount. Annual interest rate. Loan term in years.
+Output: Monthly repayment. Total amount repaid. Total interest paid.
+Below output: Link to MoneySmart loan calculator (moneysmart.gov.au).
+TOOL FOUR. Solar Savings Estimator.
+Description: A rough guide only. Real quotes vary significantly.
+Inputs: Average monthly electricity bill. State selector.
+Output: Estimated annual saving range. Estimated payback period range.
+Below output: Links to energymadeeasy.gov.au and Clean Energy Council (cleanenergycouncil.org.au).
+TOOL FIVE. Business Structure Comparison.
+Description: Not advice. A plain-language comparison to help you ask the right questions.
+Output: A clean comparison table. Five rows: tax treatment, personal liability, setup cost, admin burden, best suited for. Four columns: Sole Trader, Partnership, Company, Trust. Cerulean header row. Alternating warm white and white rows. No inputs needed. Just the table, readable and clean.
+Below table: Link to business.gov.au/registrations/register-a-business.
+TOOL SIX. 100 Points ID Checker.
+Description: Check if you have enough ID before you walk in the door.
+Interface: Checklist of common documents. Each item shows its point value. Running total updates as user ticks items.
+Documents: Australian passport (70), Australian driver's licence (40), Medicare card (25), Australian birth certificate (70), Citizenship certificate (70), Centrelink card (25), Bank card with signature (25), Utility bill with name and address (25), Council rate notice (25), ATO notice of assessment (25).
+Output: Total points. Pass or not yet, with a plain message. If not enough: what else they might find.
+TOOL SEVEN. Passport Eligibility Checker.
+Description: New passport or renewal. Rough timeline only. Check DFAT for current processing times.
+Inputs: Do you have an Australian passport? Yes/No. If yes: is it expired by more than 3 years? Yes/No. Travel date.
+Output: New application or renewal pathway. Rough processing time. Priority processing note if travel is within 6 weeks. Link to passports.gov.au.
+TOOL EIGHT. Public Transport Finder.
+Description: Not a live timetable. The right app and site for your state.
+Interface: State selector. Eight options.
+Output per state: Card name, official website, official app name for iOS and Android, top-up method.
+NSW: Opal, transportnsw.info.
+VIC: myki, ptv.vic.gov.au.
+QLD: go card, translink.com.au.
+WA: SmartRider, transperth.wa.gov.au.
+SA: Metrocard, adelaidemetro.com.au.
+TAS: Greencard, metrotas.com.au.
+ACT: MyWay, transport.act.gov.au.
+NT: No card system. Darwinbus.com.au.
+TOOL NINE. Parking Fine Finder.
+Description: Where to pay your fine. State by state.
+Interface: State selector.
+Output: The correct authority, how to pay, how to dispute, how to request a payment plan. Hard-coded per state. Real URLs.
+NSW: Revenue NSW (revenue.nsw.gov.au).
+VIC: Fines Victoria (fines.vic.gov.au).
+QLD: State Penalties Enforcement Registry (sper.qld.gov.au).
+WA: Fines Enforcement Registry (wa.gov.au/organisation/fines-enforcement-registry).
+SA: Expiation Notice Branch (sa.gov.au/topics/driving-and-transport).
+TAS: Department of Justice (justice.tas.gov.au).
+ACT: Access Canberra (accesscanberra.act.gov.au).
+NT: Fines Recovery Unit (nt.gov.au).
+TOOL TEN. Working With Children Check Finder.
+Description: Who needs one, how to get it, what it costs. By state.
+Interface: State selector.
+Output: State name, who must have it, how to apply, cost, validity period, official link.
+Hard-code all eight states and territories.
+
+SECTION 5. REFERENCE. NEW SECTION.
+Background: warm cream #FAF6E8. Back to cream. Breathes after the white sections.
+Section heading: "About Australia." Midnight Navy. Geist Sans 700.
+Sub-line: "Hard-coded facts. Updated when they change. Sourced from official government records."
+Eight reference tiles in a grid. Same rounded card treatment. Each tile has a title, a brief intro line, and a "Read more" expand button. Same X to close mechanic.
+TILE ONE. Australia at a Glance.
+Content: Official name: Commonwealth of Australia. Capital: Canberra. Population: approximately 27 million (ABS 2024). Area: 7.692 million square kilometres. Currency: Australian dollar (AUD). Official language: None legislated. English is the de facto language. Government: Federal parliamentary constitutional monarchy. Head of State: King Charles III. Governor-General: appointed by the King on the advice of the Prime Minister. Head of Government: Prime Minister. Source: australia.gov.au.
+TILE TWO. States and Territories.
+Content: Six states. New South Wales (Sydney). Victoria (Melbourne). Queensland (Brisbane). South Australia (Adelaide). Western Australia (Perth). Tasmania (Hobart). Two self-governing territories. Australian Capital Territory (Canberra). Northern Territory (Darwin). Seven external territories. Christmas Island. Cocos (Keeling) Islands. Norfolk Island. Jervis Bay Territory. Ashmore and Cartier Islands. Coral Sea Islands. Heard Island and McDonald Islands. Note: Most Australians cannot name all seven external territories. Now you can.
+TILE THREE. National Anthem.
+Content: Full title: Advance Australia Fair. Adopted: 1984. Modified: January 2021. The word "young" in the first verse was changed to "one" to better reflect Australia's Indigenous history.
+Verse one: Australians all let us rejoice, For we are one and free, With golden soil and wealth for toil, Our home is girt by sea, Our land abounds in nature's gifts, Of beauty rich and rare, In history's page let every stage, Advance Australia Fair, In joyful strains then let us sing, Advance Australia Fair.
+Verse two: Beneath our radiant southern cross, We'll toil with hearts and hands, To make this Commonwealth of ours, Renowned of all the lands, For those who've come across the seas, We've boundless plains to share, With courage let us all combine, To advance Australia Fair, In joyful strains then let us sing, Advance Australia Fair.
+Source: pmc.gov.au.
+TILE FOUR. Australian Values.
+Content: Sourced directly from homeaffairs.gov.au. The Australian values include: respect for the equal worth, dignity and freedom of the individual, freedom of speech and association, freedom of religion and a secular government, support for parliamentary democracy and the rule of law, equality under the law, equality of men and women, equality of opportunity, peacefulness, and a spirit of egalitarianism that embraces mutual respect, tolerance, fair play, and compassion for those in need. Source: homeaffairs.gov.au/about-us/our-portfolios/multicultural-affairs/about-australian-citizenship/australians-values.
+TILE FIVE. Time Zones.
+Content: Australia has five main time zones. AEST Australian Eastern Standard Time. UTC+10. NSW, VIC, QLD, TAS, ACT. AEDT Australian Eastern Daylight Time. UTC+11. NSW, VIC, TAS, ACT during daylight saving. ACST Australian Central Standard Time. UTC+9:30. SA, NT. ACDT Australian Central Daylight Time. UTC+10:30. SA during daylight saving. AWST Australian Western Standard Time. UTC+8. WA. No daylight saving in WA, QLD, NT. Lord Howe Island observes UTC+10:30 in winter and UTC+11 in summer.
+TILE SIX. Daylight Saving.
+Content: Daylight saving runs from the first Sunday in October to the first Sunday in April. Clocks go forward one hour in October. Back one hour in April. States that observe it: NSW, VIC, SA, TAS, ACT. States that do not: QLD, WA, NT. QLD held referendums in 1992 and 2010 and voted no both times.
+TILE SEVEN. Emergency Numbers.
+Content: This tile does not expand. All content visible by default.
+000. Police, fire, ambulance. Use from any phone.
+112. Emergency from a mobile with no signal. Connects to 000.
+13 11 14. Lifeline. Crisis support. 24 hours.
+1800 737 732. 1800RESPECT. Family violence and sexual assault.
+131 114. Poisons Information Centre. 24 hours.
+132 500. State Emergency Service. Floods, storms.
+131 444. Police Assistance Line. Non-emergency.
+1300 22 4636. Beyond Blue. Mental health support.
+1800 551 800. Kids Helpline. 5 to 25 years old.
+Style: this tile gets a soft Signal green left border (#A3E635 at 60 percent opacity) to signal importance without alarming.
+TILE EIGHT. Public Holidays 2026.
+Content: National public holidays plus state variations. Accordion by state. New Year's Day 1 Jan, Australia Day 26 Jan, Good Friday, Easter Saturday, Easter Sunday, Easter Monday, Anzac Day 25 Apr, Christmas Day 25 Dec, Boxing Day 26 Dec apply nationally. State additions listed per state. Source: fairwork.gov.au/leave/public-holidays.
+
+SECTION 6. HOW KINDD WORKS. UNCHANGED IN CONTENT.
+Background: warm cream #FAF6E8.
+Three blocks. Same text as built. Font and colour fixes apply.
+SECTION 7. WHO KINDD IS FOR. UNCHANGED IN CONTENT.
+Background: off-cream #F0EAD6.
+All seven lines plus final two in Midnight Navy. Font fixes apply.
+SECTION 8. ALWAYS FREE. UNCHANGED IN CONTENT.
+Background: warm cream.
+SECTION 9. THE DISCLAIMER. UNCHANGED IN CONTENT.
+Background: off-cream.
+
+RESPONSIVE. ALL SECTIONS.
+Breakpoints: 320px, 375px to 414px, 768px, 1024px, 1280px to 1440px, 1920px and above.
+No horizontal scroll. No clipped cards. All grids stack to single column on mobile.
+Tool expanded states on mobile scroll internally if content is long. Do not let them overflow the viewport.
+INTERACTIONS. UNCHANGED PLUS NEW.
+Guide accordions: unchanged.
+Tool cards: "Open tool" button expands card. X button closes. Framer Motion AnimatePresence. Smooth height.
+Reference tiles: same expand mechanic.
+Emergency numbers tile: no expand. Always visible. No X button.
