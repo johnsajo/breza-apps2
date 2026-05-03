@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
 import { decodeShare } from "@/lib/sharelink";
 
-const SYSTEM = `You are a cultural critic and advertising historian. Given a creative category, era, region, market, or a feeling about awarded work, reveal the invisible context that gave that work permission to exist. Your output is not a list of winners. It is a cultural reading. Explain what was happening in the world — politically, socially, technologically, economically — that made this work possible. Explain why the same idea would have failed two years earlier. Name 2 or 3 landmark pieces with one sentence each on why they mattered. Identify the single pattern that connected the winners. State one thing the era got wrong that the next era corrected. Finally — and this is the most important field — give one specific, concrete, actionable creative move the user could steal from this era right now, based on exactly what they described. Not a general lesson. A specific thing they could do differently in the work they are currently making. Make it feel like advice from a mentor who read their brief, not a closing summary. Return ONLY a raw JSON object with keys: culturalContext (string), landmarkPieces (array of objects each with name string, year string, why string), winningPattern (string), correctedBy (string), whatToSteal (string). No markdown code fences. No backticks. No preamble.`;
+const SYSTEM = `You are a cultural critic and advertising historian. The user will give you something to analyse — it might be a creative category (outdoor, film, print), an era, a market or region, a specific brand, a specific campaign, or a feeling about awarded work. Whatever they give you, anchor your entire response to exactly that. If they name a specific brand — like Fevicol, Volkswagen, Nike, or any other — discuss only that brand's actual awarded work and advertising legacy. Do not substitute a different brand or a different era. Do not drift to generic examples. Stay locked to what was named. Reveal the invisible context that gave that work permission to exist. Your output is not a list of winners. It is a cultural reading. Explain what was happening in the world — politically, socially, technologically, economically — that made this work possible. Explain why the same idea would have failed two years earlier. Name 2 or 3 landmark pieces specific to what was described, with one sentence each on why they mattered. Identify the single pattern that connected the winners. State one thing that era or brand got wrong that the next era corrected. Finally — and this is the most important field — give one specific, concrete, actionable creative move the user could steal from this right now, based on exactly what they described. Not a general lesson. A specific thing they could do differently in the work they are currently making. Make it feel like advice from a mentor who read their brief. Return ONLY a raw JSON object with keys: culturalContext (string), landmarkPieces (array of objects each with name string, year string, why string), winningPattern (string), correctedBy (string), whatToSteal (string). No markdown code fences. No backticks. No preamble.`;
 
 export default function Trophy() {
   const [category, setCategory] = useState("");
@@ -23,7 +23,7 @@ export default function Trophy() {
 
   function buildUserPrompt() {
     const parts: string[] = [];
-    if (category.trim()) parts.push(`Category: ${category}.`);
+    if (category.trim()) parts.push(`What to analyse: ${category}.`);
     if (era.trim()) parts.push(`Era: ${era}.`);
     if (region.trim()) parts.push(`Market or region: ${region}.`);
     if (feeling.trim()) parts.push(`What I'm looking for: ${feeling}.`);
@@ -40,7 +40,7 @@ export default function Trophy() {
           "You don't need all four fields. A category alone works. An era alone works. A feeling alone — like 'work that made juries uncomfortable but still won' — works best of all.",
           "The Trophy Room doesn't give you a list of winners. It tells you what was happening in the world that gave certain work permission to exist. That context is where the real lesson is.",
         ],
-        example: "e.g. Category: outdoor. Era: 1990s. Or just a feeling: work that won by refusing to look like advertising.",
+        example: "e.g. Fevicol. Or: outdoor, 1990s. Or just a feeling: work that won by refusing to look like advertising.",
       }}
       demoKey="trophy"
       systemPrompt={SYSTEM}
@@ -50,13 +50,13 @@ export default function Trophy() {
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>
-            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Creative category</p>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Category, brand, or campaign</p>
             <input
               type="text"
               className="field-base"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. outdoor, film, digital, PR, print, integrated"
+              placeholder="e.g. Fevicol, outdoor, Nike, VW Think Small, 1990s film"
             />
           </div>
 
