@@ -6,6 +6,22 @@ interface StoredKey {
   savedAt: number;
 }
 
+async function callViaServer(
+  userPrompt: string,
+  systemPrompt: string
+): Promise<string> {
+  const res = await fetch(`${import.meta.env.BASE_URL}../api/ai/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ systemPrompt, userPrompt }),
+  });
+  if (res.status === 429) throw new Error("RATE_LIMIT");
+  if (!res.ok) throw new Error("API_ERROR");
+  const data = (await res.json()) as { text?: string; error?: string };
+  if (!data.text) throw new Error("API_ERROR");
+  return data.text;
+}
+
 export async function callOutsideEye(
   userPrompt: string,
   systemPrompt: string
@@ -14,7 +30,9 @@ export async function callOutsideEye(
     localStorage.getItem("outsideeye_key") || "null"
   ) as StoredKey | null;
 
-  if (!stored) throw new Error("NO_KEY");
+  if (!stored) {
+    return callViaServer(userPrompt, systemPrompt);
+  }
 
   const { provider, key } = stored;
   const model = getModel(provider);
