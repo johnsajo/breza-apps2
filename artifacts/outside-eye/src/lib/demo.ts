@@ -1179,6 +1179,88 @@ export const DEMO_RESPONSES: Record<string, object[]> = {
       ],
     },
   ],
+
+  trophy: [
+    {
+      culturalContext: "The 1990s outdoor renaissance happened as post-Cold War optimism collided with rising brand literacy. Audiences were learning to decode advertising for the first time — they knew they were being sold to, and they respected brands that respected that knowledge. The political poster tradition of the 1970s had trained cities to read a single image with a single idea. That literacy made creative ambition possible.",
+      landmarkPieces: [
+        { name: "The Economist Poster Series", year: "1988", why: "Proved outdoor could treat its audience as participants rather than targets, turning the city into a game played back." },
+        { name: "Nike 'Just Do It' Billboards", year: "1993", why: "Removed the product almost entirely and replaced it with a worldview, proving aspiration needs no demonstration at all." },
+        { name: "Wonderbra 'Hello Boys'", year: "1994", why: "Demonstrated that a single image with a single line, placed correctly, generates more earned media than the entire media buy." },
+      ],
+      winningPattern: "The winners stopped explaining the product and started expressing a point of view. Every piece assumed the audience was more intelligent than they were being treated.",
+      correctedBy: "The next era recognised that wit without warmth was cleverness performing as advertising. The 2000s reintroduced genuine feeling — not intelligence, but resonance.",
+    },
+    {
+      culturalContext: "Digital advertising in the 2010s was shaped by smartphone ubiquity colliding with post-GFC scepticism. Audiences who had survived financial collapse were allergic to aspiration and responded to participation, honesty, and brands willing to admit their own absurdity. The platforms rewarded content that generated conversation over content that broadcast, which inverted the entire creative logic of the industry.",
+      landmarkPieces: [
+        { name: "Old Spice 'The Man Your Man Could Smell Like'", year: "2010", why: "Collapsed the wall between commercial and entertainment, then invited the internet to live inside the joke with real-time responses." },
+        { name: "Always 'Like a Girl'", year: "2014", why: "Showed that purpose advertising could generate genuine emotion rather than borrow it wholesale from a charity model." },
+        { name: "Dove 'Real Beauty'", year: "2004", why: "The blueprint every brand in this era was consciously or unconsciously following — whether they knew it or not." },
+      ],
+      winningPattern: "The work that won treated the audience as co-authors. The message only existed when someone chose to pass it on. Reach became a byproduct of resonance rather than a budget line.",
+      correctedBy: "By 2018 the model had been corrupted by imitation. Every brand had a purpose campaign. The next era rebuilt credibility through specificity — doing less, but meaning it.",
+    },
+    {
+      culturalContext: "Work that unsettles juries usually arrives ahead of cultural permission. These are the pieces where the room goes quiet, the arguments run for an hour, and the final vote is uncomfortably close. They win because one or two jurors are willing to defend discomfort as evidence of honesty. The work is almost always about a subject that polite advertising had previously refused to touch directly.",
+      landmarkPieces: [
+        { name: "Benetton HIV/AIDS Campaign", year: "1992", why: "Put a dying man's final moments on a billboard and dared the world to look away. The industry wanted to. Juries could not." },
+        { name: "This Girl Can", year: "2015", why: "Broke every rule of aspirational fitness advertising by showing real women sweating and jiggling. Won because the jury recognised the alternative was a lie." },
+        { name: "Fearless Girl", year: "2017", why: "The jury argument was never about the craft — it was about whether a financial services firm had earned the right to speak this way. The award was given before that was resolved." },
+      ],
+      winningPattern: "Every uncomfortable winner refused the dominant aesthetic of its category. It looked like something you would not expect from that client in that medium at that moment.",
+      correctedBy: "The next era became suspicious of discomfort as a creative strategy. Being provocative because you are brave is a different thing from being provocative because you are trying to appear brave.",
+    },
+  ],
+
+  insight: [
+    {
+      verdict: "FELT",
+      insightStatement: "When a queue feels disrespectful, people stop weighing whether the wait was worth it — they start deciding whether the brand was.",
+      followUpQuestion: "",
+    },
+    {
+      verdict: "OBSERVED",
+      insightStatement: "",
+      followUpQuestion: "You watched someone else experience this. Tell me about the moment they realised it was a problem — not just an inconvenience, but something that changed how they felt about the brand.",
+    },
+    {
+      verdict: "ASSUMED",
+      insightStatement: "",
+      followUpQuestion: "You arrived at this conclusion, but who told it to you first? Where did the idea that this was a problem actually come from — was it research, a conversation, or a belief you already held?",
+    },
+  ],
+
+  insightFollowup: [
+    {
+      verdict: "FELT",
+      insightStatement: "The moment you're kept waiting by something that could have been different, you don't just lose patience — you lose a small piece of trust that you never consciously chose to give.",
+      followUpQuestion: "",
+    },
+    {
+      verdict: "OBSERVED",
+      insightStatement: "",
+      followUpQuestion: "You're still standing slightly outside the experience. What would have to be true for this to be something you felt personally — not something you understood intellectually?",
+    },
+  ],
+
+  lineage: [
+    {
+      oldest: { year: "1960", name: "Dove 'Real Women' Print Ads", why: "The first major brand to use non-professional, unretouched imagery as the core creative strategy rather than the exception." },
+      famous: { year: "2013", name: "Dove 'Real Beauty Sketches'", why: "The version most people in marketing cite when they want to justify authentic-looking production values." },
+      uncomfortable: { year: "2021", name: "Every DTC brand's UGC-style paid creative", why: "Shaky phone footage, 'organic' testimonials, lo-fi editing — the aesthetic has become the most overproduced format in digital advertising." },
+    },
+    {
+      oldest: { year: "1886", name: "Coca-Cola Script Logotype", why: "The first brand to demonstrate that a typeface alone, applied consistently enough, becomes more recognisable than any symbol it could have commissioned." },
+      famous: { year: "1994", name: "FedEx Wordmark (Lindon Leader)", why: "The piece every designer knows by name — the hidden arrow made purely typographic thinking feel like craft rather than a limitation." },
+      uncomfortable: { year: "2023", name: "The wave of sans-serif corporate rebrands", why: "Your client has seen them all. They will ask what makes yours different. Have the answer before they do." },
+    },
+    {
+      oldest: { year: "1950s", name: "Direct Mail 'Reply By' Deadline", why: "The original urgency device — postmarked deadlines created genuine scarcity because physical delivery made the constraint real." },
+      famous: { year: "2012", name: "Amazon Lightning Deals", why: "Took deadline urgency from an occasional tactic to a permanent platform feature, training a generation to treat the countdown as a trust signal." },
+      uncomfortable: { year: "2020", name: "Shopify Countdown Timer Apps", why: "The clock on your product page. The question is whether your scarcity is real — because your audience has been trained to open a private window and check." },
+    },
+  ],
 };
 
 export function getDemoResponse(key: string, index: number): object | undefined {

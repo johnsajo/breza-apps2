@@ -12,7 +12,10 @@ const rooms = [
   { num: "07", key: "wordmark", name: "The Wordmark Room", desc: "Type a brand name. Get three typographic wordmark concepts.", href: "/wordmark" },
   { num: "08", key: "library", name: "The Library", desc: "Books, channels, and resources worth your time. Curated by discipline.", href: "/library" },
   { num: "09", key: "spark", name: "The First Draft", desc: "Stuck on a blank page. Get three wildly different starting points.", href: "/spark" },
-  { num: "10", key: "tone", name: "The Voice Room", desc: "Describe your brand. Get a full tone of voice guide with rewrite examples.", href: "/tone", isNew: true },
+  { num: "10", key: "tone", name: "The Voice Room", desc: "Describe your brand. Get a full tone of voice guide with rewrite examples.", href: "/tone" },
+  { num: "11", key: "trophy", name: "The Trophy Room", desc: "Enter a category, era, or a feeling about awarded work. Get the cultural reading behind why it won.", href: "/trophy", isNew: true },
+  { num: "12", key: "insight", name: "The Insight Room", desc: "One question. Three possible verdicts. Find out whether your insight is actually real.", href: "/insight", isNew: true },
+  { num: "13", key: "lineage", name: "The Lineage Room", desc: "Describe a creative idea. Find out where it came from — and what you're uncomfortably close to.", href: "/lineage", isNew: true },
 ];
 
 export default function Home() {
@@ -61,7 +64,7 @@ export default function Home() {
           marginBottom: 24,
         }}
       >
-        Ten creative tools for designers, writers, marketers, and makers who want
+        Thirteen creative tools for designers, writers, marketers, and makers who want
         honest feedback on their work. Free to use. Bring a key you already have
         and it can stay that way, on your actual work.
       </p>
@@ -88,7 +91,7 @@ export default function Home() {
           marginBottom: 32,
         }}
       >
-        The Ten Rooms
+        The Thirteen Rooms
       </p>
 
       {visited.length > 0 && (
@@ -113,7 +116,7 @@ export default function Home() {
                 flexShrink: 0,
               }}
             />
-            {visited.length} of 10 rooms tried
+            {visited.length} of 13 rooms tried
           </p>
         </div>
       )}

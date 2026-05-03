@@ -129,6 +129,7 @@ export default function Library() {
     const url = encodeShare(state);
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
+      window.dispatchEvent(new Event("outsideeye:copied"));
       setTimeout(() => setShareCopied(false), 2000);
     });
   }

@@ -12,6 +12,9 @@ import Wordmark from "@/pages/Wordmark";
 import Library from "@/pages/Library";
 import Spark from "@/pages/Spark";
 import ToneOfVoice from "@/pages/ToneOfVoice";
+import Trophy from "@/pages/Trophy";
+import Insight from "@/pages/Insight";
+import Lineage from "@/pages/Lineage";
 import Settings from "@/pages/Settings";
 import HowItWorks from "@/pages/HowItWorks";
 import About from "@/pages/About";
@@ -32,6 +35,9 @@ function Router() {
         <Route path="/library" component={Library} />
         <Route path="/spark" component={Spark} />
         <Route path="/tone" component={ToneOfVoice} />
+        <Route path="/trophy" component={Trophy} />
+        <Route path="/insight" component={Insight} />
+        <Route path="/lineage" component={Lineage} />
         <Route path="/howitworks" component={HowItWorks} />
         <Route path="/settings" component={Settings} />
         <Route path="/about" component={About} />

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Nav from "./Nav";
 import Footer from "./Footer";
 import ScrollToTop from "./ScrollToTop";
+import Toast from "./Toast";
 
 function useModeClass() {
   useEffect(() => {
@@ -106,6 +107,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <Footer />
       <ScrollToTop />
+      <Toast />
     </div>
   );
 }
