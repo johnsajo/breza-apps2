@@ -92,6 +92,8 @@ export default function Colour() {
     setIsDemo(false);
   }
 
+  const isValid = desc.trim().length > 0 && industry.length > 0;
+
   async function handleSubmit() {
     setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
     markVisited("colour");

@@ -1,9 +1,18 @@
 const key = (room: string) => `outsideeye_session_${room}`;
 
+const ALL_ROOMS = [
+  "critique", "brief", "bridge", "translate",
+  "jury", "colour", "wordmark", "library", "spark",
+];
+
 export interface SessionData {
   output: Record<string, unknown>;
   isDemo: boolean;
   savedAt: number;
+}
+
+export interface RoomSession extends SessionData {
+  room: string;
 }
 
 export function saveSession(room: string, output: Record<string, unknown>, isDemo: boolean): void {
@@ -25,6 +34,17 @@ export function loadSession(room: string): SessionData | null {
 
 export function clearSession(room: string): void {
   localStorage.removeItem(key(room));
+}
+
+export function clearAllSessions(): void {
+  ALL_ROOMS.forEach(clearSession);
+}
+
+export function loadAllSessions(): RoomSession[] {
+  return ALL_ROOMS.flatMap((room) => {
+    const data = loadSession(room);
+    return data ? [{ ...data, room }] : [];
+  });
 }
 
 export function sessionAge(savedAt: number): string {
