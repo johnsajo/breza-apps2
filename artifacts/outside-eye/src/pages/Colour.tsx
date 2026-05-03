@@ -75,7 +75,14 @@ export default function Colour() {
     const prompt = `Brand/project description: ${desc}. Industry: ${industry}. Mood: ${selectedMoods.join(", ") || "unspecified"}. Output usage: ${usage || "unspecified"}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
-      setOutput(JSON.parse(raw));
+      const data = JSON.parse(raw);
+      if (data.palettes) {
+        data.palettes = data.palettes.map((p: Palette & { colors?: ColourToken[] }) => ({
+          ...p,
+          colours: p.colours ?? p.colors ?? [],
+        }));
+      }
+      setOutput(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
@@ -146,7 +153,7 @@ export default function Colour() {
                 <p className="fraunces-label" style={{ fontSize: 22, color: "#F5F0E8", fontWeight: 500, marginBottom: 8 }}>{palette.name}</p>
                 <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", marginBottom: 24, lineHeight: 1.6 }}>{palette.rationale}</p>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
-                  {palette.colours.map((c, ci) => <ColourSwatch key={ci} token={c} />)}
+                  {(palette.colours ?? []).map((c, ci) => <ColourSwatch key={ci} token={c} />)}
                 </div>
                 {[
                   { label: "Pairing Logic", value: palette.pairingLogic },
