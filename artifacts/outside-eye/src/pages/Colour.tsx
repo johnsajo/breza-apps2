@@ -296,12 +296,15 @@ export default function Colour() {
           </div>
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             {isDemo ? (
-              <button onClick={handleNextDemo} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#F5A623", background: "none", border: "1px solid #F5A623", padding: "5px 12px", cursor: "pointer", transition: "opacity 150ms ease" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
-              >
-                Try another example →
-              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5A5550" }}>{((demoIndex - 1) % 3) + 1} of 3</span>
+                <button onClick={handleNextDemo} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#F5A623", background: "none", border: "1px solid #F5A623", padding: "5px 12px", cursor: "pointer", transition: "opacity 150ms ease" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                >
+                  Try another example →
+                </button>
+              </div>
             ) : (
               <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}

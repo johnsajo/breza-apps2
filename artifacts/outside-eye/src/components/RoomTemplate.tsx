@@ -5,7 +5,7 @@ import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
 import ModeBadge from "./ModeBadge";
 import { callOutsideEye } from "@/lib/ai";
-import { getDemoResponse } from "@/lib/demo";
+import { getDemoResponse, getDemoCount } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import { encodeShare, type ShareState } from "@/lib/sharelink";
@@ -321,25 +321,30 @@ export default function RoomTemplate({
 
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             {isDemo ? (
-              <button
-                onClick={handleNextDemo}
-                style={{
-                  fontFamily: "'DM Sans', system-ui, sans-serif",
-                  fontSize: 11,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: "#F5A623",
-                  background: "none",
-                  border: "1px solid #F5A623",
-                  padding: "5px 12px",
-                  cursor: "pointer",
-                  transition: "opacity 150ms ease",
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
-              >
-                Try another example →
-              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5A5550" }}>
+                  {((demoIndex - 1) % getDemoCount(demoKey)) + 1} of {getDemoCount(demoKey)}
+                </span>
+                <button
+                  onClick={handleNextDemo}
+                  style={{
+                    fontFamily: "'DM Sans', system-ui, sans-serif",
+                    fontSize: 11,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "#F5A623",
+                    background: "none",
+                    border: "1px solid #F5A623",
+                    padding: "5px 12px",
+                    cursor: "pointer",
+                    transition: "opacity 150ms ease",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                >
+                  Try another example →
+                </button>
+              </div>
             ) : (
               <button
                 onClick={handleSubmit}
