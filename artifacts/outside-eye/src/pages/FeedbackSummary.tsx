@@ -82,6 +82,7 @@ function buildBrief(
     useful.forEach((r) => {
       const entry = feedback.find((f) => f.roomKey === r.key)!;
       lines.push(`  ${r.num}  ${r.name}  (rated ${formatDate(entry.at)})`);
+      if (entry.note) lines.push(`       "${entry.note}"`);
     });
   }
 
@@ -91,6 +92,7 @@ function buildBrief(
     notUseful.forEach((r) => {
       const entry = feedback.find((f) => f.roomKey === r.key)!;
       lines.push(`  ${r.num}  ${r.name}  (rated ${formatDate(entry.at)})`);
+      if (entry.note) lines.push(`       "${entry.note}"`);
     });
   }
 
@@ -245,47 +247,71 @@ export default function FeedbackSummary() {
               key={room.key}
               style={{
                 display: "flex",
-                alignItems: "center",
-                gap: 20,
+                flexDirection: "column",
                 padding: "18px 0",
                 borderBottom: "1px solid #1A1A1A",
                 opacity: wasVisited ? 1 : 0.4,
               }}
             >
-              <span
-                style={{
-                  fontFamily: "'Departure Mono', 'Courier New', monospace",
-                  fontSize: 12,
-                  color: "#F5A623",
-                  flexShrink: 0,
-                  width: 24,
-                }}
-              >
-                {room.num}
-              </span>
+              {/* Main row: number · name · status */}
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <span
+                  style={{
+                    fontFamily: "'Departure Mono', 'Courier New', monospace",
+                    fontSize: 12,
+                    color: "#F5A623",
+                    flexShrink: 0,
+                    width: 24,
+                  }}
+                >
+                  {room.num}
+                </span>
 
-              <p
-                className="fraunces-label"
-                style={{ fontSize: 18, fontWeight: 500, color: "#F5F0E8", flex: 1 }}
-              >
-                {room.name}
-              </p>
+                <p
+                  className="fraunces-label"
+                  style={{ fontSize: 18, fontWeight: 500, color: "#F5F0E8", flex: 1 }}
+                >
+                  {room.name}
+                </p>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-                {!wasVisited ? (
-                  <span
-                    style={{
-                      fontFamily: "'Departure Mono', monospace",
-                      fontSize: 11,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      color: "#3A3530",
-                    }}
-                  >
-                    Not tried
-                  </span>
-                ) : entry ? (
-                  <>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+                  {!wasVisited ? (
+                    <span
+                      style={{
+                        fontFamily: "'Departure Mono', monospace",
+                        fontSize: 11,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "#3A3530",
+                      }}
+                    >
+                      Not tried
+                    </span>
+                  ) : entry ? (
+                    <>
+                      <span
+                        style={{
+                          fontFamily: "'Departure Mono', monospace",
+                          fontSize: 11,
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: "#5A5550",
+                        }}
+                      >
+                        {formatDate(entry.at)}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "'Departure Mono', monospace",
+                          fontSize: 16,
+                          color: entry.rating === "up" ? "#7CBA6A" : "#F87171",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {entry.rating === "up" ? "↑" : "↓"}
+                      </span>
+                    </>
+                  ) : (
                     <span
                       style={{
                         fontFamily: "'Departure Mono', monospace",
@@ -295,33 +321,27 @@ export default function FeedbackSummary() {
                         color: "#5A5550",
                       }}
                     >
-                      {formatDate(entry.at)}
+                      Tried · not rated
                     </span>
-                    <span
-                      style={{
-                        fontFamily: "'Departure Mono', monospace",
-                        fontSize: 16,
-                        color: entry.rating === "up" ? "#7CBA6A" : "#F87171",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {entry.rating === "up" ? "↑" : "↓"}
-                    </span>
-                  </>
-                ) : (
-                  <span
-                    style={{
-                      fontFamily: "'Departure Mono', monospace",
-                      fontSize: 11,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      color: "#5A5550",
-                    }}
-                  >
-                    Tried · not rated
-                  </span>
-                )}
+                  )}
+                </div>
               </div>
+
+              {/* Note row */}
+              {entry?.note && (
+                <p
+                  style={{
+                    fontFamily: "'Departure Mono', 'Courier New', monospace",
+                    fontSize: 11,
+                    color: "#5A5550",
+                    fontStyle: "italic",
+                    marginTop: 8,
+                    paddingLeft: 44,
+                  }}
+                >
+                  "{entry.note}"
+                </p>
+              )}
             </div>
           );
         })}

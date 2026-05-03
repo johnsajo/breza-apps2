@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
-import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
+import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -81,6 +81,7 @@ export default function Wordmark() {
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("wordmark"));
+  const [note, setNote] = useState(() => getNote("wordmark"));
 
   const isValid = brandName.trim().length > 0 && personality.trim().length > 0 && styleDir.length > 0;
 
@@ -88,6 +89,11 @@ export default function Wordmark() {
     const next = rating === r ? null : r;
     setRating(next);
     if (next) saveFeedback("wordmark", next);
+  }
+
+  function handleNote(n: string) {
+    setNote(n);
+    saveNote("wordmark", n);
   }
 
   async function handleSubmit() {
@@ -175,7 +181,7 @@ export default function Wordmark() {
               Try again
             </button>
           </div>
-          <FeedbackRow rating={rating} onRate={handleRating} />
+          <FeedbackRow rating={rating} onRate={handleRating} note={note} onNote={handleNote} />
         </div>
       )}
       <div style={{ marginTop: 88 }} />

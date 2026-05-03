@@ -2,7 +2,7 @@ import { useState } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
-import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
+import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -50,6 +50,7 @@ export default function Colour() {
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("colour"));
+  const [note, setNote] = useState(() => getNote("colour"));
 
   const isValid = desc.trim().length > 0 && industry.length > 0;
 
@@ -57,6 +58,11 @@ export default function Colour() {
     const next = rating === r ? null : r;
     setRating(next);
     if (next) saveFeedback("colour", next);
+  }
+
+  function handleNote(n: string) {
+    setNote(n);
+    saveNote("colour", n);
   }
 
   function toggleMood(m: string) {
@@ -184,7 +190,7 @@ export default function Colour() {
               Try again
             </button>
           </div>
-          <FeedbackRow rating={rating} onRate={handleRating} />
+          <FeedbackRow rating={rating} onRate={handleRating} note={note} onNote={handleNote} />
         </div>
       )}
       <div style={{ marginTop: 88 }} />

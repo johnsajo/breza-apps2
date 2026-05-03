@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
+import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 
 const PULL_QUOTE_FIELDS = new Set([
   "theOneThing",
@@ -197,10 +197,14 @@ function GhostButton({
 export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProps) {
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState<Rating | null>(null);
+  const [note, setNote] = useState("");
+  const [noteSaved, setNoteSaved] = useState(false);
+  const [noteFocused, setNoteFocused] = useState(false);
 
   useEffect(() => {
     if (feedbackKey) {
       setRating(getFeedback(feedbackKey));
+      setNote(getNote(feedbackKey));
     }
   }, [feedbackKey]);
 
@@ -218,6 +222,19 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
     const next = rating === r ? null : r;
     setRating(next);
     if (feedbackKey && next) saveFeedback(feedbackKey, next);
+  }
+
+  function handleNoteSave() {
+    if (!feedbackKey) return;
+    saveNote(feedbackKey, note);
+    if (note.trim()) {
+      setNoteSaved(true);
+      setTimeout(() => setNoteSaved(false), 1500);
+    }
+  }
+
+  function handleNoteKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
   }
 
   return (
@@ -328,6 +345,55 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
             </GhostButton>
           </div>
         </div>
+
+        {rating && feedbackKey && (
+          <div
+            style={{
+              marginTop: 12,
+              paddingTop: 12,
+              borderTop: "1px solid #1A1A1A",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <input
+              type="text"
+              value={note}
+              placeholder="Add a note…"
+              onChange={(e) => setNote(e.target.value)}
+              onFocus={() => setNoteFocused(true)}
+              onBlur={() => { setNoteFocused(false); handleNoteSave(); }}
+              onKeyDown={handleNoteKeyDown}
+              style={{
+                flex: 1,
+                background: "none",
+                border: "none",
+                borderBottom: `1px solid ${noteFocused ? "#5A5550" : "#2A2A2A"}`,
+                outline: "none",
+                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontSize: 12,
+                color: "#B8B2A8",
+                padding: "4px 0",
+                transition: "border-color 150ms ease",
+              }}
+            />
+            {noteSaved && (
+              <span
+                style={{
+                  fontFamily: "'Departure Mono', monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#7CBA6A",
+                  flexShrink: 0,
+                }}
+              >
+                Saved
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

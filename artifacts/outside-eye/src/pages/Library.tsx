@@ -2,7 +2,7 @@ import { useState } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
-import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
+import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -34,11 +34,17 @@ export default function Library() {
   const [isDemo, setIsDemo] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("books");
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("library"));
+  const [note, setNote] = useState(() => getNote("library"));
 
   function handleRating(r: Rating) {
     const next = rating === r ? null : r;
     setRating(next);
     if (next) saveFeedback("library", next);
+  }
+
+  function handleNote(n: string) {
+    setNote(n);
+    saveNote("library", n);
   }
 
   const isValid = discipline.length > 0 && level.length > 0;
@@ -206,7 +212,7 @@ export default function Library() {
               Try again
             </button>
           </div>
-          <FeedbackRow rating={rating} onRate={handleRating} />
+          <FeedbackRow rating={rating} onRate={handleRating} note={note} onNote={handleNote} />
         </div>
       )}
       <div style={{ marginTop: 88 }} />
