@@ -282,7 +282,7 @@ export default function Colour() {
             </div>
           )}
 
-          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings for real palette generation.</p>}
+          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Pre-set example — not AI feedback on your input. Switch to Live for real responses.</p>}
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             {output.palettes.map((palette, pi) => (
               <div key={pi} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 32 }}>

@@ -1,0 +1,54 @@
+The demo mode is currently calling the AI API. That is wrong. Fix it completely using the rules below. Do not change anything else.
+THE DEMO RULE. ABSOLUTE.
+When the body has class mode-demo, or when localStorage.getItem('outsideeye_key') returns null or empty:
+
+No API call fires. Ever. Not even a test call.
+The hardcoded response from demoEntries.js for that room renders after 200ms.
+The input fields auto-fill via typewriter at 38 characters per second using the hardcoded entry fields.
+Fields type in sequence. 300ms pause between fields. 800ms delay on room mount before first character starts.
+User watches the fields fill. User presses Enter or clicks the button.
+Hardcoded response appears. 200ms delay. No spinner. No API call.
+Button below response reads: "TRY ANOTHER EXAMPLE" in Departure Mono uppercase. Cycles to the next of the 5 hardcoded entries. Different fields, different response each time.
+DEMO label appears bottom left of output card in Departure Mono warm-grey 11px uppercase.
+
+THE LIVE RULE.
+When the body has class mode-live AND localStorage.getItem('outsideeye_key') returns a non-empty string:
+
+Fields do not auto-fill. User types their own input.
+Button fires callOutsideEye in src/lib/ai.js with the user's input and the room's system prompt.
+Real API response renders in the output card.
+No DEMO label.
+
+THE SWITCH.
+The ModePill in nav controls this. DEMO pill active means demo behaviour. LIVE pill active means live behaviour. If user clicks LIVE with no key saved, pill stays on DEMO and tooltip appears: "Add a key in Settings first."
+THE FIX IN src/lib/ai.js.
+The callOutsideEye function must check for a key before doing anything:
+javascriptexport async function callOutsideEye(systemPrompt, userMessage) {
+  const key = localStorage.getItem('outsideeye_key');
+  if (!key) {
+    console.error('callOutsideEye called with no key. This should not happen in demo mode.');
+    return 'No key found. Switch to Demo Mode or add a key in Settings.';
+  }
+  // rest of provider detection and API call logic
+}
+THE FIX IN EVERY ROOM COMPONENT.
+Every room must check mode before firing. At the top of every room's submit handler:
+javascriptconst isDemo = !localStorage.getItem('outsideeye_key') || 
+               document.body.classList.contains('mode-demo');
+
+if (isDemo) {
+  // Use hardcoded demoEntries response. No API call.
+  setTimeout(() => {
+    setOutput(demoEntries.roomname[currentDemoIndex].response);
+  }, 200);
+  return;
+}
+
+// Only reaches here in live mode with a real key
+const result = await callOutsideEye(SYSTEM_PROMPT, userInput);
+setOutput(result);
+THE FIX IN src/lib/demoEntries.js.
+Every room must have exactly 5 entry objects. Each object has two keys: fields (the values that typewriter-fill the inputs) and response (the hardcoded string that renders on submit). No API call. No placeholder text. Real, well-written hardcoded responses that demonstrate what the room actually does.
+If any room is missing its 5 entries, write them now. Do not leave any room with fewer than 5.
+WHAT NOT TO TOUCH.
+Do not change the visual design. Do not change the routing. Do not change the colour palette or typography. Do not change the ModePill visual component. Only fix the demo vs live logic.

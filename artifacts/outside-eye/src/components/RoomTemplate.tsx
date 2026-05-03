@@ -266,7 +266,7 @@ export default function RoomTemplate({
             marginBottom: 16,
           }}
         >
-          Demo mode — add your key in Settings for feedback on your actual work.
+          Demo mode — showing a pre-set example. Your input is not being read.
         </p>
       )}
 

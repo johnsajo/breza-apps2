@@ -273,7 +273,7 @@ export default function Insight() {
 
       {inDemoMode && (
         <p style={{ fontFamily: "'DM Sans'", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5A5550", marginBottom: 16 }}>
-          Demo mode — add your key in Settings for feedback on your actual work.
+          Demo mode — showing a pre-set example. Your input is not being read.
         </p>
       )}
 
@@ -321,7 +321,7 @@ export default function Insight() {
           <div style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 32, marginBottom: 24 }}>
             {isDemo && (
               <p style={{ fontFamily: "'DM Sans'", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", marginBottom: 20 }}>
-                Demo Response — Add your key in Settings for feedback on your actual work.
+                Pre-set example — not AI feedback on your input. Switch to Live for real responses.
               </p>
             )}
 

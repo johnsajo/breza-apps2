@@ -6,7 +6,7 @@ type Mode = "demo" | "live";
 function getMode(): Mode {
   const override = localStorage.getItem("outsideeye_mode");
   if (override === "demo" || override === "live") return override as Mode;
-  return !!localStorage.getItem("outsideeye_key") ? "live" : "demo";
+  return "live";
 }
 
 export function applyMode(mode: Mode) {
@@ -34,7 +34,7 @@ const btnStyle = (active: boolean, activeColor: string): React.CSSProperties => 
 
 export default function ModePill() {
   const [, navigate] = useLocation();
-  const [mode, setMode] = useState<Mode>("demo");
+  const [mode, setMode] = useState<Mode>("live");
   const [hasKey, setHasKey] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -65,14 +65,13 @@ export default function ModePill() {
   }
 
   function handleLive() {
+    applyMode("live");
+    setMode("live");
     if (!hasKey) {
       clearTimeout(tooltipTimer.current);
       setShowTooltip(true);
-      tooltipTimer.current = setTimeout(() => setShowTooltip(false), 2000);
-      return;
+      tooltipTimer.current = setTimeout(() => setShowTooltip(false), 2500);
     }
-    applyMode("live");
-    setMode("live");
   }
 
   return (
@@ -114,14 +113,14 @@ export default function ModePill() {
             animation: "fadeInDown 150ms ease forwards",
           }}
         >
-          Add a key in{" "}
+          Using shared AI — add your own key in{" "}
           <span
             style={{ color: "#F5A623", cursor: "pointer" }}
             onClick={() => navigate("/settings")}
           >
             Settings
           </span>{" "}
-          first.
+          for private usage.
         </div>
       )}
     </div>

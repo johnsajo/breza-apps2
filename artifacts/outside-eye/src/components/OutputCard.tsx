@@ -251,7 +251,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
               color: "#B8B2A8",
             }}
           >
-            Demo Response — Add your key in Settings for feedback on your own work.
+            Pre-set example — not AI feedback on your input. Switch to Live for real responses.
           </p>
           <hr style={{ border: "none", borderTop: "1px solid #2A2A2A", marginTop: 16 }} />
         </div>

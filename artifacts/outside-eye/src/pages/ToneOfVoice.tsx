@@ -362,7 +362,7 @@ export default function ToneOfVoice() {
 
           {isDemo && (
             <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>
-              Demo Response — Add your key in Settings for a real voice guide.
+              Pre-set example — not AI feedback on your input. Switch to Live for real responses.
             </p>
           )}
 

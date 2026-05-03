@@ -199,7 +199,7 @@ export default function Lineage() {
 
       {inDemoMode && (
         <p style={{ fontFamily: "'DM Sans'", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5A5550", marginBottom: 16 }}>
-          Demo mode — add your key in Settings for feedback on your actual work.
+          Demo mode — showing a pre-set example. Your input is not being read.
         </p>
       )}
 
@@ -252,7 +252,7 @@ export default function Lineage() {
         <div>
           {isDemo && (
             <p style={{ fontFamily: "'DM Sans'", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", marginBottom: 20 }}>
-              Demo Response — Add your key in Settings for feedback on your actual work.
+              Pre-set example — not AI feedback on your input. Switch to Live for real responses.
             </p>
           )}
 
