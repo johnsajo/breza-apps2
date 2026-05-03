@@ -942,7 +942,12 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
   return (
     <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: cardShadow, padding: 28, breakInside: "avoid", marginBottom: 24 }}>
       <ClusterIcon id={cluster.id} color={cluster.color} />
-      <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 17, color: C.navy, marginTop: 14 }}>{cluster.name}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: 14 }}>
+        <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 17, color: C.navy }}>{cluster.name}</div>
+        <span style={{ flexShrink: 0, fontFamily: SANS, fontWeight: 500, fontSize: 11, color: cluster.color, background: cluster.color + "1F", borderRadius: 10, padding: "3px 9px", whiteSpace: "nowrap" }}>
+          {cluster.guides.length} {cluster.guides.length === 1 ? "guide" : "guides"}
+        </span>
+      </div>
       <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, marginTop: 4, lineHeight: 1.5 }}>{cluster.description}</div>
       <div style={{ height: 1, background: "#E8E0D0", margin: "16px 0" }} />
       {cluster.guides.map((guide) => (
