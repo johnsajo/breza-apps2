@@ -916,21 +916,123 @@ export default function Home() {
       </section>
 
       {/* ── SECTION 6 — HOW KINDD WORKS ─────────────────────────────────────── */}
-      <section id="how-it-works" style={{ padding: "96px 24px", background: C.cream }}>
-        <div className="max-w-6xl mx-auto">
-          <h2 style={{ fontSize: "2rem", fontWeight: 700, color: C.navy, textAlign: "center", marginBottom: 64 }}>Three things to know before you start.</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+      <section id="how-it-works" style={{ padding: "96px 24px", background: C.offCream }}>
+        <div className="max-w-5xl mx-auto">
+
+          {/* Eyebrow + heading */}
+          <div style={{ textAlign: "center", marginBottom: 72 }}>
+            <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: C.cerulean, fontWeight: 600 }}>How KINDD works</span>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 700, color: C.navy, marginTop: 12, marginBottom: 16, lineHeight: 1.15 }}>From government to you.<br />Three steps.</h2>
+            <p style={{ fontSize: "1.0625rem", color: C.grey, maxWidth: 520, margin: "0 auto", lineHeight: 1.7 }}>
+              KINDD does the legwork. You get plain language, the real source, and nothing else.
+            </p>
+          </div>
+
+          {/* Step cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {[
-              { h: "Free forever.", p: "No login. No account. No tier. Cookies clear, you start fresh. That is the whole arrangement." },
-              { h: "Government sources only.", p: "ATO, Services Australia, Fair Trading, Healthdirect, Scamwatch, every state tribunal. Linked at the end of every guide. Last updated date shown." },
-              { h: "Directions, not advice.", p: "We are not lawyers, accountants, or doctors. We are the person who knows which door to knock on. Once you find the door, the experts on the other side take it from there." },
-            ].map(({ h, p }) => (
-              <div key={h} style={{ paddingTop: 28, borderTop: `1px solid ${C.breeze}80` }}>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: C.navy, marginBottom: 12 }}>{h}</h3>
-                <p style={{ color: C.grey, lineHeight: 1.75, fontSize: "0.95rem" }}>{p}</p>
-              </div>
+              {
+                num: "01",
+                label: "We find the source.",
+                body: "Every guide begins at an official government website — the ATO, Services Australia, state tribunals, Fair Trading, Healthdirect, Scamwatch. No forums. No opinion pieces. Government only, every time.",
+                aside: "Sources include ATO · Services Australia · ASIC · Fair Work Commission · state CAT / NCAT tribunals · Healthdirect · Scamwatch · Department of Home Affairs · ABS",
+                icon: (
+                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
+                    <rect x="10" y="8" width="28" height="36" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
+                    <line x1="17" y1="18" x2="31" y2="18" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="17" y1="24" x2="31" y2="24" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="17" y1="30" x2="26" y2="30" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
+                    <circle cx="38" cy="38" r="8" stroke={C.navy} strokeWidth="2" fill={C.offCream}/>
+                    <line x1="43.5" y1="43.5" x2="48" y2="48" stroke={C.navy} strokeWidth="2.5" strokeLinecap="round"/>
+                    <circle cx="38" cy="38" r="2.5" fill={C.cerulean}/>
+                  </svg>
+                ),
+              },
+              {
+                num: "02",
+                label: "We translate it.",
+                body: "Dense legislative language becomes plain sentences. We keep every fact. We cut every hedge. The result is what the information means — not what it says, in the way it was written for lawyers.",
+                aside: "Plain English · No jargon · No disclaimers beyond what is necessary · No opinion · Accurate to the source",
+                icon: (
+                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
+                    <rect x="6" y="12" width="20" height="28" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
+                    <line x1="11" y1="20" x2="21" y2="20" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
+                    <line x1="11" y1="25" x2="21" y2="25" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
+                    <line x1="11" y1="30" x2="18" y2="30" stroke={C.grey} strokeWidth="1.75" strokeLinecap="round"/>
+                    <path d="M29 28 L35 28" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M32 24 L36 28 L32 32" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="37" y="12" width="14" height="28" rx="3" stroke={C.navy} strokeWidth="2" fill={C.cream}/>
+                    <line x1="40" y1="20" x2="48" y2="20" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
+                    <line x1="40" y1="25" x2="48" y2="25" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
+                    <line x1="40" y1="30" x2="45" y2="30" stroke={C.cerulean} strokeWidth="1.75" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+              {
+                num: "03",
+                label: "We send you there.",
+                body: "Every guide ends with a direct link back to the official source. You verify the detail yourself. You apply. You speak to the expert. KINDD's job is done the moment you reach the right door.",
+                aside: "Direct links to official sites · Last-updated date on every guide · No middle layer between you and the source",
+                icon: (
+                  <svg width={56} height={56} viewBox="0 0 56 56" fill="none">
+                    <rect x="10" y="16" width="30" height="22" rx="3" stroke={C.navy} strokeWidth="2" fill={C.warmWhite}/>
+                    <path d="M20 27 L30 27" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M27 23 L31 27 L27 31" stroke={C.cerulean} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M40 20 L46 27 L40 34" stroke={C.navy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                    <circle cx="46" cy="27" r="4" fill={C.cerulean} stroke={C.cerulean}/>
+                    <line x1="44.5" y1="27" x2="47.5" y2="27" stroke={C.white} strokeWidth="1.5" strokeLinecap="round"/>
+                    <line x1="46" y1="25.5" x2="46" y2="28.5" stroke={C.white} strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+            ].map(({ num, label, body, aside, icon }, i) => (
+              <motion.div
+                key={num}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "72px 1fr auto",
+                  gap: "0 32px",
+                  alignItems: "start",
+                  padding: "40px 0",
+                  borderBottom: i < 2 ? `1px solid ${C.breeze}50` : "none",
+                }}
+                className="md:grid-cols-[72px_1fr_240px]"
+              >
+                {/* Number */}
+                <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: "2.5rem", fontWeight: 700, color: C.cerulean, lineHeight: 1, paddingTop: 6 }}>
+                  {num}
+                </div>
+
+                {/* Body */}
+                <div>
+                  <div style={{ marginBottom: 14 }}>{icon}</div>
+                  <h3 style={{ fontSize: "1.3125rem", fontWeight: 700, color: C.navy, marginBottom: 12, lineHeight: 1.25 }}>{label}</h3>
+                  <p style={{ fontSize: "1rem", color: C.grey, lineHeight: 1.75, maxWidth: 540 }}>{body}</p>
+                </div>
+
+                {/* Aside */}
+                <div style={{ display: "none" }} className="md:block">
+                  <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, lineHeight: 1.9, paddingTop: 8, borderLeft: `2px solid ${C.breeze}80`, paddingLeft: 16 }}>{aside}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
+
+          {/* Guarantee strip */}
+          <div style={{ marginTop: 64, padding: "32px 40px", background: C.navy, borderRadius: 16, display: "flex", flexWrap: "wrap", gap: 32, alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <p style={{ fontWeight: 700, fontSize: "1.125rem", color: C.cream, marginBottom: 6 }}>The whole arrangement.</p>
+              <p style={{ fontSize: "0.9rem", color: C.breeze, lineHeight: 1.65, maxWidth: 480 }}>
+                No login. No account. No tier. No paywall. No ads. No affiliate links. No recommendations. Government sources only. Free because some things should be.
+              </p>
+            </div>
+            <CtaButton onClick={() => scrollTo("guides")}>Browse the guides.</CtaButton>
+          </div>
+
         </div>
       </section>
 
