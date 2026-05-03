@@ -1,0 +1,125 @@
+KINDD. REPLIT PROMPT.
+
+Build a complete marketing and reference website called KINDD. Single-page app with smooth scroll sections. Vite + React 18 + Tailwind CSS + Framer Motion for hero animations only + Lucide React for icons.
+
+AESTHETIC.
+Background: warm cream #FAF6E8 throughout the entire site. No dark mode. No toggle.
+Primary text: Midnight Navy #0F172A.
+Secondary text: warm grey #6B6B5E.
+Accent: Breeze #B8D4E8 for links, borders, and interactive highlights.
+Interactive hover: Cerulean #007BA7.
+Font: Geist Sans for all UI and body. Geist Mono for last-updated stamps, source links, and disclaimer text. Import both from Google Fonts or Vercel CDN.
+No shadows that feel heavy. Soft, warm, low-contrast throughout.
+No cards with sharp borders. Use soft background fills, #F0EAD6 or similar warm off-cream, to differentiate sections and clusters.
+Spacing is generous. This site breathes.
+
+NAVIGATION.
+Sticky top. Blurs on scroll with backdrop-filter blur. Background becomes cream at 90 percent opacity on scroll.
+Left: wordmark "kindd" in Geist Sans, medium weight, Midnight Navy.
+Right: menu items. Home, Guides, How KINDD Works, About Breza + You, Contact.
+Hamburger menu on mobile. Smooth open and close animation.
+Prominent link in nav: "Part of Breza + You" in Breeze #B8D4E8, links to brezaplusyou.com.au.
+No per-app emails. Contact links to connect@tbcworldwide.com.
+
+SECTION 1. HERO.
+Full-bleed hero section. Minimum 100vh.
+Background: a warm cream placeholder div, full width, full height, labelled clearly "Hero image: Australian suburban street, painterly illustration, warm cream palette. Replace with final asset." Styled as a soft warm cream-to-blush gradient as stand-in. No stock photos.
+Overlay: subtle warm cream gradient from bottom, 40 percent opacity, so text reads cleanly over the image without killing it.
+Content centred horizontally. Positioned upper-centre to allow image detail below.
+Wordmark: "kindd" large, Geist Sans, Midnight Navy.
+Hero line directly below: "You are one of our kind." Large display size. Midnight Navy. Geist Sans medium weight.
+Subtext one line below that: "A plain-language guide to Australian life. Sourced from government. Updated monthly. Always free." Geist Sans, warm grey #6B6B5E, smaller size.
+CTA button below subtext: "Browse the guides." Filled button. Background Midnight Navy. Text cream. Soft rounded corners. Hover state shifts to Cerulean #007BA7.
+Scroll-down arrow at bottom centre. Lucide React ChevronDown. Disappears after hero scroll. Subtle pulse animation via Framer Motion.
+Go-to-top arrow fixed bottom right. Lucide React ArrowUp. Appears after hero scroll. Cream background, navy icon, soft border.
+
+SECTION 2. THE PREMISE.
+Background: warm cream #FAF6E8.
+Heading: "Why KINDD exists." Geist Sans, Midnight Navy, large.
+Body copy in three short paragraphs, warm grey, comfortable reading width, max 680px, centred:
+Paragraph one: "Adult life in Australia comes with no manual. There are forms to fill. Bodies to call. Rights you have but were never told about. Money you might be owed. Doors you did not know to knock on."
+Paragraph two: "KINDD points you to the right door. Sixteen plain-language guides covering tax, renting, health, family, neighbours, money, voting, and the rest of it. We do not give advice. We tell you where to go and what to ask when you get there."
+Paragraph three: "Every word here came from a government source. Every link goes back to one. Updated monthly. Free forever. No account. No catch."
+
+SECTION 3. THE SIXTEEN GUIDES.
+Background: slightly warmer off-cream #F0EAD6 to differentiate.
+Heading: "Sixteen guides. One small world."
+Sub-line: "Pick a cluster. Pick a guide. Get the right link, the right script, the right next step."
+Five cluster tiles. Stacked on mobile. Two or three column grid on desktop. Each cluster tile has a soft cream background, generous padding, soft border in Breeze #B8D4E8 at low opacity.
+Each cluster has a cluster heading in Midnight Navy, a one-line description in warm grey, and the guide names listed below as clickable items in Cerulean #007BA7.
+Cluster one. Money and Work. "Tax, income, super, consumer rights." Guides: Tax Basics, Side Income and Gig Work, Money and Super, Consumer Rights.
+Cluster two. Home and Renting. "Where you live, who you live near, what it costs." Guides: Renting and Tenancy, Neighbours and Community, Council and Local Government, Utilities and Cost of Living.
+Cluster three. Health and Family. "Bodies, minds, kids, carers." Guides: Health and Medicare, Mental Health and Wellbeing, Kids and Families, Disability and Carer Support.
+Cluster four. Civic and Legal. "Voting, legal basics, safety." Guides: Voting and Civic Life, Legal Basics, Safety and Family Violence.
+Cluster five. New to Australia. "If you arrived recently, start here." Guides: Settling In, Health, Banking, Schools, Community, Qualifications.
+Each guide name, when clicked, expands inline or scrolls to a dedicated section below with the guide content. Use accordion expand for v1. Clean open and close animation via Framer Motion.
+Each guide expanded state shows: a two to three sentence plain-language description of what the guide covers, a last-updated stamp in Geist Mono warm grey, and two to four official government links as CTA buttons. Button style: outlined, Cerulean border and text, cream background, hover fills Cerulean with cream text.
+Guide content placeholder text for each: "Guide content coming. Will include plain-language overview, what to expect, and direct links to official government sources." Replace with real content before launch.
+Last updated stamp format: "Last updated: May 2026. Always check the official source for current information." Geist Mono. Warm grey. Small.
+
+SECTION 4. HOW KINDD WORKS.
+Background: warm cream #FAF6E8.
+Heading: "Three things to know before you start."
+Three equal blocks. Side by side on desktop. Stacked on mobile. No heavy card styling. Just generous padding and a soft top border in Breeze.
+Block one. "Free forever." Body: "No login. No account. No tier. Cookies clear, you start fresh. That is the whole arrangement."
+Block two. "Government sources only." Body: "ATO, Services Australia, Fair Trading, Healthdirect, Scamwatch, every state tribunal. Linked at the end of every guide. Last updated date shown."
+Block three. "Directions, not advice." Body: "We are not lawyers, accountants, or doctors. We are the person who knows which door to knock on. Once you find the door, the experts on the other side take it from there."
+
+SECTION 5. WHO KINDD IS FOR.
+Background: slightly warmer off-cream #F0EAD6.
+Heading: "For the people no one wrote a manual for."
+Body as single-line paragraphs, each separated by generous spacing. Warm grey. Max width 680px. Centred.
+"For the freelancer who just got their first invoice and does not know what to do with it."
+"For the renter staring at a leaky ceiling and a quiet landlord."
+"For the parent looking for somewhere free for the kids on Saturday."
+"For the new citizen working out how Medicare actually works."
+"For the small business owner who got a Centrelink letter and panicked."
+"For the tradie whose neighbour just took down a shared fence without asking."
+"For anyone who has ever Googled something at 11pm and ended up on a forum from 2014."
+"KINDD is for them. KINDD is for you." Last two lines in Midnight Navy, slightly larger. The rest warm grey.
+
+SECTION 6. ALWAYS FREE.
+Background: warm cream #FAF6E8.
+Heading: "It costs nothing. It will always cost nothing."
+Body: "KINDD is free because some things should be open. Tax. Tenancy. Health. Mental health. The basics of being an adult here. None of that should sit behind a paywall. No tier. No upgrade. No premium. Just the guides."
+CTA button: "Start with a guide." Same style as hero CTA. Scrolls to Section 3.
+
+SECTION 7. THE DISCLAIMER.
+Background: #F0EAD6.
+Heading: "Before you use KINDD." Smaller heading size than other sections.
+Body in Geist Mono, warm grey, small size, max width 640px, centred:
+"Information here was last updated this month. Always check the official government website linked at the end of each guide for the most current details."
+"KINDD is not a substitute for professional advice. For tax, see a registered tax agent. For legal matters, see a lawyer or your local community legal centre. For medical concerns, see a doctor."
+"KINDD points you to the right place. The experts there take it from there."
+
+SECTION 8. FOOTER.
+Background: Midnight Navy #0F172A. Text: warm cream #FAF6E8. This is the only dark element on the page. Grounds the footer without breaking the site aesthetic.
+Row one. Wordmark "kindd" left aligned. One-line tagline right aligned or below on mobile: "You are one of our kind."
+Row two. Lowercase wordmark links to the other twelve app sites, separated by mid-dots. All in warm grey, hover Breeze. compyr, alertss, turnd, yourrr, novlit, sharpend, moodframe, the outside eye, rostrr, platd, sortd, earnt.
+Row three. TBC ecosystem links. tbcworldwide.com, brezaplusyou.com.au, taracollective.org, celes13.com. Same style as row two.
+Row four. Contact: connect@tbcworldwide.com. Single line. Linked. Breeze colour.
+Row five. Social placeholder icons. Lucide React. LinkedIn, Instagram, X, YouTube. Greyed at 40 percent opacity. No live URLs yet.
+Row six. "Part of Breza + You. Tech Division of TBC Worldwide. Free because some things should be." Linked to brezaplusyou.com.au. Small. Warm grey.
+Row seven. Copyright: "2026 KINDD. All rights reserved." Small. Warm grey.
+
+RESPONSIVE RULES.
+Breakpoints: 320px, 375px to 414px, 768px, 1024px, 1280px to 1440px, 1920px and above.
+No horizontal scroll. No clipped content. No layout collapse.
+Navigation hamburger on mobile.
+All section grids stack to single column on mobile.
+Hero text scales down gracefully. CTA remains full-width button on mobile.
+Footer rows stack vertically on mobile. App links wrap.
+
+INTERACTIONS.
+Scroll-down arrow on hero. Disappears on scroll. Framer Motion fade out.
+Go-to-top arrow fixed bottom right. Appears after hero scroll. Framer Motion fade in.
+Nav blur on scroll. Backdrop filter blur, cream at 90 percent opacity.
+Guide accordion open and close. Framer Motion AnimatePresence. Smooth height transition.
+CTA hover states. Colour shifts as specified. No heavy transforms.
+No other animations. No parallax. No scroll-triggered reveals. KINDD is calm.
+
+WHAT NOT TO BUILD.
+No login. No auth. No Supabase. No backend. No API calls. No forms except contact link which is a mailto. No chat. No comments. No user submissions. No state management library. No database. No cookies beyond localStorage for guide expand state memory.
+
+GITHUB.
+Repo name: kindd-site. README written before push. Clean commits.
