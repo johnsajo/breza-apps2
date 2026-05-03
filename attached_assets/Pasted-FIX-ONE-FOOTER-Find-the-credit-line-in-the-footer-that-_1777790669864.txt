@@ -1,0 +1,58 @@
+FIX ONE. FOOTER.
+Find the credit line in the footer that reads: "Part of Breza + You. Tech Division of TBC Worldwide. Free because some things should be."
+Replace with: "Part of Breza + You. Tech Division of TBC Worldwide."
+Remove "Free because some things should be." entirely. From the footer only. That line is gone from the site. The Always Free section carries that message. The footer does not need to repeat it.
+
+FIX TWO. GOVERNMENT TOOLS GRID.
+Below the three owned tools section, add a new sub-section. Same white background. No new section heading in the nav. It sits inside the Tools section visually but is clearly separated.
+Sub-heading: "More tools from official sources." DM Serif Display 32px Midnight Navy. Left-aligned inside max-width 1200px container. Margin-top 72px.
+Sub-line below heading: "We did not build these. The government did. We just put them in one place." DM Sans 400 15px warm grey. Left-aligned. Margin-bottom 36px.
+Grid: four columns desktop, two columns tablet, one column mobile. gap 20px.
+Each card: white background. Border-radius 16px. Box-shadow 0 2px 16px rgba(15,23,42,0.08). Padding 24px. No expand. No accordion. Everything visible immediately.
+Card top: cluster colour icon block 40x40px, same style as guide cluster icons, matching colour per category.
+Card content:
+Tool name: DM Sans 600 15px Midnight Navy. Margin-top 12px.
+One-line description: DM Sans 400 13px warm grey. Margin-top 4px.
+CTA button: single Cerulean outlined button, full width, margin-top 16px. Label is the site name with Lucide ExternalLink icon. Links directly to the official tool. Opens in new tab.
+Disclaimer line below each CTA: Geist Mono 11px warm grey. "Official government tool. Not affiliated with KINDD."
+CARDS TO BUILD. Ten cards.
+Card one. Amber icon. Category: Tax.
+Name: ATO Tax Withheld Calculator.
+Description: Calculate how much tax should be withheld from your pay. Official ATO tool.
+Link: ato.gov.au/calculators-and-tools/tax-withheld-calculator. Button label: "ATO Tax Calculator."
+Card two. Amber icon. Category: Tax.
+Name: ATO Income Tax Estimator.
+Description: Estimate your income tax for the year based on your earnings.
+Link: ato.gov.au/calculators-and-tools/income-tax-estimator. Button label: "ATO Income Tax Estimator."
+Card three. Sage icon. Category: Money.
+Name: MoneySmart Loan Repayment Calculator.
+Description: Enter a loan amount, rate, and term. See your monthly repayment.
+Link: moneysmart.gov.au/loans/personal-loans/loan-repayment-calculator. Button label: "MoneySmart Loan Calculator."
+Card four. Sage icon. Category: Money.
+Name: MoneySmart Budget Planner.
+Description: Map your income and expenses. See where your money goes each month.
+Link: moneysmart.gov.au/budgeting/budget-planner. Button label: "MoneySmart Budget Planner."
+Card five. Sage icon. Category: Money.
+Name: MoneySmart Compound Interest Calculator.
+Description: See how your savings grow over time with compound interest.
+Link: moneysmart.gov.au/budgeting/compound-interest-calculator. Button label: "MoneySmart Savings Calculator."
+Card six. Teal icon. Category: Super.
+Name: ATO Super Guarantee Estimator.
+Description: Check how much super your employer should be paying you.
+Link: ato.gov.au/calculators-and-tools/super-guarantee-contributions. Button label: "ATO Super Estimator."
+Card seven. Forest icon. Category: Energy.
+Name: Energy Made Easy Comparator.
+Description: Compare electricity and gas plans in your area. Government run. No ads.
+Link: energymadeeasy.gov.au. Button label: "Energy Made Easy."
+Card eight. Copper icon. Category: Business.
+Name: ABN Lookup.
+Description: Search any ABN to verify a business is registered and trading.
+Link: abr.business.gov.au. Button label: "ABN Lookup."
+Card nine. Plum icon. Category: Work.
+Name: Fair Work Pay Calculator.
+Description: Calculate minimum pay rates, penalty rates, and allowances for your award.
+Link: calculate.fairwork.gov.au. Button label: "Fair Work Pay Calculator."
+Card ten. Rose icon. Category: Health.
+Name: Healthdirect Symptom Checker.
+Description: Check symptoms and find the right level of care. Government funded.
+Link: healthdirect.gov.au/symptom-checker. Button label: "Healthdirect Symptom Checker."

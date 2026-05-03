@@ -1110,6 +1110,45 @@ export default function Home() {
             </div>
 
           </div>
+
+          {/* ── Government tools sub-section ───────────────────────────────── */}
+          <div style={{ maxWidth: 1200, margin: "72px auto 0" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, marginBottom: 8 }}>More tools from official sources.</h2>
+            <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, marginBottom: 36 }}>We did not build these. The government did. We just put them in one place.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 20 }}>
+              {[
+                { color: "#F59E0B", icon: "money",      name: "ATO Tax Withheld Calculator",           desc: "Calculate how much tax should be withheld from your pay. Official ATO tool.",                         url: "https://www.ato.gov.au/calculators-and-tools/tax-withheld-calculator",            btn: "ATO Tax Calculator" },
+                { color: "#F59E0B", icon: "money",      name: "ATO Income Tax Estimator",              desc: "Estimate your income tax for the year based on your earnings.",                                       url: "https://www.ato.gov.au/calculators-and-tools/income-tax-estimator",               btn: "ATO Income Tax Estimator" },
+                { color: "#6B8F71", icon: "consumer",   name: "MoneySmart Loan Repayment Calculator",  desc: "Enter a loan amount, rate, and term. See your monthly repayment.",                                    url: "https://moneysmart.gov.au/loans/personal-loans/loan-repayment-calculator",         btn: "MoneySmart Loan Calculator" },
+                { color: "#6B8F71", icon: "consumer",   name: "MoneySmart Budget Planner",             desc: "Map your income and expenses. See where your money goes each month.",                                 url: "https://moneysmart.gov.au/budgeting/budget-planner",                              btn: "MoneySmart Budget Planner" },
+                { color: "#6B8F71", icon: "consumer",   name: "MoneySmart Compound Interest Calculator",desc: "See how your savings grow over time with compound interest.",                                         url: "https://moneysmart.gov.au/budgeting/compound-interest-calculator",                btn: "MoneySmart Savings Calculator" },
+                { color: "#2A9D8F", icon: "employment", name: "ATO Super Guarantee Estimator",         desc: "Check how much super your employer should be paying you.",                                            url: "https://www.ato.gov.au/calculators-and-tools/super-guarantee-contributions",      btn: "ATO Super Estimator" },
+                { color: "#2D6A4F", icon: "civic",      name: "Energy Made Easy Comparator",           desc: "Compare electricity and gas plans in your area. Government run. No ads.",                             url: "https://www.energymadeeasy.gov.au",                                               btn: "Energy Made Easy" },
+                { color: "#B5651D", icon: "business",   name: "ABN Lookup",                            desc: "Search any ABN to verify a business is registered and trading.",                                      url: "https://abr.business.gov.au",                                                     btn: "ABN Lookup" },
+                { color: "#6B46C1", icon: "govjobs",    name: "Fair Work Pay Calculator",              desc: "Calculate minimum pay rates, penalty rates, and allowances for your award.",                          url: "https://calculate.fairwork.gov.au",                                               btn: "Fair Work Pay Calculator" },
+                { color: "#C2405A", icon: "health",     name: "Healthdirect Symptom Checker",          desc: "Check symptoms and find the right level of care. Government funded.",                                 url: "https://www.healthdirect.gov.au/symptom-checker",                                 btn: "Healthdirect Symptom Checker" },
+              ].map((tool) => (
+                <div key={tool.name} style={{ background: C.white, borderRadius: 16, boxShadow: "0 2px 16px rgba(15,23,42,0.08)", padding: 24, display: "flex", flexDirection: "column" }}>
+                  {/* Icon block */}
+                  <div style={{ width: 40, height: 40, borderRadius: 11, background: tool.color + "1F", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <ClusterIcon id={tool.icon} color={tool.color} />
+                  </div>
+                  <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, marginTop: 12, lineHeight: 1.35 }}>{tool.name}</div>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, marginTop: 4, lineHeight: 1.55, flex: 1 }}>{tool.desc}</p>
+                  <a
+                    href={tool.url} target="_blank" rel="noreferrer"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 16, padding: "9px 14px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, textDecoration: "none", transition: "all 0.15s", width: "100%", boxSizing: "border-box" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = C.cerulean; (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = C.cerulean; }}
+                  >
+                    {tool.btn} <ExternalLink style={{ width: 11, height: 11, flexShrink: 0 }} />
+                  </a>
+                  <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, marginTop: 10, textAlign: "center" }}>Official government tool. Not affiliated with KINDD.</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -1337,7 +1376,7 @@ export default function Home() {
               <a href="#" className="hover:text-[#FAF6E8] transition-colors"><Youtube className="h-5 w-5" /></a>
             </div>
             <div className="text-xs text-[#6B6B5E] text-right space-y-2">
-              <p>Part of <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">Breza + You</a>. Tech Division of TBC Worldwide. Free because some things should be.</p>
+              <p>Part of <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">Breza + You</a>. Tech Division of TBC Worldwide.</p>
               <p>© 2026 KINDD. All rights reserved.</p>
             </div>
           </div>
