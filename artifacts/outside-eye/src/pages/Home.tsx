@@ -17,10 +17,8 @@ export default function Home() {
     <div className="content-width" style={{ paddingTop: 72 }}>
       <p
         style={{
-          fontFamily: "'Departure Mono', 'Courier New', monospace",
-          fontSize: 12,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          fontSize: 14,
           color: "#B8B2A8",
           marginBottom: 20,
         }}
@@ -52,9 +50,9 @@ export default function Home() {
           marginBottom: 24,
         }}
       >
-        The Outside Eye is a set of free creative tools for designers, writers, marketers,
-        and small business owners who want honest feedback on their work. Nine rooms.
-        Bring any key you already have, or use Demo Mode to see how each room works.
+        Nine creative tools for designers, writers, marketers, and makers who want
+        honest feedback on their work. Demo Mode is free. Bring a key you already
+        have to use it on your actual work.
       </p>
 
       <p
@@ -70,7 +68,17 @@ export default function Home() {
 
       <hr className="hr-hairline" style={{ marginBottom: 64 }} />
 
-      <p className="label-mono" style={{ marginBottom: 32 }}>
+      <p
+        style={{
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          fontSize: 13,
+          fontWeight: 500,
+          color: "#B8B2A8",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+          marginBottom: 32,
+        }}
+      >
         The Nine Rooms
       </p>
 
@@ -202,7 +210,17 @@ export default function Home() {
           },
         ].map((col) => (
           <div key={col.label}>
-            <p className="label-mono" style={{ marginBottom: 16 }}>
+            <p
+              style={{
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#F5A623",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                marginBottom: 16,
+              }}
+            >
               {col.label}
             </p>
             <p

@@ -62,15 +62,13 @@ export default function Footer() {
           </p>
           <p
             style={{
-              fontFamily: "'Departure Mono', 'Courier New', monospace",
-              fontSize: 12,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 13,
               color: "#94A3B8",
               marginTop: 6,
             }}
           >
-            A Free Creative Mentor. No Account. No Subscription.
+            A free creative mentor. No account. No subscription.
           </p>
         </div>
 
