@@ -1,18 +1,28 @@
 import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { getVisited } from "@/lib/visited";
 
 const rooms = [
-  { num: "01", name: "The Critique", desc: "Upload your work or paste your copy. Get specific, honest feedback.", href: "/critique" },
-  { num: "02", name: "The Brief Decoder", desc: "Paste any brief or client email. Understand what they actually want.", href: "/brief" },
-  { num: "03", name: "The Bridge", desc: "Connect two unrelated ideas into one poetic thread.", href: "/bridge" },
-  { num: "04", name: "The Feedback Translator", desc: "Decode what your client really means when they say make it pop.", href: "/translate" },
-  { num: "05", name: "The Jury", desc: "Three different minds react to your concept before you present it.", href: "/jury" },
-  { num: "06", name: "Colour Intelligence", desc: "Describe your project. Get three palette options with full rationale.", href: "/colour" },
-  { num: "07", name: "The Wordmark Room", desc: "Type a brand name. Get three typographic wordmark concepts.", href: "/wordmark" },
-  { num: "08", name: "The Library", desc: "Books, channels, and resources worth your time. Curated by discipline.", href: "/library" },
-  { num: "09", name: "The First Draft", desc: "Stuck on a blank page. Get three wildly different starting points.", href: "/spark" },
+  { num: "01", key: "critique", name: "The Critique", desc: "Upload your work or paste your copy. Get specific, honest feedback.", href: "/critique" },
+  { num: "02", key: "brief", name: "The Brief Decoder", desc: "Paste any brief or client email. Understand what they actually want.", href: "/brief" },
+  { num: "03", key: "bridge", name: "The Bridge", desc: "Connect two unrelated ideas into one poetic thread.", href: "/bridge" },
+  { num: "04", key: "translate", name: "The Feedback Translator", desc: "Decode what your client really means when they say make it pop.", href: "/translate" },
+  { num: "05", key: "jury", name: "The Jury", desc: "Three different minds react to your concept before you present it.", href: "/jury" },
+  { num: "06", key: "colour", name: "Colour Intelligence", desc: "Describe your project. Get three palette options with full rationale.", href: "/colour" },
+  { num: "07", key: "wordmark", name: "The Wordmark Room", desc: "Type a brand name. Get three typographic wordmark concepts.", href: "/wordmark" },
+  { num: "08", key: "library", name: "The Library", desc: "Books, channels, and resources worth your time. Curated by discipline.", href: "/library" },
+  { num: "09", key: "spark", name: "The First Draft", desc: "Stuck on a blank page. Get three wildly different starting points.", href: "/spark" },
 ];
 
 export default function Home() {
+  const [visited, setVisited] = useState<string[]>([]);
+
+  useEffect(() => {
+    setVisited(getVisited());
+    const handler = () => setVisited(getVisited());
+    window.addEventListener("outsideeye:visited", handler);
+    return () => window.removeEventListener("outsideeye:visited", handler);
+  }, []);
   return (
     <div className="content-width" style={{ paddingTop: 72 }}>
       <p
@@ -82,80 +92,135 @@ export default function Home() {
         The Nine Rooms
       </p>
 
-      <div>
-        {rooms.map((room) => (
-          <Link key={room.num} href={room.href}>
-            <div
+      {visited.length > 0 && (
+        <div style={{ marginBottom: 8 }}>
+          <p
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 12,
+              color: "#B8B2A8",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <span
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 24,
-                padding: "24px 0",
-                borderBottom: "1px solid #2A2A2A",
-                cursor: "pointer",
-                transition: "background-color 150ms ease",
-                marginLeft: -24,
-                marginRight: -24,
-                paddingLeft: 24,
-                paddingRight: 24,
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                backgroundColor: "#F5A623",
+                display: "inline-block",
+                flexShrink: 0,
               }}
-              className="room-row"
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.backgroundColor = "#141414";
-                const arrow = e.currentTarget.querySelector(".room-arrow") as HTMLElement;
-                if (arrow) arrow.style.opacity = "1";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.backgroundColor = "transparent";
-                const arrow = e.currentTarget.querySelector(".room-arrow") as HTMLElement;
-                if (arrow) arrow.style.opacity = "0";
-              }}
-            >
-              <span
+            />
+            {visited.length} of 9 rooms tried
+          </p>
+        </div>
+      )}
+
+      <div>
+        {rooms.map((room) => {
+          const hasVisited = visited.includes(room.key);
+          return (
+            <Link key={room.num} href={room.href}>
+              <div
                 style={{
-                  fontFamily: "'Departure Mono', 'Courier New', monospace",
-                  fontSize: 13,
-                  color: "#F5A623",
-                  flexShrink: 0,
-                  width: 28,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 24,
+                  padding: "24px 0",
+                  borderBottom: "1px solid #2A2A2A",
+                  cursor: "pointer",
+                  transition: "background-color 150ms ease",
+                  marginLeft: -24,
+                  marginRight: -24,
+                  paddingLeft: 24,
+                  paddingRight: 24,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "#141414";
+                  const arrow = e.currentTarget.querySelector(".room-arrow") as HTMLElement;
+                  if (arrow) arrow.style.opacity = "1";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "transparent";
+                  const arrow = e.currentTarget.querySelector(".room-arrow") as HTMLElement;
+                  if (arrow) arrow.style.opacity = "0";
                 }}
               >
-                {room.num}
-              </span>
-              <div style={{ flex: 1 }}>
-                <p
-                  className="fraunces-label"
-                  style={{ fontSize: 22, fontWeight: 500, color: "#F5F0E8", marginBottom: 4 }}
-                >
-                  {room.name}
-                </p>
-                <p
+                <div
                   style={{
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    fontSize: 15,
-                    color: "#B8B2A8",
-                    lineHeight: 1.5,
+                    flexShrink: 0,
+                    width: 28,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: 5,
                   }}
                 >
-                  {room.desc}
-                </p>
+                  {hasVisited && (
+                    <span
+                      style={{
+                        width: 5,
+                        height: 5,
+                        borderRadius: "50%",
+                        backgroundColor: "#F5A623",
+                        display: "block",
+                      }}
+                    />
+                  )}
+                  <span
+                    style={{
+                      fontFamily: "'Departure Mono', 'Courier New', monospace",
+                      fontSize: 13,
+                      color: hasVisited ? "#F5A623" : "#F5A623",
+                      opacity: hasVisited ? 1 : 0.5,
+                    }}
+                  >
+                    {room.num}
+                  </span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p
+                    className="fraunces-label"
+                    style={{
+                      fontSize: 22,
+                      fontWeight: 500,
+                      color: hasVisited ? "#F5F0E8" : "#F5F0E8",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {room.name}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "'DM Sans', system-ui, sans-serif",
+                      fontSize: 15,
+                      color: "#B8B2A8",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {room.desc}
+                  </p>
+                </div>
+                <span
+                  className="room-arrow"
+                  style={{
+                    fontFamily: "'Departure Mono', monospace",
+                    fontSize: 16,
+                    color: "#F5A623",
+                    opacity: 0,
+                    transition: "opacity 150ms ease",
+                    flexShrink: 0,
+                  }}
+                >
+                  →
+                </span>
               </div>
-              <span
-                className="room-arrow"
-                style={{
-                  fontFamily: "'Departure Mono', monospace",
-                  fontSize: 16,
-                  color: "#F5A623",
-                  opacity: 0,
-                  transition: "opacity 150ms ease, transform 150ms ease",
-                  flexShrink: 0,
-                }}
-              >
-                →
-              </span>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       <div style={{ marginTop: 88 }} />

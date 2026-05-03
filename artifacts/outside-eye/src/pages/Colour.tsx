@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
+import { markVisited } from "@/lib/visited";
 import HowToUse from "@/components/HowToUse";
 
 const industries = [
@@ -55,6 +56,7 @@ export default function Colour() {
 
   async function handleSubmit() {
     setError(null); setOutput(null); setLoading(true); setIsDemo(false);
+    markVisited("colour");
     const prompt = `Brand/project description: ${desc}. Industry: ${industry}. Mood: ${selectedMoods.join(", ") || "unspecified"}. Output usage: ${usage || "unspecified"}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);

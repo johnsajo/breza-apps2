@@ -4,6 +4,7 @@ import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
+import { markVisited } from "@/lib/visited";
 
 interface RoomTemplateProps {
   roomNumber: string;
@@ -38,6 +39,7 @@ export default function RoomTemplate({
     setOutput(null);
     setLoading(true);
     setIsDemo(false);
+    markVisited(demoKey);
 
     try {
       const raw = await callOutsideEye(buildUserPrompt(), systemPrompt);

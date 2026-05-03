@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
+import { markVisited } from "@/lib/visited";
 import HowToUse from "@/components/HowToUse";
 
 const disciplines = [
@@ -35,6 +36,7 @@ export default function Library() {
 
   async function handleSubmit() {
     setError(null); setOutput(null); setLoading(true); setIsDemo(false);
+    markVisited("library");
     const prompt = `Discipline: ${discipline}. Level: ${level}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
