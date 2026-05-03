@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import { detectProvider, getProviderLabel } from "@/lib/detect";
+import { getVisited } from "@/lib/visited";
+import { getAllFeedback } from "@/lib/feedback";
 
 const providers = [
   { name: "Gemini Flash", note: "1,500 requests per day, no card needed", url: "https://aistudio.google.com", label: "aistudio.google.com" },
@@ -16,6 +19,7 @@ export default function Settings() {
   const [manualProvider, setManualProvider] = useState("");
   const [savedMsg, setSavedMsg] = useState(false);
   const [geminiOpen, setGeminiOpen] = useState(false);
+  const [sessionStats, setSessionStats] = useState({ tried: 0, rated: 0, up: 0 });
 
   useEffect(() => {
     const raw = localStorage.getItem("outsideeye_key");
@@ -24,6 +28,13 @@ export default function Settings() {
       setKeyInput(stored.key || "");
       setDetectedProvider(stored.provider || "");
     }
+    const visited = getVisited();
+    const fb = getAllFeedback();
+    setSessionStats({
+      tried: visited.length,
+      rated: fb.length,
+      up: fb.filter((f) => f.rating === "up").length,
+    });
   }, []);
 
   function handleKeyChange(val: string) {
@@ -286,6 +297,80 @@ export default function Settings() {
         <br />
         Clear it any time.
       </p>
+
+      {sessionStats.tried > 0 && (
+        <>
+          <div style={{ marginTop: 40 }} />
+          <hr className="hr-hairline" />
+          <div style={{ marginTop: 32 }} />
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontFamily: "'Departure Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#F5A623",
+                  marginBottom: 6,
+                }}
+              >
+                Session Notes
+              </p>
+              <p
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  fontSize: 15,
+                  color: "#B8B2A8",
+                  lineHeight: 1.5,
+                }}
+              >
+                {sessionStats.tried} of 9 rooms tried
+                {sessionStats.rated > 0
+                  ? ` · ${sessionStats.up} useful, ${sessionStats.rated - sessionStats.up} not`
+                  : " · not yet rated"}
+              </p>
+            </div>
+
+            <Link href="/feedback-summary">
+              <button
+                style={{
+                  fontFamily: "'Departure Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#B8B2A8",
+                  background: "none",
+                  border: "1px solid #2A2A2A",
+                  padding: "6px 14px",
+                  cursor: "pointer",
+                  transition: "color 150ms ease, border-color 150ms ease",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
+                }}
+              >
+                View full summary →
+              </button>
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 }
