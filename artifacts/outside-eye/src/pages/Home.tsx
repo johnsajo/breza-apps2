@@ -25,7 +25,7 @@ export default function Home() {
     return () => window.removeEventListener("outsideeye:visited", handler);
   }, []);
   return (
-    <div className="content-width" style={{ paddingTop: 72 }}>
+    <div className="content-width" style={{ paddingTop: 40 }}>
       <p
         style={{
           fontFamily: "'DM Sans', system-ui, sans-serif",
@@ -62,8 +62,8 @@ export default function Home() {
         }}
       >
         Ten creative tools for designers, writers, marketers, and makers who want
-        honest feedback on their work. Demo Mode is free. Bring a key you already
-        have to use it on your actual work.
+        honest feedback on their work. Free to use. Bring a key you already have
+        and it can stay that way, on your actual work.
       </p>
 
       <p
@@ -71,13 +71,11 @@ export default function Home() {
           fontFamily: "'DM Sans', system-ui, sans-serif",
           fontSize: 14,
           color: "#B8B2A8",
-          marginBottom: 64,
+          marginBottom: 40,
         }}
       >
         No account. No subscription. No data collected.
       </p>
-
-      <hr className="hr-hairline" style={{ marginBottom: 64 }} />
 
       <p
         style={{
