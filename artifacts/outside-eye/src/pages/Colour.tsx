@@ -73,6 +73,14 @@ export default function Colour() {
       if (Array.isArray(s.selectedMoods)) setSelectedMoods(s.selectedMoods as string[]);
       if (typeof s.usage === "string") setUsage(s.usage);
       if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+      if (typeof s._demoExample === "string") {
+        const idx = parseInt(s._demoExample, 10);
+        if (!isNaN(idx)) {
+          const demo = getDemoResponse("colour", idx) as { palettes: Palette[] };
+          if (demo) { setOutput(demo); setIsDemo(true); setDemoIndex(idx + 1); saveSession("colour", demo as unknown as Record<string, unknown>, true); }
+        }
+        return;
+      }
     }
     const saved = loadSession("colour");
     if (saved) {
@@ -118,7 +126,9 @@ export default function Colour() {
   }
 
   function handleCopyShareLink() {
-    const url = encodeShare({ desc, industry, selectedMoods, usage, inspirationUrl });
+    const base = { desc, industry, selectedMoods, usage, inspirationUrl };
+    const state = isDemo ? { ...base, _demoExample: String((demoIndex - 1) % 3) } : base;
+    const url = encodeShare(state);
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
@@ -243,7 +253,7 @@ export default function Colour() {
             onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
             onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
           >
-            {shareCopied ? "Link copied" : "Copy share link"}
+            {shareCopied ? "Link copied" : isDemo ? "Share this example" : "Copy share link"}
           </button>
         )}
         <ModeBadge />

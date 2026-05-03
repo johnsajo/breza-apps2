@@ -77,6 +77,14 @@ export default function Library() {
     if (s) {
       if (typeof s.discipline === "string") setDiscipline(s.discipline);
       if (typeof s.level === "string") setLevel(s.level);
+      if (typeof s._demoExample === "string") {
+        const idx = parseInt(s._demoExample, 10);
+        if (!isNaN(idx)) {
+          const demo = getDemoResponse("library", idx) as LibraryData;
+          if (demo) { setOutput(demo); setIsDemo(true); setDemoIndex(idx + 1); saveSession("library", demo as unknown as Record<string, unknown>, true); }
+        }
+        return;
+      }
     }
     const saved = loadSession("library");
     if (saved) {
@@ -116,7 +124,9 @@ export default function Library() {
   }
 
   function handleCopyShareLink() {
-    const url = encodeShare({ discipline, level });
+    const base = { discipline, level };
+    const state = isDemo ? { ...base, _demoExample: String((demoIndex - 1) % 3) } : base;
+    const url = encodeShare(state);
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
@@ -242,7 +252,7 @@ export default function Library() {
             onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
             onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
           >
-            {shareCopied ? "Link copied" : "Copy share link"}
+            {shareCopied ? "Link copied" : isDemo ? "Share this example" : "Copy share link"}
           </button>
         )}
         <ModeBadge />

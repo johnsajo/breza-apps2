@@ -111,6 +111,14 @@ export default function ToneOfVoice() {
       if (typeof s.industry === "string") setIndustry(s.industry);
       if (typeof s.audience === "string") setAudience(s.audience);
       if (Array.isArray(s.selectedTones)) setSelectedTones(s.selectedTones as string[]);
+      if (typeof s._demoExample === "string") {
+        const idx = parseInt(s._demoExample, 10);
+        if (!isNaN(idx)) {
+          const demo = getDemoResponse("tone", idx) as unknown as ToneData;
+          if (demo) { setOutput(demo); setIsDemo(true); setDemoIndex(idx + 1); saveSession("tone", demo as unknown as Record<string, unknown>, true); }
+        }
+        return;
+      }
     }
     const saved = loadSession("tone");
     if (saved) {
@@ -160,7 +168,9 @@ export default function ToneOfVoice() {
   }
 
   function handleCopyShareLink() {
-    const url = encodeShare({ brandDesc, industry, audience, selectedTones });
+    const base = { brandDesc, industry, audience, selectedTones };
+    const state = isDemo ? { ...base, _demoExample: String((demoIndex - 1) % 3) } : base;
+    const url = encodeShare(state);
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
@@ -317,7 +327,7 @@ export default function ToneOfVoice() {
             onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
             onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
           >
-            {shareCopied ? "Link copied" : "Copy share link"}
+            {shareCopied ? "Link copied" : isDemo ? "Share this example" : "Copy share link"}
           </button>
         )}
         <ModeBadge />

@@ -1,0 +1,489 @@
+# THE OUTSIDE EYE — COMPLETE REPLIT BUILD PROMPT
+# Paste this entire block into a fresh Replit instance. One pass. Do not stop.
+
+---
+
+## WHAT YOU ARE BUILDING
+
+A free creative mentor web app called THE OUTSIDE EYE. Thirteen rooms. Each room is a specific creative tool for designers, writers, marketers, and makers. No backend. No database. No login. BYOK model. Users bring their own API key. Demo mode works without a key using hardcoded entries and responses.
+
+---
+
+## TECH STACK. EXACT. NO SUBSTITUTIONS.
+
+- React 18 + Vite + plain JavaScript. No TypeScript.
+- Tailwind CSS.
+- React Router v6.
+- Google Fonts: Fraunces, Departure Mono, DM Sans. Load via index.html head tag.
+- No backend. No database. No server.
+- localStorage for BYOK key only.
+- Deploy target: Cloudflare Pages. Add /public/_redirects file: /* /index.html 200
+
+---
+
+## COLOUR PALETTE. LOCKED. USE CSS VARIABLES.
+
+```css
+:root {
+  --darkroom: #0D0D0D;
+  --surface1: #141414;
+  --surface2: #1C1C1C;
+  --hairline: #2A2A2A;
+  --warm-white: #F5F0E8;
+  --warm-grey: #B8B2A8;
+  --amber: #F5A623;
+  --amber-deep: #C47D0E;
+  --signal: #A3E635;
+  --pulse: #F87171;
+  --navy: #0A0F1E;
+  --moonlight: #F0F4F8;
+  --drift: #94A3B8;
+  --breeze: #B8D4E8;
+}
+```
+
+---
+
+## TYPOGRAPHY. LOCKED.
+
+Load in index.html head:
+```html
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Departure+Mono&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+```
+
+- Fraunces: all headlines, room names, pull quotes, nav wordmark. Weight 600 minimum. opsz 72 on anything 32px and above. Amber on dark. Tracking -0.02em.
+- Departure Mono: all UI chrome. Labels, room numbers, button text, nav items. Always uppercase as labels. Letter-spacing 0.08em.
+- DM Sans: all body copy, descriptions, input text, output card body. Weight 400 body. Weight 500 field labels. 17px body. Line-height 1.65.
+
+No gradients on backgrounds. No glassmorphism. No glows. No rounded cards. No stock imagery. Pure typography and space.
+
+---
+
+## BACKGROUND STATE SYSTEM. LOCKED.
+
+Two body classes: mode-demo and mode-live.
+
+- mode-demo: hero illustration at 0.15 opacity behind all content. Amber energy. Inviting.
+- mode-live: pure black. No illustration. Clean. Serious.
+- Transition: 600ms ease on class change.
+- Illustration: colourful dense world-of-advertising illustration rendered as a background-image at 0.15 opacity. Use a placeholder grey block labelled ILLUSTRATION PENDING until asset is generated.
+- On app load: check localStorage. No key means mode-demo. Key found means mode-live.
+- On key save: body switches to mode-live. Illustration fades out.
+- On key clear: body switches to mode-demo. Illustration fades in.
+
+---
+
+## MODEPILL COMPONENT. LOCKED.
+
+Persistent in nav across all pages.
+
+- Pill container: surface2, hairline border, border-radius 999px, padding 3px.
+- Two buttons: DEMO and LIVE.
+- DEMO active: amber background, darkroom text.
+- LIVE active: signal green background, darkroom text.
+- Inactive half: transparent, warm-grey text.
+- Cross-fade 300ms. No sliding animation.
+- Click LIVE with no key: pill stays on DEMO. Tooltip appears below: "Add a key in Settings first." Departure Mono 11px warm-grey. Appears 2000ms then fades.
+
+---
+
+## BYOK MODEL. LOCKED.
+
+Six providers. User pastes any key. App detects by prefix.
+
+- AIza → Gemini Flash, gemini-2.5-flash
+- sk-ant- → Claude, claude-haiku-4-5-20251001
+- sk-proj- → OpenAI, gpt-4o-mini
+- gsk_ → Groq, llama-3.3-70b-versatile
+- DeepSeek and Qwen via manual dropdown in Settings.
+
+One wrapper function callOutsideEye in src/lib/ai.js. All rooms call this. No room knows the provider.
+
+Anthropic browser header: anthropic-dangerous-direct-browser-access: true
+
+No embedded key anywhere.
+
+---
+
+## DEMO MECHANISM. LOCKED.
+
+File: src/lib/demoEntries.js
+
+- Five hardcoded entry sets per room.
+- Typewriter effect per field at 38 chars per second. Fields type in sequence.
+- 300ms pause between fields. 800ms delay on room mount before first character.
+- User reads. User presses Enter or clicks button to fire.
+- Hardcoded response renders in 200ms. No API call in demo mode.
+- Regenerate button: "TRY ANOTHER EXAMPLE." Cycles through 5 entry sets.
+- Different entries and different hardcoded response each time.
+- Demo mode stays accessible even when Live key is saved.
+- ModePill allows switching between modes at any time.
+
+---
+
+## THE THIRTEEN ROOMS. LOCKED.
+
+### 01 The Critique /critique
+Input: paste any creative work. Headline, tagline, body copy, campaign idea, design description.
+Output: gut reaction one line, what is working, what is not working, one specific fix.
+Demo entries: five different creative pieces across different disciplines.
+
+### 02 The Brief Decoder /brief
+Input: paste a brief, however badly written.
+Output: what the client actually wants (vs what they said), the real constraint, the one question that needs answering before work starts.
+Demo entries: five briefs of varying quality and clarity.
+
+### 03 The Bridge /bridge
+Input: a creative idea that is not connecting with its audience. Describe the idea and describe the disconnect.
+Output: three bridge lines. Ways to reframe the idea so it lands. Not new ideas. The same idea made accessible.
+Demo entries: five disconnected ideas across different categories.
+
+### 04 The Feedback Translator /translate
+Input: paste client feedback, however confusing or contradictory.
+Output: what they actually mean, what they are afraid of, what the real ask is underneath the words.
+Demo entries: five pieces of real-sounding client feedback.
+
+### 05 The Jury /jury
+Input: describe a piece of work as if presenting it to an awards jury.
+Output: likely jury reaction, what would make it stronger, whether it has a chance and in which category.
+Demo entries: five pieces of work at different levels of ambition.
+
+### 06 Colour Intelligence /colour
+Input: describe a brand, a mood, a product, or a brief.
+Output: a colour palette recommendation with hex values, a reason for each colour, and one colour to avoid and why.
+Demo entries: five brand or mood descriptions.
+
+### 07 The Wordmark Room /wordmark
+Input: brand name plus three words describing what the brand stands for.
+Output: typographic direction, three font pairing suggestions, one layout principle, one thing to avoid.
+Demo entries: five brand names with descriptors.
+
+### 08 The Library /library
+Input: a creative problem or a theme.
+Output: three reference points. A book, a film or campaign, and a cultural moment. Each with one line on why it is relevant to the problem.
+Demo entries: five creative problems or themes.
+
+### 09 The First Draft /spark
+Input: a brief, an idea, or just a starting point. Any length.
+Output: a first draft. Copy, concept, or creative direction depending on what was entered. Not polished. Alive.
+Demo entries: five starting points across different brief types.
+
+### 10 The Voice Room /voice
+Input: describe your brand. What it does, what it stands for, what makes it different. Select industry. Name your audience. Pick tone adjectives from: Witty, Warm, Direct, Bold, Playful, Authoritative, Empathetic, Irreverent, Refined, Urgent, Casual, Formal, Poetic, Dry, Energetic, Calm.
+Output: Voice Archetype (named, e.g. The Maverick Muse), Voice Manifesto (one line), Character Traits (three), Words to Use (five), Words to Avoid (five), Do list (four items), Don't list (four items), Voice in Action (three before/after rewrites: product description, error message, call to action).
+Demo entries: five brand descriptions across different industries and tones.
+
+### 11 The Trophy Room /trophy
+Input: a creative category (e.g. outdoor, digital, PR, film), an era or year range, a market or region (optional), or a feeling (e.g. "work that made juries uncomfortable but still won").
+Output: not a list of winners. A cultural reading. What was happening in the world that gave this work permission. Why that idea landed in that year and would have been rejected two years earlier. The invisible context behind awarded work. Two or three landmark pieces named with one sentence each on why they mattered. One pattern that connected the winners. One thing the era got wrong that the next era corrected.
+Demo entries: five different category/era/feeling combinations. One should be a feeling-only entry with no year or category to show the room handles ambiguity.
+
+### 12 The Insight Room /insight
+Input: one question only presented to the user: "Where did you first notice this?" They answer in their own words. No brief. No audience description. No strategy language. Just where they first noticed the thing their work is built around.
+Output: three possible verdicts only:
+- FELT. This is real. Someone lived this. Builds the entry into a proper insight statement. One sentence. No jargon.
+- OBSERVED. You saw it but you did not feel it. Get closer. Asks one follow-up question.
+- ASSUMED. You did not notice this. You decided it. Start over. Asks one follow-up question.
+If OBSERVED or ASSUMED: one follow-up question appears. User answers. Room gives a second verdict. Two rounds maximum.
+Scoring display: large single word verdict in amber (FELT), warm-grey (OBSERVED), or pulse red (ASSUMED). Then the insight statement or follow-up question below.
+Demo entries: five different entries. One FELT, two OBSERVED, two ASSUMED. Show the full arc including follow-up.
+
+### 13 The Lineage Room /lineage
+Input: describe a creative idea. Campaign concept, visual device, brand voice, structural mechanic. Anything.
+Output: three ancestor cards.
+- Card 1: The Oldest One. The earliest known use of this idea or device. Year, name, one line on why it is the origin.
+- Card 2: The Famous One. The version of this idea that most people know, even if they do not know it by name. Year, name, one line.
+- Card 3: The Uncomfortable One. The version that is uncomfortably close to what the user is making right now. Year, name, one line. This card has a different visual treatment. Amber border. Warm-white type. The note underneath: "This is not a reason to stop. It is a reason to go further."
+Demo entries: five creative ideas at different levels of originality. At least one that is genuinely original so the room can demonstrate honest lineage even for fresh thinking.
+
+---
+
+## ROUTES. COMPLETE LIST.
+
+/
+/critique
+/brief
+/bridge
+/translate
+/jury
+/colour
+/wordmark
+/library
+/spark
+/voice
+/trophy
+/insight
+/lineage
+/settings
+/about
+/howitworks
+
+---
+
+## HOMEPAGE CONTENT. LOCKED.
+
+Headline: "Work gets better when someone else looks at it."
+
+Subtext: "Thirteen creative tools for designers, writers, marketers, and makers who want honest feedback on their work. Free to use. Bring a key you already have and it can stay that way, on your actual work."
+
+Three column labels:
+- ALWAYS FREE TO EXPLORE
+- YOUR DATA STAYS YOURS
+- NO ACCOUNT REQUIRED
+
+Pull quote: "Most people trying to get better at their craft don't have a mentor. The Outside Eye is the next best thing."
+
+Room grid: 13 cards. Room number in Departure Mono. Room name in Fraunces. One line description in DM Sans. Cards link to respective routes.
+
+Primary CTA: "EXPLORE THE ROOMS" routes to /critique as default entry point.
+Secondary CTA: "HOW IT WORKS" routes to /howitworks.
+
+---
+
+## HOW IT WORKS PAGE. LOCKED.
+
+Route: /howitworks
+Heading: "Your key. Two minutes."
+Six provider tabs: GEMINI, CLAUDE, OPENAI, DEEPSEEK, QWEN, GROQ.
+GEMINI active default.
+
+Each tab contains:
+- Provider name
+- Free tier note
+- Link to console
+- Numbered steps. One action per step. Written for someone who has never touched an API key.
+
+Provider free tier notes:
+- Gemini: 1,500 requests per day. No card needed. aistudio.google.com
+- Claude: Trial credits on signup. console.anthropic.com
+- OpenAI: Pay as you go. Very low cost per request. platform.openai.com
+- DeepSeek: Generous free tier. platform.deepseek.com
+- Qwen: Free tier available. dashscope-intl.aliyuncs.com
+- Groq: Free tier. Fast. console.groq.com
+
+Security note below tabs.
+CTA linking to /settings.
+
+---
+
+## SETTINGS PAGE.
+
+Fields:
+- API key input. Paste key. App detects provider by prefix. Displays detected provider name below field.
+- Manual provider dropdown for DeepSeek and Qwen.
+- Save key button. Amber. Departure Mono uppercase.
+- On save: key written to localStorage. Body class switches to mode-live. ModePill updates.
+- Clear saved key button. Below save. Warm-grey. Smaller. Text: "Clear saved key and return to Demo Mode." On click: key removed from localStorage. Body class switches to mode-demo.
+
+---
+
+## ABOUT PAGE.
+
+Route: /about
+Leave as a placeholder. Clean page with heading "About" in Fraunces and one line in DM Sans: "Copy coming soon." Sajo writes this himself.
+
+---
+
+## NAVIGATION. LOCKED.
+
+Sticky top. Blurs on scroll. Hamburger on mobile.
+
+Left: THE OUTSIDE EYE wordmark in Fraunces amber.
+Centre (desktop): room links collapsed into "ROOMS" dropdown showing all 13.
+Right: ModePill component + SETTINGS link + HOW IT WORKS link.
+
+No prominent Breza mention in nav. The footer carries that.
+
+---
+
+## FOOTER. LOCKED.
+
+Background navy #0A0F1E. All content centre aligned.
+
+Room names in two rows. Plain text. Drift colour. No links. Departure Mono.
+Row 1: the critique, the brief decoder, the bridge, the feedback translator, the jury, colour intelligence, the wordmark room
+Row 2: the library, the first draft, the voice room, the trophy room, the insight room, the lineage room
+
+Division links (linked): tbcworldwide.com, brezaplusyou.com.au, taracollective.org, celes13.com.au
+Contact: connect@tbcworldwide.com. Single line. Linked.
+Social icon placeholders. Lucide React. LinkedIn, Instagram, X, YouTube. Greyed out. No href yet.
+Credit line: "Part of Breza + You. Tech Division of TBC Worldwide." Linked to brezaplusyou.com.au.
+Copyright: "2026 The Outside Eye. All rights reserved."
+
+Footer tagline above room list: "A FREE CREATIVE MENTOR. NO ACCOUNT. NO SUBSCRIPTION." Departure Mono uppercase. Warm-grey.
+
+---
+
+## FILE STRUCTURE.
+
+```
+src/
+  components/
+    Nav.jsx
+    Footer.jsx
+    ModePill.jsx
+    RoomShell.jsx        — shared wrapper for all 13 rooms
+    OutputCard.jsx       — shared output display component
+  lib/
+    ai.js                — callOutsideEye wrapper function
+    demoEntries.js       — all hardcoded demo entries and responses for all 13 rooms
+    detectProvider.js    — key prefix detection logic
+  pages/
+    Home.jsx
+    Settings.jsx
+    About.jsx
+    HowItWorks.jsx
+    rooms/
+      Critique.jsx
+      BriefDecoder.jsx
+      Bridge.jsx
+      FeedbackTranslator.jsx
+      Jury.jsx
+      ColourIntelligence.jsx
+      WordmarkRoom.jsx
+      Library.jsx
+      FirstDraft.jsx
+      VoiceRoom.jsx
+      TrophyRoom.jsx
+      InsightRoom.jsx
+      LineageRoom.jsx
+  App.jsx
+  main.jsx
+  index.css
+public/
+  _redirects
+```
+
+---
+
+## AI PROMPT LOGIC PER ROOM. SYSTEM PROMPTS.
+
+Each room passes a system prompt to callOutsideEye. Write these exactly.
+
+**Critique:** "You are a senior creative director with 25 years of experience. You give honest, specific, useful feedback. No softening. No encouragement unless it is earned. No buzzwords. Short sentences. You review creative work and give: one gut reaction sentence, what is working and why, what is not working and why, one specific actionable fix. Nothing else."
+
+**Brief Decoder:** "You are a seasoned strategist who has decoded thousands of client briefs. You identify what the client actually wants versus what they said, the real constraint underneath the brief, and the one question that must be answered before work starts. Plain language. No strategy jargon."
+
+**Bridge:** "You are a creative translator. You take ideas that are not connecting and find three ways to reframe them so they land with the intended audience. You do not create new ideas. You make the existing idea accessible. Three bridge lines only. Each one a different angle."
+
+**Feedback Translator:** "You decode client feedback. You identify what they actually mean, what they are afraid of, and what the real ask is underneath their words. You are not cynical about clients. You are honest about communication gaps. Plain language."
+
+**Jury:** "You are a composite of every major creative awards jury. You assess work as if presented in a jury room. You give the likely jury reaction, what would make it stronger, and an honest assessment of its chances and in which category it belongs. You know the difference between work that wins and work that deserves to win. You say both."
+
+**Colour Intelligence:** "You are a colour strategist and brand designer. You recommend colour palettes based on brand descriptions, moods, or briefs. You give hex values, a clear reason for each colour choice, and one colour to actively avoid with a reason. No generic recommendations. Every palette should feel considered and specific."
+
+**Wordmark Room:** "You are a typographic director. You give typographic direction for brand names including three specific font pairing suggestions with names, one layout principle, and one thing to avoid. You know type history and current practice equally well. No generic sans-serif recommendations without strong justification."
+
+**Library:** "You are a deeply read creative with a broad cultural reference library. For any creative problem or theme you provide three references: a book, a film or campaign, and a cultural moment. Each with one sentence on why it is specifically relevant to the problem. No obvious choices. No Wikipedia entries. Things worth actually engaging with."
+
+**First Draft:** "You are a copywriter and creative director who writes first drafts that are alive, not polished. You respond to briefs, ideas, or starting points with actual copy or creative direction. You do not explain what you are doing. You do it. The draft should feel like it came from a person, not a machine."
+
+**Voice Room:** "You are a brand voice strategist. Given a brand description, industry, audience, and tone adjectives, you produce a complete voice guide including: a named Voice Archetype, a one-line Voice Manifesto, three Character Traits, five Words to Use, five Words to Avoid, four Do items, four Don't items, and three before/after rewrite examples across product description, error message, and call to action. Everything specific to the brand described. Nothing generic."
+
+**Trophy Room:** "You are a cultural critic and creative historian who understands why work wins awards. Given a category, era, market, or feeling, you do not list winners. You read the cultural moment. You explain what was happening in the world that gave certain work permission. You name two or three landmark pieces with one sentence each on their significance. You identify the pattern connecting the winners and one thing that era got wrong that the next era corrected. You write like a critic, not an encyclopaedia."
+
+**Insight Room:** "You are a strategic planner who tests insights for truth. The user tells you where they first noticed something. You give one of three verdicts: FELT (this is real, someone lived this), OBSERVED (you saw it but did not feel it), or ASSUMED (you decided this, you did not notice it). If FELT, you write the insight as one clean sentence with no jargon. If OBSERVED or ASSUMED, you ask one follow-up question only. No lecture. No explanation of your verdict beyond the one-word result and what follows it."
+
+**Lineage Room:** "You are a creative historian and idea archaeologist. Given any creative idea, you find its three ancestors: the oldest known use of this idea or device, the most famous version most people know without knowing its name, and the version uncomfortably close to what the user is making. Each ancestor gets a year, a name, and one sentence. The uncomfortable one gets an additional note: This is not a reason to stop. It is a reason to go further. You are honest even when the idea is genuinely original. In that case, say so and find the closest ancestors anyway."
+
+---
+
+## ROOM SHELL COMPONENT SPEC.
+
+Every room uses RoomShell.jsx as a wrapper. It provides:
+- Room number in Departure Mono top left. e.g. 01
+- Room name in Fraunces amber headline.
+- One line description in DM Sans warm-grey.
+- HOW TO USE THIS ROOM expandable in Departure Mono amber uppercase with arrow.
+- Input area below.
+- Output area below input. Hidden until response fires.
+- ModePill state determines whether callOutsideEye fires live or returns hardcoded demo response.
+- DEMO label in Departure Mono warm-grey bottom left of output card when in demo mode.
+
+---
+
+## INSIGHT ROOM SPECIFIC UI.
+
+The Insight Room has a different input pattern to all other rooms.
+
+On mount: single question appears in Fraunces amber. "Where did you first notice this?"
+No other labels. No other fields. One textarea below.
+Button: "SHOW ME THE VERDICT" in Departure Mono uppercase amber.
+
+Verdict display: large single word centred on screen.
+- FELT: amber. Fraunces. 72px.
+- OBSERVED: warm-grey. Fraunces. 72px.
+- ASSUMED: pulse red. Fraunces. 72px.
+
+Below verdict: insight statement (if FELT) or follow-up question (if OBSERVED or ASSUMED) in DM Sans warm-white. 20px. Max-width 480px. Centred.
+
+If follow-up question appears: second textarea below. Same button. Second verdict fires. No third round.
+
+---
+
+## LINEAGE ROOM SPECIFIC UI.
+
+Three cards displayed horizontally on desktop, stacked on mobile.
+
+Card 1 and Card 2: surface1 background. hairline border.
+Card 3 (The Uncomfortable One): surface1 background. amber border 2px. warm-white type.
+Note below Card 3 in Departure Mono warm-grey: "This is not a reason to stop. It is a reason to go further."
+
+Card anatomy: Label (THE OLDEST ONE / THE FAMOUS ONE / THE UNCOMFORTABLE ONE) in Departure Mono warm-grey uppercase. Year in Fraunces amber large. Name in Fraunces warm-white. One sentence in DM Sans warm-grey.
+
+---
+
+## TROPHY ROOM SPECIFIC UI.
+
+Input has three optional fields and one required.
+
+Required: Category, era, or feeling. One open text field. Placeholder: "e.g. outdoor advertising 1990s, or work that made juries uncomfortable but still won"
+Optional: Year range. Short text field.
+Optional: Market or region. Short text field.
+
+Output sections:
+- THE CULTURAL MOMENT: paragraph in DM Sans warm-white.
+- LANDMARK WORK: two or three cards. Each: year, name, one sentence. Surface1 background.
+- THE PATTERN: one sentence in Fraunces amber italic.
+- WHAT THEY GOT WRONG: one sentence in DM Sans warm-grey.
+
+---
+
+## PLACEHOLDERS FOR UNFINISHED ASSETS.
+
+Clean grey blocks (#2A2A2A) with Departure Mono label in warm-grey. Never stock photos. Never lorem ipsum imagery.
+
+Label format: [ASSET NAME PENDING]
+
+---
+
+## BUILD NOTES.
+
+- Build every route. Every room. Every demo entry. Do not stub or skip.
+- The demo entries are the product for most users. They must be well-written and genuinely useful.
+- Every input must have a keyboard shortcut. Enter or Cmd+Enter fires the room.
+- Mobile first. 375px base. All rooms work on phone.
+- No horizontal scroll anywhere.
+- Go-to-top arrow fixed bottom right. Appears after hero scroll. Subtle. Lucide React ChevronUp.
+- Scroll-down arrow on homepage hero. Disappears after scroll.
+- All transitions 300ms ease unless specified otherwise.
+- Background state transition 600ms ease.
+
+---
+
+## GITHUB REPO NAME WHEN PUSHED.
+
+theoutsideeye-site
+
+---
+
+## CLOUDFLARE PAGES DEPLOY.
+
+/public/_redirects content:
+/* /index.html 200
+
+Connect GitHub repo to Cloudflare Pages. Build command: npm run build. Output directory: dist.
+
+---
+
+END OF REPLIT PROMPT. PASTE ENTIRE BLOCK.

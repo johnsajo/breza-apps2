@@ -8,7 +8,7 @@ import { callOutsideEye } from "@/lib/ai";
 import { getDemoResponse, getDemoCount } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
-import { encodeShare, type ShareState } from "@/lib/sharelink";
+import { encodeShare, decodeShare, type ShareState } from "@/lib/sharelink";
 
 interface RoomTemplateProps {
   roomNumber: string;
@@ -51,6 +51,15 @@ export default function RoomTemplate({
   const [demoIndex, setDemoIndex] = useState(0);
 
   useEffect(() => {
+    const s = decodeShare();
+    if (s && typeof s._demoExample === "string") {
+      const idx = parseInt(s._demoExample, 10);
+      if (!isNaN(idx)) {
+        const demo = getDemoResponse(demoKey, idx);
+        if (demo) { setOutput(demo as Record<string, unknown>); setIsDemo(true); setDemoIndex(idx + 1); saveSession(demoKey, demo as Record<string, unknown>, true); }
+      }
+      return;
+    }
     const saved = loadSession(demoKey);
     if (saved) {
       setOutput(saved.output);
@@ -131,7 +140,10 @@ export default function RoomTemplate({
 
   function handleCopyShareLink() {
     if (!shareState) return;
-    const url = encodeShare(shareState);
+    const state = isDemo
+      ? { ...shareState, _demoExample: String((demoIndex - 1) % getDemoCount(demoKey)) }
+      : shareState;
+    const url = encodeShare(state);
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
@@ -247,7 +259,7 @@ export default function RoomTemplate({
             onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
             onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
           >
-            {shareCopied ? "Link copied" : "Copy share link"}
+            {shareCopied ? "Link copied" : isDemo ? "Share this example" : "Copy share link"}
           </button>
         )}
         <ModeBadge />
