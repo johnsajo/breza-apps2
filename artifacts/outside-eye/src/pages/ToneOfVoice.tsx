@@ -7,6 +7,7 @@ import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
+import ModeBadge from "@/components/ModeBadge";
 import FeedbackRow from "@/components/FeedbackRow";
 
 const industries = [
@@ -298,6 +299,7 @@ export default function ToneOfVoice() {
             {shareCopied ? "Link copied" : "Copy share link"}
           </button>
         )}
+        <ModeBadge />
       </div>
 
       {error && (

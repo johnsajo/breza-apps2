@@ -8,6 +8,7 @@ import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/sessio
 import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
+import ModeBadge from "@/components/ModeBadge";
 
 const industries = [
   "Advertising and Marketing", "Arts and Culture", "Automotive",
@@ -224,6 +225,7 @@ export default function Colour() {
             {shareCopied ? "Link copied" : "Copy share link"}
           </button>
         )}
+        <ModeBadge />
       </div>
 
       {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}

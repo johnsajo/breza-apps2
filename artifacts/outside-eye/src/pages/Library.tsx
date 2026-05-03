@@ -7,6 +7,7 @@ import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
+import ModeBadge from "@/components/ModeBadge";
 import FeedbackRow from "@/components/FeedbackRow";
 
 const disciplines = [
@@ -223,6 +224,7 @@ export default function Library() {
             {shareCopied ? "Link copied" : "Copy share link"}
           </button>
         )}
+        <ModeBadge />
       </div>
 
       {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}

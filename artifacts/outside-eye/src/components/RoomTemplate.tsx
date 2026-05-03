@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
+import ModeBadge from "./ModeBadge";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
@@ -203,6 +204,7 @@ export default function RoomTemplate({
             {shareCopied ? "Link copied" : "Copy share link"}
           </button>
         )}
+        <ModeBadge />
       </div>
 
       {error && (
