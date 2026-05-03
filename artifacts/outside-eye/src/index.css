@@ -182,4 +182,15 @@
   .mode-live .bg-illustration {
     opacity: 0;
   }
+
+  @keyframes pill-pulse {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.18); }
+    60%  { transform: scale(0.96); }
+    100% { transform: scale(1); }
+  }
+
+  .pill-pulse {
+    animation: pill-pulse 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
 }

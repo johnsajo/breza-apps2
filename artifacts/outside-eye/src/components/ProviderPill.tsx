@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { getProviderLabel } from "@/lib/detect";
 
@@ -22,17 +22,29 @@ const pillBase: React.CSSProperties = {
   textTransform: "uppercase",
   fontWeight: 700,
   lineHeight: 1.5,
-  transition: "filter 150ms ease",
+  transition: "background-color 400ms ease, filter 150ms ease",
 };
 
 export default function ProviderPill() {
   const [, navigate] = useLocation();
   const [stored, setStored] = useState<StoredKey | null>(null);
+  const [pulsing, setPulsing] = useState(false);
+  const prevIsLive = useRef(false);
 
   useEffect(() => {
     function check() {
       const raw = localStorage.getItem("outsideeye_key");
-      setStored(raw ? (JSON.parse(raw) as StoredKey) : null);
+      const next = raw ? (JSON.parse(raw) as StoredKey) : null;
+      const wasLive = prevIsLive.current;
+      const isNowLive = !!next;
+
+      if (!wasLive && isNowLive) {
+        setPulsing(true);
+        setTimeout(() => setPulsing(false), 420);
+      }
+
+      prevIsLive.current = isNowLive;
+      setStored(next);
     }
     check();
     window.addEventListener("storage", check);
@@ -48,6 +60,7 @@ export default function ProviderPill() {
   return (
     <button
       onClick={() => navigate(isLive ? "/settings" : "/howitworks")}
+      className={pulsing ? "pill-pulse" : ""}
       style={{
         ...pillBase,
         backgroundColor: isLive ? "#22C55E" : "#3B82F6",
