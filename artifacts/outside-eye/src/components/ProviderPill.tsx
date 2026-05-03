@@ -8,6 +8,23 @@ interface StoredKey {
   savedAt: number;
 }
 
+const pillBase: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 5,
+  border: "none",
+  borderRadius: 100,
+  padding: "4px 11px 4px 9px",
+  cursor: "pointer",
+  fontFamily: "'DM Sans', system-ui, sans-serif",
+  fontSize: 11,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  fontWeight: 700,
+  lineHeight: 1.5,
+  transition: "filter 150ms ease",
+};
+
 export default function ProviderPill() {
   const [, navigate] = useLocation();
   const [stored, setStored] = useState<StoredKey | null>(null);
@@ -28,80 +45,19 @@ export default function ProviderPill() {
 
   const isLive = !!stored;
 
-  if (isLive) {
-    return (
-      <button
-        onClick={() => navigate("/settings")}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 5,
-          background: "#F5A623",
-          border: "none",
-          borderRadius: 100,
-          padding: "3px 10px 3px 8px",
-          cursor: "pointer",
-          fontFamily: "'DM Sans', system-ui, sans-serif",
-          fontSize: 11,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: "#0D0D0D",
-          fontWeight: 600,
-          lineHeight: 1.6,
-          transition: "background 150ms ease",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = "#C47D0E";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = "#F5A623";
-        }}
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            backgroundColor: "#0D0D0D",
-            display: "inline-block",
-            flexShrink: 0,
-            opacity: 0.5,
-          }}
-        />
-        {getProviderLabel(stored!.provider)}
-      </button>
-    );
-  }
-
   return (
     <button
-      onClick={() => navigate("/howitworks")}
+      onClick={() => navigate(isLive ? "/settings" : "/howitworks")}
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 5,
-        background: "transparent",
-        border: "1px solid #3A3530",
-        borderRadius: 100,
-        padding: "3px 10px 3px 8px",
-        cursor: "pointer",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        fontSize: 11,
-        letterSpacing: "0.08em",
-        textTransform: "uppercase",
-        color: "#5A5550",
-        lineHeight: 1.6,
-        transition: "border-color 150ms ease, color 150ms ease",
+        ...pillBase,
+        backgroundColor: isLive ? "#22C55E" : "#3B82F6",
+        color: "#ffffff",
       }}
       onMouseEnter={(e) => {
-        const btn = e.currentTarget as HTMLButtonElement;
-        btn.style.borderColor = "#B8B2A8";
-        btn.style.color = "#B8B2A8";
+        (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1.15)";
       }}
       onMouseLeave={(e) => {
-        const btn = e.currentTarget as HTMLButtonElement;
-        btn.style.borderColor = "#3A3530";
-        btn.style.color = "#5A5550";
+        (e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)";
       }}
     >
       <span
@@ -109,12 +65,12 @@ export default function ProviderPill() {
           width: 6,
           height: 6,
           borderRadius: "50%",
-          backgroundColor: "#5A5550",
+          backgroundColor: "rgba(255,255,255,0.5)",
           display: "inline-block",
           flexShrink: 0,
         }}
       />
-      Demo Mode
+      {isLive ? `Live — ${getProviderLabel(stored!.provider)}` : "Demo Mode"}
     </button>
   );
 }

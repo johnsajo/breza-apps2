@@ -79,7 +79,22 @@ export default function Layout({ children }: { children: ReactNode }) {
           paddingBottom: 88,
         }}
       >
-        {children}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "min(740px, 100%)",
+            backgroundColor: "#0D0D0D",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          {children}
+        </div>
       </main>
 
       <Footer />
