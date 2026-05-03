@@ -1727,19 +1727,23 @@ export default function Home() {
         <div style={{ maxWidth: 720, margin: "0 auto" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, marginBottom: 40, lineHeight: 1.1 }}>For the people no one wrote a manual for.</h2>
           {[
+            "For the new arrival working out which Medicare card to get and why it matters.",
+            "For the permanent resident counting the days to citizenship and not sure what comes next.",
+            "For the one who chose Australia and wants to understand what this country actually stands for.",
             "For the freelancer who just got their first invoice and does not know what to do with it.",
-            "For the renter staring at a leaky ceiling and a quiet landlord.",
-            "For the parent looking for somewhere free for the kids on Saturday.",
-            "For the new citizen working out how Medicare actually works.",
-            "For the small business owner who got a Centrelink letter and panicked.",
             "For the tradie whose neighbour just took down a shared fence without asking.",
+            "For the small business owner who registered an ABN and now has no idea what GST means for them.",
+            "For the parent trying to find the right school, the right support, and the right next step.",
+            "For the employee who suspects they are being underpaid and does not know where to start.",
+            "For the employer who wants to do right by their people and needs to know the rules.",
             "For anyone who has ever Googled something at 11pm and ended up on a forum from 2014.",
           ].map((line) => (
             <p key={line} style={{ fontFamily: SANS, fontWeight: 400, fontSize: 19, color: C.grey, lineHeight: 1.6, marginBottom: 18 }}>{line}</p>
           ))}
           <div style={{ marginTop: 56 }}>
             <p style={{ fontFamily: SERIF, fontSize: 36, color: C.navy, marginBottom: 0 }}>KINDD is for them.</p>
-            <p style={{ fontFamily: SERIF, fontSize: 36, color: C.navy }}>KINDD is for you.</p>
+            <p style={{ fontFamily: SERIF, fontSize: 36, color: C.navy, marginBottom: 0 }}>KINDD is for you.</p>
+            <p style={{ fontFamily: SERIF, fontSize: 24, color: C.grey, marginTop: 20 }}>Be kindd. One of our kind.</p>
           </div>
         </div>
       </section>
