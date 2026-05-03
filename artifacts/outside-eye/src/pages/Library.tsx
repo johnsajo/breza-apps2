@@ -114,8 +114,15 @@ export default function Library() {
   const isValid = discipline.length > 0 && level.length > 0;
 
   async function handleSubmit() {
-    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setIsDemo(false);
     markVisited("library");
+    if (localStorage.getItem("outsideeye_mode") === "demo") {
+      const demo = DEMO_RESPONSES.library as LibraryData;
+      setOutput(demo); setIsDemo(true);
+      saveSession("library", demo as unknown as Record<string, unknown>, true);
+      return;
+    }
+    setLoading(true);
     const prompt = `Discipline: ${discipline}. Level: ${level}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);

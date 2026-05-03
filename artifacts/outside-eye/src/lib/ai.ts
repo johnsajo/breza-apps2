@@ -38,6 +38,8 @@ export async function callOutsideEye(
   imageBase64?: string,
   imageType?: string
 ): Promise<string> {
+  if (localStorage.getItem("outsideeye_mode") === "demo") throw new Error("NO_KEY");
+
   const stored = JSON.parse(
     localStorage.getItem("outsideeye_key") || "null"
   ) as StoredKey | null;

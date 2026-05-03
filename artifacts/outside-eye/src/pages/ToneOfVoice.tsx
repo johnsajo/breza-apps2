@@ -158,9 +158,15 @@ export default function ToneOfVoice() {
     setError(null);
     setOutput(null);
     setRestored(null);
-    setLoading(true);
     setIsDemo(false);
     markVisited("tone");
+    if (localStorage.getItem("outsideeye_mode") === "demo") {
+      const demo = DEMO_RESPONSES.tone as ToneData;
+      setOutput(demo); setIsDemo(true);
+      saveSession("tone", demo as unknown as Record<string, unknown>, true);
+      return;
+    }
+    setLoading(true);
 
     const parts = [
       `Brand description: ${brandDesc}.`,

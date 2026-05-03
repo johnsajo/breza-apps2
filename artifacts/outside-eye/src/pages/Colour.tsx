@@ -114,8 +114,15 @@ export default function Colour() {
   }
 
   async function handleSubmit() {
-    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setIsDemo(false);
     markVisited("colour");
+    if (localStorage.getItem("outsideeye_mode") === "demo") {
+      const demo = DEMO_RESPONSES.colour as { palettes: Palette[] };
+      setOutput(demo); setIsDemo(true);
+      saveSession("colour", demo as unknown as Record<string, unknown>, true);
+      return;
+    }
+    setLoading(true);
     const parts = [
       `Brand/project description: ${desc}.`,
       `Industry: ${industry}.`,

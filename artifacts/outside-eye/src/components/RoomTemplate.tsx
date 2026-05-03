@@ -45,6 +45,9 @@ export default function RoomTemplate({
   const [isDemo, setIsDemo] = useState(false);
   const [restored, setRestored] = useState<number | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
+  const [inDemoMode, setInDemoMode] = useState(
+    () => localStorage.getItem("outsideeye_mode") === "demo"
+  );
 
   useEffect(() => {
     const saved = loadSession(demoKey);
@@ -55,14 +58,38 @@ export default function RoomTemplate({
     }
   }, [demoKey]);
 
+  useEffect(() => {
+    function sync() {
+      setInDemoMode(localStorage.getItem("outsideeye_mode") === "demo");
+    }
+    window.addEventListener("outsideeye:modechange", sync);
+    window.addEventListener("outsideeye:keychange", sync);
+    return () => {
+      window.removeEventListener("outsideeye:modechange", sync);
+      window.removeEventListener("outsideeye:keychange", sync);
+    };
+  }, []);
+
   async function handleSubmit() {
     setError(null);
     setOutput(null);
     setRestored(null);
-    setLoading(true);
     setIsDemo(false);
     markVisited(demoKey);
 
+    if (localStorage.getItem("outsideeye_mode") === "demo") {
+      const demo = DEMO_RESPONSES[demoKey];
+      if (demo) {
+        setOutput(demo as Record<string, unknown>);
+        setIsDemo(true);
+        saveSession(demoKey, demo as Record<string, unknown>, true);
+      } else {
+        setError("Add your key in Settings to use this room.");
+      }
+      return;
+    }
+
+    setLoading(true);
     try {
       const raw = await callOutsideEye(buildUserPrompt(), systemPrompt, imageBase64, imageType);
       const parsed = JSON.parse(raw);
@@ -70,16 +97,7 @@ export default function RoomTemplate({
       saveSession(demoKey, parsed, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
-      if (msg === "NO_KEY") {
-        const demo = DEMO_RESPONSES[demoKey];
-        if (demo) {
-          setOutput(demo as Record<string, unknown>);
-          setIsDemo(true);
-          saveSession(demoKey, demo as Record<string, unknown>, true);
-        } else {
-          setError("Add your key in Settings to use this room.");
-        }
-      } else if (msg === "BAD_KEY") {
+      if (msg === "BAD_KEY") {
         setError("Your key was rejected. Please check it in Settings.");
       } else if (msg === "RATE_LIMIT") {
         setError("You have hit your provider rate limit. Try again in a moment.");
@@ -170,6 +188,21 @@ export default function RoomTemplate({
       <hr className="hr-hairline" style={{ marginBottom: 40 }} />
 
       <HowToUse paragraphs={howToUse.paragraphs} example={howToUse.example} />
+
+      {inDemoMode && (
+        <p
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 11,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#5A5550",
+            marginBottom: 16,
+          }}
+        >
+          Demo mode — add your key in Settings for feedback on your actual work.
+        </p>
+      )}
 
       {inputSection}
 

@@ -178,8 +178,15 @@ export default function Wordmark() {
   }
 
   async function handleSubmit() {
-    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setIsDemo(false);
     markVisited("wordmark");
+    if (localStorage.getItem("outsideeye_mode") === "demo") {
+      const demo = DEMO_RESPONSES.wordmark as { concepts: Concept[] };
+      setOutput(demo); setIsDemo(true);
+      saveSession("wordmark", demo as unknown as Record<string, unknown>, true);
+      return;
+    }
+    setLoading(true);
     const styleDef = STYLE_DEFINITIONS[styleDir] ?? "";
     const parts = [
       `Brand name: "${brandName}".`,
