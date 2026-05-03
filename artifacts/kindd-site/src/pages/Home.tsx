@@ -692,11 +692,16 @@ export default function Home() {
       </nav>
 
       {/* ── SECTION 1 — HERO ────────────────────────────────────────────────── */}
-      <section id="home" style={{ position: "relative", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "20vh", paddingLeft: 24, paddingRight: 24 }}>
-        <img src={heroImg} alt="An Australian suburban street with houses, picket fences, a letterbox, and a kookaburra on a post. Painterly illustration." style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", zIndex: -2 }} />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, rgba(250,246,232,0.55) 0%, rgba(250,246,232,0.15) 45%, transparent 65%)`, zIndex: -1 }} />
+      <section id="home" style={{ position: "relative", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "16vh", paddingLeft: 24, paddingRight: 24, background: C.cream }}>
+        <img
+          src={heroImg}
+          alt="An Australian suburban street with houses, picket fences, a letterbox, and a kookaburra on a post. Painterly illustration."
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", zIndex: 0, opacity: 1 }}
+        />
+        {/* Top cream fade so text is readable; bottom stays clear */}
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to bottom, ${C.cream} 0%, ${C.cream} 18%, rgba(250,246,232,0.75) 36%, rgba(250,246,232,0.15) 56%, transparent 72%)`, zIndex: 1 }} />
 
-        <div className="max-w-3xl mx-auto text-center flex flex-col items-center" style={{ zIndex: 1 }}>
+        <div className="max-w-3xl mx-auto text-center flex flex-col items-center" style={{ position: "relative", zIndex: 2 }}>
           <h1 style={{ fontSize: "clamp(4rem, 12vw, 7rem)", fontWeight: 700, letterSpacing: "-0.04em", color: C.navy, marginBottom: 24, lineHeight: 1 }}>kindd</h1>
           <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 500, color: C.navy, marginBottom: 20, lineHeight: 1.2 }}>You are one of our kind.</h2>
           <p style={{ fontSize: "1.125rem", color: C.grey, maxWidth: 520, margin: "0 auto 40px", lineHeight: 1.7 }}>
