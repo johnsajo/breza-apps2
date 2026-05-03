@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoMercator, geoPath } from "d3-geo";
 import {
-  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink, Download,
+  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink, Download, Search,
   Linkedin, Instagram, Twitter, Youtube,
 } from "lucide-react";
 import { clusters } from "@/data/guides";
@@ -1225,6 +1225,8 @@ function RefTileCard({ tile, onReadMore }: { tile: RefTileData; onReadMore: () =
 export default function Home() {
   const [scrollY, setScrollY]       = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [query,      setQuery]      = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [openCit, setOpenCit]       = useState<number | null>(null);
   const [modalTile, setModalTile]   = useState<RefTileData | null>(null);
 
@@ -1358,14 +1360,78 @@ export default function Home() {
           <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", marginBottom: 6 }}>
             Plain language. Government sources. Updated monthly.
           </p>
-          <p style={{ fontFamily: MONO, fontSize: 12, color: C.grey, textAlign: "center", marginBottom: 48 }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: C.grey, textAlign: "center", marginBottom: 32 }}>
             All guides last reviewed May 2026. Always check the official government source linked in each guide.
           </p>
-          <div className="columns-1 sm:columns-2 xl:columns-3" style={{ columnGap: 24 }}>
-            {clusters.map((cluster) => (
-              <GuideClusterCard key={cluster.id} cluster={cluster} />
-            ))}
+
+          {/* ── Search input ────────────────────────────────────────────── */}
+          <div style={{ maxWidth: 480, margin: "0 auto 40px", position: "relative" }}>
+            <Search style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: C.grey, pointerEvents: "none" }} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              placeholder="Search guides…"
+              aria-label="Search guides"
+              style={{
+                width: "100%", boxSizing: "border-box",
+                paddingLeft: 44, paddingRight: query ? 40 : 16, paddingTop: 12, paddingBottom: 12,
+                borderRadius: 12, border: `1.5px solid ${searchFocused ? C.cerulean : "#E0DFDB"}`,
+                fontFamily: SANS, fontSize: 15, color: C.navy, background: C.white,
+                outline: "none", transition: "border-color 0.15s",
+              }}
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                aria-label="Clear search"
+                style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: C.grey, display: "flex", padding: 4 }}
+              >
+                <X style={{ width: 14, height: 14 }} />
+              </button>
+            )}
           </div>
+
+          {/* ── Guides grid ─────────────────────────────────────────────── */}
+          {(() => {
+            const q = query.trim().toLowerCase();
+            const filtered = q === ""
+              ? clusters
+              : clusters
+                  .map((cluster) => {
+                    if (cluster.name.toLowerCase().includes(q)) return cluster;
+                    const matched = cluster.guides.filter(
+                      (g) => g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)
+                    );
+                    return matched.length > 0 ? { ...cluster, guides: matched } : null;
+                  })
+                  .filter((c): c is Cluster => c !== null);
+
+            if (filtered.length === 0) return (
+              <div style={{ textAlign: "center", padding: "48px 24px" }}>
+                <p style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, marginBottom: 8 }}>No guides found.</p>
+                <p style={{ fontFamily: SANS, fontSize: 15, color: C.grey, marginBottom: 24 }}>
+                  Try a different word, or browse all guides below.
+                </p>
+                <button
+                  onClick={() => setQuery("")}
+                  style={{ padding: "10px 24px", borderRadius: 24, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, background: "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 14, cursor: "pointer" }}
+                >
+                  Clear search
+                </button>
+              </div>
+            );
+
+            return (
+              <div className="columns-1 sm:columns-2 xl:columns-3" style={{ columnGap: 24 }}>
+                {filtered.map((cluster) => (
+                  <GuideClusterCard key={cluster.id + query} cluster={cluster} />
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </section>
 
