@@ -140,199 +140,225 @@ const ID_DOCS = [
 ];
 
 // ─── Australia map state data ─────────────────────────────────────────────────
-interface StateHoliday { date: string; name: string; }
-interface StateInfo {
-  name: string;
+interface StateHoliday  { date: string; name: string; }
+interface StatePlace    { name: string; population: string; }
+interface StateHighlight{ name: string; description: string; }
+interface StateData {
+  fullName: string;
   capital: string;
-  timezone: string;
-  dst: string;
   population: string;
+  timezone: string;
+  daylightSaving: boolean;
+  site: string;
   siteLabel: string;
-  siteUrl: string;
+  places: StatePlace[];
+  highlights: StateHighlight[];
   holidays: StateHoliday[];
 }
 
-const STATE_INFO: Record<string, StateInfo> = {
+const STATE_DATA: Record<string, StateData> = {
   NSW: {
-    name: "New South Wales",
-    capital: "Sydney",
-    timezone: "AEST UTC+10",
-    dst: "Observed",
-    population: "8.4 million",
-    siteLabel: "nsw.gov.au",
-    siteUrl: "https://www.nsw.gov.au",
+    fullName: "New South Wales", capital: "Sydney", population: "Approximately 8.4 million",
+    timezone: "AEST UTC+10", daylightSaving: true, site: "https://nsw.gov.au", siteLabel: "nsw.gov.au",
+    places: [
+      { name: "Sydney",       population: "Approx. 5.3 million" },
+      { name: "Newcastle",    population: "Approx. 500,000" },
+      { name: "Wollongong",   population: "Approx. 320,000" },
+      { name: "Central Coast",population: "Approx. 340,000" },
+      { name: "Albury",       population: "Approx. 55,000" },
+    ],
+    highlights: [
+      { name: "Sydney Opera House",   description: "UNESCO World Heritage Site. One of the most recognisable buildings in the world. Circular Quay, Sydney." },
+      { name: "Sydney Harbour Bridge",description: "The world's largest steel arch bridge. Walk the bridge or take the BridgeClimb for panoramic harbour views." },
+      { name: "Blue Mountains",       description: "Ancient sandstone plateaus, eucalyptus forests, and the Three Sisters rock formation. Two hours west of Sydney." },
+      { name: "Byron Bay",            description: "Australia's most easterly point. Famous for beaches, surf, and the Cape Byron lighthouse." },
+      { name: "Hunter Valley",        description: "Australia's oldest wine region. World-class wineries, restaurants, and weekend escapes from Sydney." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "5 Apr",  name: "Easter Sunday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "8 Jun",  name: "King's Birthday" },
-      { date: "3 Aug",  name: "Bank Holiday" },
-      { date: "5 Oct",  name: "Labour Day" },
-      { date: "12 Oct", name: "Queen's Birthday" },
-      { date: "25 Dec", name: "Christmas Day" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },          { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },        { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },            { date: "4 Aug",  name: "Bank Holiday" },
+      { date: "12 Oct", name: "King's Birthday" },      { date: "25 Dec", name: "Christmas Day" },
       { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   VIC: {
-    name: "Victoria",
-    capital: "Melbourne",
-    timezone: "AEST UTC+10",
-    dst: "Observed",
-    population: "6.9 million",
-    siteLabel: "vic.gov.au",
-    siteUrl: "https://www.vic.gov.au",
+    fullName: "Victoria", capital: "Melbourne", population: "Approximately 6.7 million",
+    timezone: "AEST UTC+10", daylightSaving: true, site: "https://vic.gov.au", siteLabel: "vic.gov.au",
+    places: [
+      { name: "Melbourne", population: "Approx. 5.2 million" },
+      { name: "Geelong",   population: "Approx. 280,000" },
+      { name: "Ballarat",  population: "Approx. 115,000" },
+      { name: "Bendigo",   population: "Approx. 115,000" },
+      { name: "Shepparton",population: "Approx. 65,000" },
+    ],
+    highlights: [
+      { name: "Great Ocean Road",   description: "One of the world's most scenic coastal drives. Home to the Twelve Apostles limestone stacks and ancient rainforest." },
+      { name: "Melbourne Laneways", description: "Hosier Lane, Degraves Street, Centre Place. Melbourne's street art and cafe culture concentrated in the CBD." },
+      { name: "Yarra Valley",       description: "Victoria's premier wine and food region. Thirty minutes from Melbourne. Celebrated for Pinot Noir and Chardonnay." },
+      { name: "Sovereign Hill",     description: "An award-winning living museum in Ballarat recreating the 1850s gold rush era." },
+      { name: "Wilsons Promontory", description: "The southernmost tip of mainland Australia. Spectacular hiking, white sand beaches, and abundant wildlife." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "9 Mar",  name: "Labour Day" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "5 Apr",  name: "Easter Sunday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "8 Jun",  name: "King's Birthday" },
-      { date: "TBC",    name: "AFL Grand Final Friday" },
-      { date: "3 Nov",  name: "Melbourne Cup Day" },
-      { date: "25 Dec", name: "Christmas Day" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },          { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },        { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },            { date: "9 Jun",  name: "King's Birthday" },
+      { date: "7 Nov",  name: "Melbourne Cup Day" },    { date: "25 Dec", name: "Christmas Day" },
       { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   QLD: {
-    name: "Queensland",
-    capital: "Brisbane",
-    timezone: "AEST UTC+10",
-    dst: "Not observed",
-    population: "5.5 million",
-    siteLabel: "qld.gov.au",
-    siteUrl: "https://www.qld.gov.au",
+    fullName: "Queensland", capital: "Brisbane", population: "Approximately 5.5 million",
+    timezone: "AEST UTC+10", daylightSaving: false, site: "https://qld.gov.au", siteLabel: "qld.gov.au",
+    places: [
+      { name: "Brisbane",      population: "Approx. 2.6 million" },
+      { name: "Gold Coast",    population: "Approx. 700,000" },
+      { name: "Sunshine Coast",population: "Approx. 380,000" },
+      { name: "Townsville",    population: "Approx. 200,000" },
+      { name: "Cairns",        population: "Approx. 160,000" },
+    ],
+    highlights: [
+      { name: "Great Barrier Reef",        description: "The world's largest coral reef system. UNESCO World Heritage Site. Visible from space. Accessible from Cairns and the Whitsundays." },
+      { name: "Whitsunday Islands",        description: "74 islands in the Coral Sea. Whitehaven Beach is consistently rated among the world's best beaches." },
+      { name: "Daintree Rainforest",       description: "The world's oldest tropical rainforest at over 135 million years old. North of Cairns." },
+      { name: "Gold Coast Theme Parks",    description: "Dreamworld, Warner Bros. Movie World, Sea World, and Wet'n'Wild. Australia's theme park capital." },
+      { name: "Fraser Island (K'gari)",   description: "The world's largest sand island. UNESCO World Heritage Site. Freshwater lakes, wild dingoes, and ancient rainforest." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "5 Apr",  name: "Easter Sunday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "4 May",  name: "Labour Day" },
-      { date: "13 Oct", name: "Queen's Birthday" },
-      { date: "25 Dec", name: "Christmas Day" },
-      { date: "28 Dec", name: "Boxing Day (observed)" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },          { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "6 Apr",  name: "Easter Monday" },        { date: "25 Apr", name: "Anzac Day" },
+      { date: "4 May",  name: "Labour Day" },           { date: "13 Oct", name: "King's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },        { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   SA: {
-    name: "South Australia",
-    capital: "Adelaide",
-    timezone: "ACST UTC+9:30",
-    dst: "Observed",
-    population: "1.8 million",
-    siteLabel: "sa.gov.au",
-    siteUrl: "https://www.sa.gov.au",
+    fullName: "South Australia", capital: "Adelaide", population: "Approximately 1.9 million",
+    timezone: "ACST UTC+9:30", daylightSaving: true, site: "https://sa.gov.au", siteLabel: "sa.gov.au",
+    places: [
+      { name: "Adelaide",     population: "Approx. 1.4 million" },
+      { name: "Mount Gambier",population: "Approx. 30,000" },
+      { name: "Victor Harbor",population: "Approx. 16,000" },
+      { name: "Whyalla",      population: "Approx. 22,000" },
+      { name: "Port Augusta", population: "Approx. 14,000" },
+    ],
+    highlights: [
+      { name: "Barossa Valley",        description: "Australia's most famous wine region. World-renowned Shiraz. German heritage towns and historic cellar doors." },
+      { name: "Kangaroo Island",       description: "Australia's third largest island. Remarkable Rocks, Admirals Arch, sea lions, koalas, and pristine wilderness." },
+      { name: "Adelaide Central Market",description: "One of the largest fresh produce markets in the Southern Hemisphere. Operating since 1869." },
+      { name: "Flinders Ranges",       description: "Ancient mountain ranges in the outback. Wilpena Pound is one of Australia's most iconic natural landmarks." },
+      { name: "Coober Pedy",           description: "The opal capital of the world. Famous for underground homes built to escape the desert heat." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "9 Mar",  name: "Adelaide Cup" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "3 Aug",  name: "Queen's Birthday" },
-      { date: "5 Oct",  name: "Labour Day" },
-      { date: "25 Dec", name: "Christmas Day" },
-      { date: "26 Dec", name: "Proclamation Day" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar",  name: "Adelaide Cup" },         { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },            { date: "9 Jun",  name: "King's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },        { date: "26 Dec", name: "Proclamation Day" },
     ],
   },
   WA: {
-    name: "Western Australia",
-    capital: "Perth",
-    timezone: "AWST UTC+8",
-    dst: "Not observed",
-    population: "2.9 million",
-    siteLabel: "wa.gov.au",
-    siteUrl: "https://www.wa.gov.au",
+    fullName: "Western Australia", capital: "Perth", population: "Approximately 2.9 million",
+    timezone: "AWST UTC+8", daylightSaving: false, site: "https://wa.gov.au", siteLabel: "wa.gov.au",
+    places: [
+      { name: "Perth",      population: "Approx. 2.2 million" },
+      { name: "Mandurah",   population: "Approx. 110,000" },
+      { name: "Bunbury",    population: "Approx. 80,000" },
+      { name: "Geraldton",  population: "Approx. 40,000" },
+      { name: "Broome",     population: "Approx. 16,000" },
+    ],
+    highlights: [
+      { name: "Ningaloo Reef", description: "A UNESCO World Heritage reef where you can swim with whale sharks. More accessible than the Great Barrier Reef and equally spectacular." },
+      { name: "Rottnest Island",description: "Home of the quokka. One of Australia's most beloved natural icons. A short ferry from Fremantle." },
+      { name: "The Kimberley", description: "One of Australia's last great wildernesses. Ancient gorges, waterfalls, and the famous Bungle Bungle Range." },
+      { name: "Margaret River",description: "World-class wine, surf, caves, and tall karri forests. Three hours south of Perth." },
+      { name: "Fremantle",     description: "A historic port city with a vibrant arts scene, the famous Fremantle Markets, and excellent craft beer." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "1 Jun",  name: "WA Day" },
-      { date: "22 Sep", name: "Queen's Birthday" },
-      { date: "25 Dec", name: "Christmas Day" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "2 Mar",  name: "WA Day" },               { date: "3 Apr",  name: "Good Friday" },
+      { date: "6 Apr",  name: "Easter Monday" },        { date: "25 Apr", name: "Anzac Day" },
+      { date: "22 Sep", name: "King's Birthday" },      { date: "25 Dec", name: "Christmas Day" },
       { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   TAS: {
-    name: "Tasmania",
-    capital: "Hobart",
-    timezone: "AEST UTC+10",
-    dst: "Observed",
-    population: "570,000",
-    siteLabel: "tas.gov.au",
-    siteUrl: "https://www.tas.gov.au",
+    fullName: "Tasmania", capital: "Hobart", population: "Approximately 570,000",
+    timezone: "AEST UTC+10", daylightSaving: true, site: "https://tas.gov.au", siteLabel: "tas.gov.au",
+    places: [
+      { name: "Hobart",      population: "Approx. 250,000" },
+      { name: "Launceston",  population: "Approx. 90,000" },
+      { name: "Devonport",   population: "Approx. 30,000" },
+      { name: "Burnie",      population: "Approx. 20,000" },
+      { name: "Queenstown",  population: "Approx. 2,000" },
+    ],
+    highlights: [
+      { name: "MONA",                  description: "Museum of Old and New Art. One of the most extraordinary private art museums in the world. Hobart." },
+      { name: "Cradle Mountain",       description: "UNESCO World Heritage wilderness. Ancient glacial lakes, alpine moorlands, and wombats in the wild." },
+      { name: "Port Arthur",           description: "A UNESCO World Heritage convict site. The most significant and best preserved convict site in Australia." },
+      { name: "Freycinet National Park",description: "Home of Wineglass Bay, consistently ranked among the world's most beautiful beaches." },
+      { name: "Salamanca Market",      description: "Hobart's iconic waterfront market every Saturday. Local produce, art, and crafts since 1972." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "9 Feb",  name: "Hobart Regatta (south only)" },
-      { date: "9 Mar",  name: "Eight Hours Day" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "13 Apr", name: "Eight Hours Day" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "8 Jun",  name: "King's Birthday" },
-      { date: "25 Dec", name: "Christmas Day" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Feb",  name: "Royal Hobart Regatta (south)" },
+      { date: "3 Apr",  name: "Good Friday" },          { date: "6 Apr",  name: "Easter Monday" },
+      { date: "14 Apr", name: "Easter Tuesday" },       { date: "25 Apr", name: "Anzac Day" },
+      { date: "9 Jun",  name: "King's Birthday" },      { date: "25 Dec", name: "Christmas Day" },
       { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   NT: {
-    name: "Northern Territory",
-    capital: "Darwin",
-    timezone: "ACST UTC+9:30",
-    dst: "Not observed",
-    population: "250,000",
-    siteLabel: "nt.gov.au",
-    siteUrl: "https://www.nt.gov.au",
+    fullName: "Northern Territory", capital: "Darwin", population: "Approximately 250,000",
+    timezone: "ACST UTC+9:30", daylightSaving: false, site: "https://nt.gov.au", siteLabel: "nt.gov.au",
+    places: [
+      { name: "Darwin",       population: "Approx. 150,000" },
+      { name: "Alice Springs",population: "Approx. 28,000" },
+      { name: "Katherine",    population: "Approx. 10,000" },
+      { name: "Nhulunbuy",    population: "Approx. 3,500" },
+      { name: "Tennant Creek",population: "Approx. 3,000" },
+    ],
+    highlights: [
+      { name: "Uluru (Ayers Rock)",    description: "The spiritual heart of Australia. A sacred site for the Anangu people. UNESCO World Heritage Site. Climbing is closed out of respect." },
+      { name: "Kakadu National Park",  description: "Australia's largest national park. UNESCO World Heritage Site for both natural and cultural values. Ancient rock art, wetlands, and wildlife." },
+      { name: "Kings Canyon",          description: "A dramatic sandstone canyon in Watarrka National Park. The rim walk offers extraordinary views over the outback." },
+      { name: "Litchfield National Park",description: "Spectacular waterfalls, swimming holes, and magnetic termite mounds. One hour from Darwin." },
+      { name: "Katherine Gorge",       description: "Nitmiluk National Park. Thirteen connected gorges carved by the Katherine River. Canoe through ancient red sandstone walls." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "4 May",  name: "May Day" },
-      { date: "8 Jun",  name: "King's Birthday" },
-      { date: "3 Aug",  name: "Picnic Day" },
-      { date: "25 Dec", name: "Christmas Day" },
-      { date: "28 Dec", name: "Boxing Day (observed)" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },          { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },            { date: "4 May",  name: "May Day" },
+      { date: "9 Jun",  name: "King's Birthday" },      { date: "3 Aug",  name: "Picnic Day" },
+      { date: "25 Dec", name: "Christmas Day" },        { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
   ACT: {
-    name: "Australian Capital Territory",
-    capital: "Canberra",
-    timezone: "AEST UTC+10",
-    dst: "Observed",
-    population: "460,000",
-    siteLabel: "act.gov.au",
-    siteUrl: "https://www.act.gov.au",
+    fullName: "Australian Capital Territory", capital: "Canberra", population: "Approximately 460,000",
+    timezone: "AEST UTC+10", daylightSaving: true, site: "https://act.gov.au", siteLabel: "act.gov.au",
+    places: [
+      { name: "Canberra",     population: "Approx. 460,000" },
+      { name: "Tuggeranong",  population: "Approx. 100,000" },
+      { name: "Belconnen",    population: "Approx. 100,000" },
+      { name: "Gungahlin",    population: "Approx. 80,000" },
+      { name: "Woden Valley", population: "Approx. 60,000" },
+    ],
+    highlights: [
+      { name: "Australian War Memorial",     description: "One of the great war memorials of the world. Commemorates Australians who have served in wars. Free entry." },
+      { name: "Parliament House",            description: "Opened in 1988. Free guided tours daily. Sit in on Question Time when parliament is sitting." },
+      { name: "National Gallery of Australia",description: "Australia's national art museum. Home to the largest collection of Aboriginal and Torres Strait Islander art in the world. Free general admission." },
+      { name: "Floriade",                    description: "Australia's biggest celebration of spring. Over a million flowers in bloom at Commonwealth Park each September and October." },
+      { name: "Mount Ainslie",               description: "A short walk from the War Memorial. Panoramic views over Canberra, Lake Burley Griffin, and Parliament House." },
+    ],
     holidays: [
-      { date: "1 Jan",  name: "New Year's Day" },
-      { date: "27 Jan", name: "Australia Day (observed)" },
-      { date: "9 Mar",  name: "Canberra Day" },
-      { date: "3 Apr",  name: "Good Friday" },
-      { date: "4 Apr",  name: "Easter Saturday" },
-      { date: "5 Apr",  name: "Easter Sunday" },
-      { date: "6 Apr",  name: "Easter Monday" },
-      { date: "25 Apr", name: "Anzac Day" },
-      { date: "25 May", name: "Reconciliation Day" },
-      { date: "8 Jun",  name: "King's Birthday" },
-      { date: "26 Oct", name: "Family and Community Day" },
-      { date: "25 Dec", name: "Christmas Day" },
-      { date: "28 Dec", name: "Boxing Day (observed)" },
+      { date: "1 Jan",  name: "New Year's Day" },      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar",  name: "Canberra Day" },         { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },            { date: "25 May", name: "Reconciliation Day" },
+      { date: "9 Jun",  name: "King's Birthday" },      { date: "26 Oct", name: "Family and Community Day" },
+      { date: "25 Dec", name: "Christmas Day" },        { date: "28 Dec", name: "Boxing Day (observed)" },
     ],
   },
 };
@@ -358,8 +384,8 @@ function buildICS(stateName: string, holidays: StateHoliday[]): string {
   return ["BEGIN:VCALENDAR","VERSION:2.0",`PRODID:-//KINDD//Public Holidays 2026 - ${stateName}//EN`,"CALSCALE:GREGORIAN","METHOD:PUBLISH",...events,"END:VCALENDAR"].join("\r\n");
 }
 
-function downloadICS(info: StateInfo, code: string) {
-  const blob = new Blob([buildICS(info.name, info.holidays)], { type: "text/calendar;charset=utf-8" });
+function downloadICS(data: StateData, code: string) {
+  const blob = new Blob([buildICS(data.fullName, data.holidays)], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href: url, download: `kindd-holidays-${code.toLowerCase()}-2026.ics` });
   document.body.appendChild(a);
@@ -419,6 +445,7 @@ function AustraliaMap() {
   const [loading,   setLoading]  = useState(true);
   const [selected,  setSelected] = useState<string | null>(null);
   const [hovered,   setHovered]  = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"facts" | "places" | "highlights" | "holidays">("facts");
 
   useEffect(() => {
     fetch(GEO_URL)
@@ -430,7 +457,9 @@ function AustraliaMap() {
       .catch(() => setLoading(false));
   }, []);
 
-  const info = selected ? STATE_INFO[selected] : null;
+  useEffect(() => { setActiveTab("facts"); }, [selected]);
+
+  const stateData = selected ? STATE_DATA[selected] : null;
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto" }}>
@@ -515,77 +544,131 @@ function AustraliaMap() {
         </p>
       )}
 
-      {/* ── Info panel ────────────────────────────────────────────────────── */}
+      {/* ── Tabbed state panel ───────────────────────────────────────────── */}
       <AnimatePresence>
-        {info && selected && (
+        {stateData && selected && (
           <motion.div
             key={selected}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.25 }}
-            style={{ maxWidth: 800, margin: "24px auto 0" }}
+            style={{ maxWidth: 960, margin: "24px auto 0" }}
           >
-            <div style={{ background: C.white, borderRadius: 16, boxShadow: "0 4px 28px rgba(15,23,42,0.11)", padding: 32 }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
-                <h3 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, margin: 0 }}>{info.name}</h3>
+            <div style={{ background: C.white, borderRadius: 20, boxShadow: "0 4px 28px rgba(15,23,42,0.11)", padding: 32 }}>
+
+              {/* Header */}
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <h3 style={{ fontFamily: SERIF, fontSize: 32, color: C.navy, margin: 0 }}>{stateData.fullName}</h3>
                 <button
                   onClick={() => setSelected(null)}
-                  style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: C.navy, display: "flex", alignItems: "center" }}
-                  aria-label="Close"
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: C.navy, display: "flex", alignItems: "center", flexShrink: 0 }}
+                  aria-label="Close state panel"
                 >
                   <X style={{ width: 20, height: 20 }} />
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4" style={{ gap: "12px 24px", marginBottom: 20 }}>
-                <div>
-                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Capital</p>
-                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.capital}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Population</p>
-                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.population}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Time zone</p>
-                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.timezone}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Daylight saving</p>
-                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: info.dst === "Observed" ? C.auGreen : C.grey, margin: 0 }}>{info.dst}</p>
-                </div>
-              </div>
-
-              <div style={{ height: 1, background: "#E8E0D0", marginBottom: 20 }} />
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, margin: 0 }}>Public holidays 2026.</p>
-                <button
-                  onClick={() => downloadICS(info, selected!)}
-                  style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 11px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, background: "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 12, cursor: "pointer" }}
-                >
-                  <Download style={{ width: 12, height: 12 }} />
-                  Download (.ics)
-                </button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "4px 24px", marginBottom: 20 }}>
-                {info.holidays.map((h) => (
-                  <div key={h.date + h.name} style={{ display: "flex", gap: 12, padding: "5px 0", borderBottom: "1px solid rgba(15,23,42,0.06)", alignItems: "baseline" }}>
-                    <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, flexShrink: 0, minWidth: 50 }}>{h.date}</span>
-                    <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 13, color: C.navy }}>{h.name}</span>
-                  </div>
+              {/* Tab pills */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "20px 0" }}>
+                {(["facts", "places", "highlights", "holidays"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    style={{
+                      padding: "8px 20px", borderRadius: 32, border: "none", cursor: "pointer",
+                      fontFamily: SANS, fontWeight: 500, fontSize: 13,
+                      background: activeTab === tab ? C.navy : "transparent",
+                      color: activeTab === tab ? "#FAF6E8" : C.grey,
+                      transition: "background 0.15s, color 0.15s",
+                    }}
+                    onMouseEnter={(e) => { if (activeTab !== tab) (e.currentTarget as HTMLButtonElement).style.background = "#F5F4F0"; }}
+                    onMouseLeave={(e) => { if (activeTab !== tab) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
                 ))}
               </div>
 
-              <a
-                href={info.siteUrl} target="_blank" rel="noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 16px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, textDecoration: "none", transition: "all 0.15s", width: "100%", boxSizing: "border-box" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = C.cerulean; (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = C.cerulean; }}
-              >
-                {info.siteLabel} <ExternalLink style={{ width: 12, height: 12 }} />
-              </a>
+              {/* Divider */}
+              <div style={{ height: 1, background: "#EEEDE9" }} />
+
+              {/* Content area */}
+              <div style={{ paddingTop: 20, minHeight: 200 }}>
+
+                {/* Facts */}
+                {activeTab === "facts" && (
+                  <div>
+                    {[
+                      { label: "CAPITAL",         value: stateData.capital,                                              green: false },
+                      { label: "TIME ZONE",        value: stateData.timezone,                                             green: false },
+                      { label: "DAYLIGHT SAVING",  value: stateData.daylightSaving ? "Observed" : "Not observed",        green: stateData.daylightSaving },
+                      { label: "POPULATION",       value: stateData.population,                                           green: false },
+                    ].map((row, i, arr) => (
+                      <div key={row.label} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+                        <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{row.label}</span>
+                        <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: row.green ? C.auGreen : C.grey, lineHeight: 1.6 }}>{row.value}</span>
+                      </div>
+                    ))}
+                    <a
+                      href={stateData.site} target="_blank" rel="noreferrer"
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 16px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, textDecoration: "none", transition: "all 0.15s", width: "100%", boxSizing: "border-box", marginTop: 20 }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = C.cerulean; (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = C.cerulean; }}
+                    >
+                      {stateData.siteLabel} <ExternalLink style={{ width: 12, height: 12 }} />
+                    </a>
+                  </div>
+                )}
+
+                {/* Places */}
+                {activeTab === "places" && (
+                  <div>
+                    {stateData.places.map((place, i) => (
+                      <div key={place.name} className="flex flex-col sm:flex-row" style={{ padding: "12px 0", borderBottom: i < stateData.places.length - 1 ? "1px solid #EEEDE9" : "none", gap: 8 }}>
+                        <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 200, flexShrink: 0 }}>{place.name}</span>
+                        <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 15, color: C.grey, lineHeight: 1.6 }}>{place.population}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Highlights */}
+                {activeTab === "highlights" && (
+                  <div>
+                    {stateData.highlights.map((h, i) => (
+                      <div key={h.name} style={{ padding: "14px 0", borderBottom: i < stateData.highlights.length - 1 ? "1px solid #EEEDE9" : "none" }}>
+                        <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, margin: "0 0 4px" }}>{h.name}</p>
+                        <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 14, color: C.grey, lineHeight: 1.6, margin: 0 }}>{h.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Holidays */}
+                {activeTab === "holidays" && (
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+                      <button
+                        onClick={() => downloadICS(stateData, selected!)}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 11px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, background: "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 12, cursor: "pointer" }}
+                      >
+                        <Download style={{ width: 12, height: 12 }} />
+                        Download (.ics)
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "4px 24px" }}>
+                      {stateData.holidays.map((h) => (
+                        <div key={h.date + h.name} style={{ display: "flex", gap: 12, padding: "5px 0", borderBottom: "1px solid rgba(15,23,42,0.06)", alignItems: "baseline" }}>
+                          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, flexShrink: 0, minWidth: 50 }}>{h.date}</span>
+                          <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 13, color: C.navy }}>{h.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
             </div>
           </motion.div>
         )}
