@@ -1190,6 +1190,7 @@ export const DEMO_RESPONSES: Record<string, object[]> = {
       ],
       winningPattern: "The winners stopped explaining the product and started expressing a point of view. Every piece assumed the audience was more intelligent than they were being treated.",
       correctedBy: "The next era recognised that wit without warmth was cleverness performing as advertising. The 2000s reintroduced genuine feeling — not intelligence, but resonance.",
+      whatToSteal: "The bet on intelligence. 1990s outdoor won by removing half the words they thought they needed. Take your current headline and cut it by two-thirds. If the idea collapses without the words, it was never an outdoor idea — it was a print ad pretending to be one.",
     },
     {
       culturalContext: "Digital advertising in the 2010s was shaped by smartphone ubiquity colliding with post-GFC scepticism. Audiences who had survived financial collapse were allergic to aspiration and responded to participation, honesty, and brands willing to admit their own absurdity. The platforms rewarded content that generated conversation over content that broadcast, which inverted the entire creative logic of the industry.",
@@ -1200,6 +1201,7 @@ export const DEMO_RESPONSES: Record<string, object[]> = {
       ],
       winningPattern: "The work that won treated the audience as co-authors. The message only existed when someone chose to pass it on. Reach became a byproduct of resonance rather than a budget line.",
       correctedBy: "By 2018 the model had been corrupted by imitation. Every brand had a purpose campaign. The next era rebuilt credibility through specificity — doing less, but meaning it.",
+      whatToSteal: "The participation mechanic. The defining work of this era only existed once an audience engaged with it. Before you brief your next campaign, ask whether the idea is complete without anyone responding to it. If it is, you are broadcasting. The era you are studying was not.",
     },
     {
       culturalContext: "Work that unsettles juries usually arrives ahead of cultural permission. These are the pieces where the room goes quiet, the arguments run for an hour, and the final vote is uncomfortably close. They win because one or two jurors are willing to defend discomfort as evidence of honesty. The work is almost always about a subject that polite advertising had previously refused to touch directly.",
@@ -1210,6 +1212,7 @@ export const DEMO_RESPONSES: Record<string, object[]> = {
       ],
       winningPattern: "Every uncomfortable winner refused the dominant aesthetic of its category. It looked like something you would not expect from that client in that medium at that moment.",
       correctedBy: "The next era became suspicious of discomfort as a creative strategy. Being provocative because you are brave is a different thing from being provocative because you are trying to appear brave.",
+      whatToSteal: "The category refusal. Before you show your work to anyone, identify the one visual or tonal convention that every other brand in your sector uses without thinking. Describe your work as if that convention does not exist. See what survives. The pieces that made juries uncomfortable all started with that question.",
     },
   ],
 
