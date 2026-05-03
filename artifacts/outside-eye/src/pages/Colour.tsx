@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
+import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -56,10 +57,18 @@ export default function Colour() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [restored, setRestored] = useState<number | null>(null);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("colour"));
   const [note, setNote] = useState(() => getNote("colour"));
 
-  const isValid = desc.trim().length > 0 && industry.length > 0;
+  useEffect(() => {
+    const saved = loadSession("colour");
+    if (saved) {
+      setOutput(saved.output as { palettes: Palette[] });
+      setIsDemo(saved.isDemo);
+      setRestored(saved.savedAt);
+    }
+  }, []);
 
   function handleRating(r: Rating) {
     const next = rating === r ? null : r;
@@ -76,8 +85,15 @@ export default function Colour() {
     setSelectedMoods((prev) => prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]);
   }
 
+  function handleClear() {
+    clearSession("colour");
+    setOutput(null);
+    setRestored(null);
+    setIsDemo(false);
+  }
+
   async function handleSubmit() {
-    setError(null); setOutput(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
     markVisited("colour");
     const parts = [
       `Brand/project description: ${desc}.`,
@@ -102,11 +118,14 @@ export default function Colour() {
         });
       }
       setOutput(data);
+      saveSession("colour", data, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
-        setOutput(DEMO_RESPONSES.colour as { palettes: Palette[] });
+        const demo = DEMO_RESPONSES.colour as { palettes: Palette[] };
+        setOutput(demo);
         setIsDemo(true);
+        saveSession("colour", demo as unknown as Record<string, unknown>, true);
       } else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
       else if (msg === "RATE_LIMIT") setError("Rate limit hit. Try again in a moment.");
       else setError("Something went wrong. Please try again.");
@@ -118,16 +137,7 @@ export default function Colour() {
       <div style={{ marginBottom: 28 }}>
         <Link href="/">
           <span
-            style={{
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "#B8B2A8",
-              cursor: "pointer",
-              transition: "color 150ms ease",
-            }}
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#B8B2A8", cursor: "pointer", transition: "color 150ms ease" }}
             onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
           >
@@ -176,13 +186,7 @@ export default function Colour() {
 
         <div>
           <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
-          <input
-            type="url"
-            className="field-base"
-            value={inspirationUrl}
-            onChange={(e) => setInspirationUrl(e.target.value)}
-            placeholder="e.g. a brand whose palette you admire..."
-          />
+          <input type="url" className="field-base" value={inspirationUrl} onChange={(e) => setInspirationUrl(e.target.value)} placeholder="e.g. a brand whose palette you admire..." />
         </div>
       </div>
 
@@ -196,7 +200,24 @@ export default function Colour() {
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
-          <hr className="hr-hairline" style={{ marginBottom: 32 }} />
+          <hr className="hr-hairline" style={{ marginBottom: 24 }} />
+
+          {restored !== null && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", backgroundColor: "#141414", border: "1px solid #2A2A2A", marginBottom: 20 }}>
+              <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8" }}>
+                Last session · {sessionAge(restored)}
+              </p>
+              <button
+                onClick={handleClear}
+                style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5A5550", padding: 0, transition: "color 150ms ease" }}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F87171")}
+                onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#5A5550")}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings for real palette generation.</p>}
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             {output.palettes.map((palette, pi) => (
@@ -221,10 +242,7 @@ export default function Colour() {
             ))}
           </div>
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+            <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
             >

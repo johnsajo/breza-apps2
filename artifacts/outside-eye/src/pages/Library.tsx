@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
+import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -35,9 +36,19 @@ export default function Library() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [restored, setRestored] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("books");
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("library"));
   const [note, setNote] = useState(() => getNote("library"));
+
+  useEffect(() => {
+    const saved = loadSession("library");
+    if (saved) {
+      setOutput(saved.output as LibraryData);
+      setIsDemo(saved.isDemo);
+      setRestored(saved.savedAt);
+    }
+  }, []);
 
   function handleRating(r: Rating) {
     const next = rating === r ? null : r;
@@ -50,10 +61,17 @@ export default function Library() {
     saveNote("library", n);
   }
 
+  function handleClear() {
+    clearSession("library");
+    setOutput(null);
+    setRestored(null);
+    setIsDemo(false);
+  }
+
   const isValid = discipline.length > 0 && level.length > 0;
 
   async function handleSubmit() {
-    setError(null); setOutput(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
     markVisited("library");
     const prompt = `Discipline: ${discipline}. Level: ${level}.`;
     try {
@@ -66,10 +84,15 @@ export default function Library() {
       data.websites = toArr(data.websites);
       data.freeCourses = toArr(data.freeCourses ?? data.free_courses);
       setOutput(data);
+      saveSession("library", data, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
-      if (msg === "NO_KEY") { setOutput(DEMO_RESPONSES.library as LibraryData); setIsDemo(true); }
-      else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
+      if (msg === "NO_KEY") {
+        const demo = DEMO_RESPONSES.library as LibraryData;
+        setOutput(demo);
+        setIsDemo(true);
+        saveSession("library", demo as unknown as Record<string, unknown>, true);
+      } else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
       else if (msg === "RATE_LIMIT") setError("Rate limit hit. Try again in a moment.");
       else setError("Something went wrong. Please try again.");
     } finally { setLoading(false); }
@@ -90,16 +113,7 @@ export default function Library() {
       <div style={{ marginBottom: 28 }}>
         <Link href="/">
           <span
-            style={{
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "#B8B2A8",
-              cursor: "pointer",
-              transition: "color 150ms ease",
-            }}
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#B8B2A8", cursor: "pointer", transition: "color 150ms ease" }}
             onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
           >
@@ -144,7 +158,24 @@ export default function Library() {
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
-          <hr className="hr-hairline" style={{ marginBottom: 32 }} />
+          <hr className="hr-hairline" style={{ marginBottom: 24 }} />
+
+          {restored !== null && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", backgroundColor: "#141414", border: "1px solid #2A2A2A", marginBottom: 20 }}>
+              <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8" }}>
+                Last session · {sessionAge(restored)}
+              </p>
+              <button
+                onClick={handleClear}
+                style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5A5550", padding: 0, transition: "color 150ms ease" }}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F87171")}
+                onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#5A5550")}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key for your actual discipline and level.</p>}
 
           <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #2A2A2A", marginBottom: 32 }}>
@@ -216,10 +247,7 @@ export default function Library() {
 
           <WeekOnePlan />
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+            <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
             >

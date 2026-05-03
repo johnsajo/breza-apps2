@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
+import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 
 interface RoomTemplateProps {
   roomNumber: string;
@@ -38,10 +39,21 @@ export default function RoomTemplate({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [restored, setRestored] = useState<number | null>(null);
+
+  useEffect(() => {
+    const saved = loadSession(demoKey);
+    if (saved) {
+      setOutput(saved.output);
+      setIsDemo(saved.isDemo);
+      setRestored(saved.savedAt);
+    }
+  }, [demoKey]);
 
   async function handleSubmit() {
     setError(null);
     setOutput(null);
+    setRestored(null);
     setLoading(true);
     setIsDemo(false);
     markVisited(demoKey);
@@ -50,6 +62,7 @@ export default function RoomTemplate({
       const raw = await callOutsideEye(buildUserPrompt(), systemPrompt, imageBase64, imageType);
       const parsed = JSON.parse(raw);
       setOutput(parsed);
+      saveSession(demoKey, parsed, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
@@ -57,6 +70,7 @@ export default function RoomTemplate({
         if (demo) {
           setOutput(demo as Record<string, unknown>);
           setIsDemo(true);
+          saveSession(demoKey, demo as Record<string, unknown>, true);
         } else {
           setError("Add your key in Settings to use this room.");
         }
@@ -70,6 +84,13 @@ export default function RoomTemplate({
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleClear() {
+    clearSession(demoKey);
+    setOutput(null);
+    setRestored(null);
+    setIsDemo(false);
   }
 
   return (
@@ -165,8 +186,55 @@ export default function RoomTemplate({
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
-          <hr className="hr-hairline" style={{ marginBottom: 32 }} />
+          <hr className="hr-hairline" style={{ marginBottom: 24 }} />
+
+          {restored !== null && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "8px 14px",
+                backgroundColor: "#141414",
+                border: "1px solid #2A2A2A",
+                marginBottom: 20,
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#B8B2A8",
+                }}
+              >
+                Last session · {sessionAge(restored)}
+              </p>
+              <button
+                onClick={handleClear}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: "#5A5550",
+                  padding: 0,
+                  transition: "color 150ms ease",
+                }}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F87171")}
+                onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#5A5550")}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           <OutputCard data={output} isDemo={isDemo} feedbackKey={demoKey} />
+
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={handleSubmit}

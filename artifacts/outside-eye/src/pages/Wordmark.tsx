@@ -4,6 +4,7 @@ import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
+import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -16,7 +17,11 @@ interface Concept {
 }
 
 function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: string }) {
-  const displayName = concept.caseStyle === "uppercase" ? brandName.toUpperCase() : concept.caseStyle === "lowercase" ? brandName.toLowerCase() : brandName;
+  const displayName = concept.caseStyle === "uppercase"
+    ? brandName.toUpperCase()
+    : concept.caseStyle === "lowercase"
+    ? brandName.toLowerCase()
+    : brandName;
 
   useEffect(() => {
     const fontEncoded = encodeURIComponent(concept.font);
@@ -40,23 +45,12 @@ function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: str
       <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 13, color: "#F5A623", marginBottom: 16, letterSpacing: "0.08em", textTransform: "uppercase" }}>
         {concept.conceptName} — {concept.personality}
       </p>
-
       <div style={{ backgroundColor: concept.backgroundColour, padding: "32px 24px", marginBottom: 20, textAlign: "center" }}>
-        <span style={{
-          fontFamily: `'${concept.font}', Georgia, serif`,
-          fontWeight: parseInt(concept.weight),
-          fontSize: 48,
-          letterSpacing: concept.letterSpacing,
-          color: concept.textColour,
-          display: "block",
-          lineHeight: 1.2,
-        }}>
+        <span style={{ fontFamily: `'${concept.font}', Georgia, serif`, fontWeight: parseInt(concept.weight), fontSize: 48, letterSpacing: concept.letterSpacing, color: concept.textColour, display: "block", lineHeight: 1.2 }}>
           {displayName}
         </span>
       </div>
-
       <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6, marginBottom: 16 }}>{concept.reasoning}</p>
-
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <button onClick={downloadSvg} style={{ background: "none", border: "1px solid #2A2A2A", cursor: "pointer", padding: "8px 16px", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F5A623", letterSpacing: "0.08em", textTransform: "uppercase", transition: "border-color 150ms ease" }}
           onMouseEnter={(e) => ((e.target as HTMLElement).style.borderColor = "#F5A623")}
@@ -64,7 +58,7 @@ function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: str
           Download SVG
         </button>
         <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-          Typographic concept using Google Fonts. Not a generated logo.
+          Typographic concept using Google Fonts
         </p>
       </div>
     </div>
@@ -82,8 +76,18 @@ export default function Wordmark() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [restored, setRestored] = useState<number | null>(null);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("wordmark"));
   const [note, setNote] = useState(() => getNote("wordmark"));
+
+  useEffect(() => {
+    const saved = loadSession("wordmark");
+    if (saved) {
+      setOutput(saved.output as { concepts: Concept[] });
+      setIsDemo(saved.isDemo);
+      setRestored(saved.savedAt);
+    }
+  }, []);
 
   const isValid = brandName.trim().length > 0 && personality.trim().length > 0 && styleDir.length > 0;
 
@@ -98,8 +102,15 @@ export default function Wordmark() {
     saveNote("wordmark", n);
   }
 
+  function handleClear() {
+    clearSession("wordmark");
+    setOutput(null);
+    setRestored(null);
+    setIsDemo(false);
+  }
+
   async function handleSubmit() {
-    setError(null); setOutput(null); setLoading(true); setIsDemo(false);
+    setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
     markVisited("wordmark");
     const parts = [
       `Brand name: "${brandName}".`,
@@ -115,10 +126,15 @@ export default function Wordmark() {
         Array.isArray(v) ? v : v && typeof v === "object" ? Object.values(v as object) : [];
       data.concepts = toArr(data.concepts);
       setOutput(data);
+      saveSession("wordmark", data, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
-      if (msg === "NO_KEY") { setOutput(DEMO_RESPONSES.wordmark as { concepts: Concept[] }); setIsDemo(true); }
-      else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
+      if (msg === "NO_KEY") {
+        const demo = DEMO_RESPONSES.wordmark as { concepts: Concept[] };
+        setOutput(demo);
+        setIsDemo(true);
+        saveSession("wordmark", demo as unknown as Record<string, unknown>, true);
+      } else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
       else if (msg === "RATE_LIMIT") setError("Rate limit hit. Try again in a moment.");
       else setError("Something went wrong. Please try again.");
     } finally { setLoading(false); }
@@ -129,16 +145,7 @@ export default function Wordmark() {
       <div style={{ marginBottom: 28 }}>
         <Link href="/">
           <span
-            style={{
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "#B8B2A8",
-              cursor: "pointer",
-              transition: "color 150ms ease",
-            }}
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#B8B2A8", cursor: "pointer", transition: "color 150ms ease" }}
             onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
             onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
           >
@@ -173,13 +180,7 @@ export default function Wordmark() {
         </div>
         <div>
           <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
-          <input
-            type="url"
-            className="field-base"
-            value={inspirationUrl}
-            onChange={(e) => setInspirationUrl(e.target.value)}
-            placeholder="e.g. a brand whose wordmark style you admire..."
-          />
+          <input type="url" className="field-base" value={inspirationUrl} onChange={(e) => setInspirationUrl(e.target.value)} placeholder="e.g. a brand whose wordmark style you admire..." />
         </div>
       </div>
 
@@ -193,14 +194,28 @@ export default function Wordmark() {
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
-          <hr className="hr-hairline" style={{ marginBottom: 32 }} />
+          <hr className="hr-hairline" style={{ marginBottom: 24 }} />
+
+          {restored !== null && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", backgroundColor: "#141414", border: "1px solid #2A2A2A", marginBottom: 20 }}>
+              <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8" }}>
+                Last session · {sessionAge(restored)}
+              </p>
+              <button
+                onClick={handleClear}
+                style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5A5550", padding: 0, transition: "color 150ms ease" }}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F87171")}
+                onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#5A5550")}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
           {(Array.isArray(output.concepts) ? output.concepts : []).map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+            <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
             >
