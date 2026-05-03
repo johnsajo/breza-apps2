@@ -1225,8 +1225,9 @@ function RefTileCard({ tile, onReadMore }: { tile: RefTileData; onReadMore: () =
 export default function Home() {
   const [scrollY, setScrollY]       = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [query,      setQuery]      = useState("");
+  const [query,         setQuery]         = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [activeCluster, setActiveCluster] = useState<string | null>(null);
   const [openCit, setOpenCit]       = useState<number | null>(null);
   const [modalTile, setModalTile]   = useState<RefTileData | null>(null);
 
@@ -1365,7 +1366,7 @@ export default function Home() {
           </p>
 
           {/* ── Search input ────────────────────────────────────────────── */}
-          <div style={{ maxWidth: 480, margin: "0 auto 40px", position: "relative" }}>
+          <div style={{ maxWidth: 480, margin: "0 auto 20px", position: "relative" }}>
             <Search style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: C.grey, pointerEvents: "none" }} />
             <input
               type="text"
@@ -1394,12 +1395,59 @@ export default function Home() {
             )}
           </div>
 
+          {/* ── Cluster filter pills ─────────────────────────────────────── */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 40 }}>
+            {/* All pill */}
+            <button
+              onClick={() => { setActiveCluster(null); setQuery(""); }}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "7px 16px", borderRadius: 20, cursor: "pointer",
+                fontFamily: SANS, fontWeight: 500, fontSize: 13,
+                border: `1.5px solid ${activeCluster === null ? C.navy : "#D8D4CC"}`,
+                background: activeCluster === null ? C.navy : "transparent",
+                color: activeCluster === null ? C.softWhite : C.grey,
+                transition: "all 0.15s",
+              }}
+            >
+              All
+            </button>
+            {clusters.map((cluster) => {
+              const isActive = activeCluster === cluster.id;
+              return (
+                <button
+                  key={cluster.id}
+                  onClick={() => setActiveCluster(isActive ? null : cluster.id)}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    padding: "7px 16px", borderRadius: 20, cursor: "pointer",
+                    fontFamily: SANS, fontWeight: 500, fontSize: 13,
+                    border: `1.5px solid ${isActive ? cluster.color : "#D8D4CC"}`,
+                    background: isActive ? cluster.color + "18" : "transparent",
+                    color: isActive ? cluster.color : C.grey,
+                    transition: "all 0.15s",
+                  }}
+                >
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: cluster.color, flexShrink: 0, opacity: isActive ? 1 : 0.5 }} />
+                  {cluster.name}
+                </button>
+              );
+            })}
+          </div>
+
           {/* ── Guides grid ─────────────────────────────────────────────── */}
           {(() => {
             const q = query.trim().toLowerCase();
+
+            // Step 1 – apply cluster filter
+            const byCluster = activeCluster
+              ? clusters.filter((c) => c.id === activeCluster)
+              : clusters;
+
+            // Step 2 – apply text filter within those clusters
             const filtered = q === ""
-              ? clusters
-              : clusters
+              ? byCluster
+              : byCluster
                   .map((cluster) => {
                     if (cluster.name.toLowerCase().includes(q)) return cluster;
                     const matched = cluster.guides.filter(
@@ -1416,10 +1464,10 @@ export default function Home() {
                   Try a different word, or browse all guides below.
                 </p>
                 <button
-                  onClick={() => setQuery("")}
+                  onClick={() => { setQuery(""); setActiveCluster(null); }}
                   style={{ padding: "10px 24px", borderRadius: 24, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, background: "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 14, cursor: "pointer" }}
                 >
-                  Clear search
+                  Clear filters
                 </button>
               </div>
             );
