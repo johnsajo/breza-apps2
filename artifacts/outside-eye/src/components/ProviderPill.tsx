@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { getProviderLabel } from "@/lib/detect";
 
 interface StoredKey {
@@ -8,13 +9,14 @@ interface StoredKey {
 }
 
 export default function ProviderPill() {
+  const [, navigate] = useLocation();
   const [stored, setStored] = useState<StoredKey | null>(null);
 
   useEffect(() => {
-    const check = () => {
+    function check() {
       const raw = localStorage.getItem("outsideeye_key");
-      setStored(raw ? JSON.parse(raw) : null);
-    };
+      setStored(raw ? (JSON.parse(raw) as StoredKey) : null);
+    }
     check();
     window.addEventListener("storage", check);
     window.addEventListener("outsideeye:keychange", check);
@@ -24,46 +26,31 @@ export default function ProviderPill() {
     };
   }, []);
 
-  if (!stored) {
-    return (
-      <span
-        style={{
-          fontFamily: "'DM Sans', system-ui, sans-serif",
-          fontSize: 12,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: "#B8B2A8",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-        }}
-      >
-        <span
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            backgroundColor: "#444",
-            display: "inline-block",
-            flexShrink: 0,
-          }}
-        />
-        Demo Mode
-      </span>
-    );
-  }
+  const isLive = !!stored;
 
   return (
-    <span
+    <button
+      onClick={() => navigate(isLive ? "/settings" : "/howitworks")}
       style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: 0,
         fontFamily: "'DM Sans', system-ui, sans-serif",
         fontSize: 12,
         letterSpacing: "0.08em",
         textTransform: "uppercase",
-        color: "#F5A623",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
+        color: isLive ? "#F5A623" : "#B8B2A8",
+        transition: "color 150ms ease",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.color = isLive ? "#F5F0E8" : "#F5A623";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.color = isLive ? "#F5A623" : "#B8B2A8";
       }}
     >
       <span
@@ -71,12 +58,12 @@ export default function ProviderPill() {
           width: 7,
           height: 7,
           borderRadius: "50%",
-          backgroundColor: "#A3E635",
+          backgroundColor: isLive ? "#A3E635" : "#444444",
           display: "inline-block",
           flexShrink: 0,
         }}
       />
-      Live — {getProviderLabel(stored.provider)}
-    </span>
+      {isLive ? getProviderLabel(stored!.provider) : "Demo Mode"}
+    </button>
   );
 }

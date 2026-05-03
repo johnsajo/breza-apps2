@@ -334,7 +334,7 @@ export default function Settings() {
                   lineHeight: 1.5,
                 }}
               >
-                {sessionStats.tried} of 9 rooms tried
+                {sessionStats.tried} of 10 rooms tried
                 {sessionStats.rated > 0
                   ? ` · ${sessionStats.up} useful, ${sessionStats.rated - sessionStats.up} not`
                   : " · not yet rated"}

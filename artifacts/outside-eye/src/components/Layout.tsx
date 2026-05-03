@@ -1,8 +1,23 @@
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import Nav from "./Nav";
 import Footer from "./Footer";
 
+function useModeClass() {
+  useEffect(() => {
+    function sync() {
+      const hasKey = !!localStorage.getItem("outsideeye_key");
+      document.body.classList.toggle("mode-demo", !hasKey);
+      document.body.classList.toggle("mode-live", hasKey);
+    }
+    sync();
+    window.addEventListener("outsideeye:keychange", sync);
+    return () => window.removeEventListener("outsideeye:keychange", sync);
+  }, []);
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
+  useModeClass();
   return (
     <div
       style={{

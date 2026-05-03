@@ -1,0 +1,946 @@
+Here is the full updated Replit prompt. It is long. That is intentional. Every detail needs to be in here so the scaffold comes out right first time.
+
+---
+
+Build "The Outside Eye" — a free creative mentor web app.
+Static React app. No backend. No database. No server.
+
+====================================================
+TECH STACK
+====================================================
+
+React 18 + Vite + plain JavaScript. No TypeScript.
+Tailwind CSS for styling.
+React Router v6 for navigation.
+No other dependencies except Google Fonts loaded via index.html link tags.
+
+====================================================
+VISUAL DIRECTION
+====================================================
+
+The concept: The Darkroom. Truth revealed in darkness.
+A serious editorial tool. Not a product. Not a dashboard. Not a SaaS app.
+Near-black canvas. Warm white type. A single amber accent.
+Nothing decorates. Everything communicates.
+
+NO gradients on backgrounds.
+NO glassmorphism.
+NO glows or neon.
+NO rounded cards.
+NO stock illustration. NO hero images.
+Pure typography and space.
+
+The word "AI" must never appear in any UI copy anywhere.
+Say "the Outside Eye" or "this room" instead.
+
+====================================================
+BACKGROUND STATE SYSTEM
+====================================================
+
+Two distinct background states. One CSS class toggle on body.
+Transition between states: 600ms ease. Smooth. Deliberate.
+
+DEMO STATE:
+Body has class "mode-demo".
+Background: darkroom #0D0D0D.
+Hero illustration image sits as a fixed full-viewport background layer.
+z-index 0. opacity 0.15. object-fit cover. pointer-events none.
+Image file: /src/assets/hero-bg.jpg
+Content sits at z-index 1 above illustration.
+
+LIVE STATE:
+Body has class "mode-live".
+Background: darkroom #0D0D0D pure. No illustration.
+Illustration layer opacity transitions to 0 over 600ms then display none.
+
+On app load:
+Check localStorage for outsideeye_key.
+If no key: add class mode-demo to body.
+If key exists: add class mode-live to body.
+
+On key save: remove mode-demo, add mode-live. Trigger 600ms fade.
+On key clear: remove mode-live, add mode-demo. Trigger 600ms fade.
+
+CSS for transition:
+.bg-illustration {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.15;
+  transition: opacity 600ms ease;
+  pointer-events: none;
+}
+.mode-live .bg-illustration {
+  opacity: 0;
+}
+
+====================================================
+COLOUR PALETTE
+====================================================
+
+In tailwind.config.js extend.colors:
+
+  darkroom:     '#0D0D0D'
+  surface1:     '#141414'
+  surface2:     '#1C1C1C'
+  hairline:     '#2A2A2A'
+  warm-white:   '#F5F0E8'
+  warm-grey:    '#B8B2A8'
+  amber:        '#F5A623'
+  amber-deep:   '#C47D0E'
+  signal:       '#A3E635'
+  pulse:        '#F87171'
+  navy:         '#0A0F1E'
+  moonlight:    '#F0F4F8'
+  drift:        '#94A3B8'
+  breeze:       '#B8D4E8'
+
+====================================================
+TYPOGRAPHY
+====================================================
+
+Load in index.html inside head:
+
+Fraunces:
+https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap
+
+Departure Mono:
+https://fonts.googleapis.com/css2?family=Departure+Mono&display=swap
+
+DM Sans:
+https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap
+
+In tailwind.config.js extend.fontFamily:
+  fraunces: ['Fraunces', 'Georgia', 'serif']
+  mono: ['Departure Mono', 'Courier New', 'monospace']
+  body: ['DM Sans', 'system-ui', 'sans-serif']
+
+USAGE:
+
+Fraunces: all headlines, room names, pull quotes, nav wordmark.
+Minimum weight 600 for display. opsz 72 on anything 32px and above.
+Colour: amber #F5A623 on dark. Tracking -0.02em.
+Desktop hero: 56px. Room names: 42px. Subheadings: 26px.
+Mobile hero: 36px. Room names: 28px.
+Italic for pull quotes only.
+
+Departure Mono: room numbers, labels, meta, provider pill, button text, nav items.
+12px to 14px. Always uppercase as labels. Letter-spacing 0.08em.
+Warm-grey for labels. Amber for active labels.
+
+DM Sans: all body copy, descriptions, input text, output card body.
+Weight 400 body. Weight 500 field labels.
+17px body. 15px secondary. 13px captions. Line-height 1.65.
+Warm-white primary. Warm-grey secondary.
+
+====================================================
+FILE STRUCTURE
+====================================================
+
+src/
+  main.jsx
+  App.jsx
+  assets/
+    hero-bg.jpg
+  lib/
+    ai.js
+    detect.js
+    demo.js
+    demoEntries.js
+  components/
+    Layout.jsx
+    Nav.jsx
+    Footer.jsx
+    RoomTemplate.jsx
+    ModeToggle.jsx
+    Typewriter.jsx
+    OutputCard.jsx
+    ProviderPill.jsx
+  pages/
+    Home.jsx
+    Critique.jsx
+    Brief.jsx
+    Bridge.jsx
+    Translate.jsx
+    Jury.jsx
+    Colour.jsx
+    Wordmark.jsx
+    Library.jsx
+    Spark.jsx
+    Settings.jsx
+    About.jsx
+    HowItWorks.jsx
+  index.css
+index.html
+tailwind.config.js
+vite.config.js
+public/
+  _redirects
+
+====================================================
+ROUTING
+====================================================
+
+Routes:
+  /             → Home
+  /critique     → Critique
+  /brief        → Brief
+  /bridge       → Bridge
+  /translate    → Translate
+  /jury         → Jury
+  /colour       → Colour
+  /wordmark     → Wordmark
+  /library      → Library
+  /spark        → Spark
+  /settings     → Settings
+  /about        → About
+  /howitworks   → HowItWorks
+
+Wrap all routes in Layout.jsx.
+Layout renders Nav at top, bg illustration layer, Footer at bottom.
+
+====================================================
+NAV.JSX
+====================================================
+
+Background: darkroom #0D0D0D. 1px hairline rule below.
+Max width 740px. Centred. Padding 20px horizontal, 18px vertical.
+Sticky top on desktop. Static on mobile.
+
+Left: "The Outside Eye"
+  Fraunces weight 600. 19px. Amber #F5A623. Link to /.
+
+Right: inline row, 20px gap.
+  1. ProviderPill
+  2. "How It Works" Departure Mono 12px warm-grey uppercase. Link to /howitworks.
+  3. "Settings" Departure Mono 12px warm-grey uppercase. Link to /settings.
+  Hover on both: amber. 150ms ease.
+
+====================================================
+PROVIDER PILL
+====================================================
+
+No key: dim dot #444 + "DEMO MODE" Departure Mono 12px warm-grey.
+Key saved: signal dot #A3E635 + "LIVE" Departure Mono 12px amber.
+Click on pill when in demo: navigates to /howitworks.
+Click on pill when live: navigates to /settings.
+
+====================================================
+MODE TOGGLE (ModeToggle.jsx)
+====================================================
+
+Appears at top of every room page. Below room number, above room name.
+Two tab buttons inline: "DEMO" and "LIVE"
+Departure Mono 12px uppercase. 20px gap between.
+
+DEMO tab:
+  Default active when no key saved.
+  Active style: amber text, 2px amber underline.
+  Inactive: warm-grey text, no underline.
+
+LIVE tab:
+  Active when key saved.
+  Active style: amber text, 2px amber underline.
+  Inactive: warm-grey text.
+  If clicked when no key saved: navigate to /howitworks.
+  Small note inline: Departure Mono 11px warm-grey.
+  "No key yet. Add one in How It Works."
+
+====================================================
+TYPEWRITER.jsx
+====================================================
+
+Props: text (string), speed (number, default 38), onComplete (function).
+
+Types characters one by one at speed characters per second.
+Uses setInterval internally. Clears on unmount.
+Renders text in a span. Cursor blinks after last character until onComplete fires.
+Cursor: 2px amber block. Blinks at 500ms interval.
+onComplete fires after final character plus 400ms pause.
+
+====================================================
+src/lib/demoEntries.js
+====================================================
+
+Export one object DEMO_ENTRIES.
+Keys match room names: critique, brief, bridge, translate, jury,
+colour, wordmark, library, spark.
+
+Each key holds an array of 5 entry sets.
+Each entry set contains the field values for that room's input form
+AND a matching pre-written response object that exactly matches
+the JSON structure the room expects from the API.
+
+The system types the entry fields in sequence.
+User reads. User presses Enter or clicks the submit button to fire.
+The matching hardcoded response renders immediately.
+No API call is made in demo mode.
+
+Regenerate button picks the next entry set in the array.
+Cycles back to 0 after index 4.
+Each regenerate shows different entries AND different response.
+
+DEMO ENTRIES — ALL FIVE PER ROOM:
+
+CRITIQUE ROOM:
+Set 1: Logo concept for an independent Sydney coffee brand called Groundwork.
+  Audience: 25 to 40 urban professionals. Intent: trustworthy but not corporate.
+  Work type: Logo.
+Set 2: Headline copy for a fitness studio called Form. Single line ad.
+  Audience: time-poor working parents. Intent: motivating without being aggressive.
+  Work type: Copy.
+Set 3: Social post for a sustainable homewares brand. Instagram caption.
+  Audience: conscious renters under 35. Intent: feel genuine not preachy.
+  Work type: Social Post.
+Set 4: Packaging concept for a small-batch hot sauce brand called Slow Burn.
+  Audience: food-curious home cooks. Intent: artisan but approachable.
+  Work type: Packaging.
+Set 5: Website hero copy for a freelance UX designer.
+  Audience: startup founders. Intent: confident without being arrogant.
+  Work type: Copy.
+
+BRIEF DECODER:
+Set 1: Client email from a local tradie asking for help with a Facebook ad.
+  "We just need something professional that shows what we do.
+  Nothing too fancy. Just clean. Maybe put the logo bigger."
+  Category: Digital.
+Set 2: Brief from a cafe owner wanting a rebrand.
+  "We want to feel premium but not pretentious. Young but not childish.
+  Like a place you'd bring your mum but also your mates."
+  Category: Brand.
+Set 3: Agency brief for a government road safety campaign.
+  "Target 18 to 25 males. Reduce speeding. Emotional not preachy.
+  Must work on outdoor and social. Budget is limited."
+  Category: Campaign.
+Set 4: Client brief for a law firm website refresh.
+  "We want to look modern but still serious. Our competitors all look the same.
+  We want to stand out but not look like a startup."
+  Category: Digital.
+Set 5: Brief for a new product launch email campaign.
+  "Introduce the product. Generate excitement. Drive pre-orders.
+  Our audience is tech-savvy millennials. Keep it short."
+  Category: Digital.
+
+BRIDGE:
+Set 1: Thing one: a worn leather tool bag. Thing two: the first day of school.
+Set 2: Thing one: a lighthouse. Thing two: a job rejection email.
+Set 3: Thing one: the smell of petrol at a servo. Thing two: ambition.
+Set 4: Thing one: a half-finished cup of tea. Thing two: a resignation letter.
+Set 5: Thing one: a traffic light stuck on red. Thing two: creative block.
+
+FEEDBACK TRANSLATOR:
+Set 1: "Can we make it pop a bit more?" Work: brand identity for a gym.
+  Stage: First presentation.
+Set 2: "It feels a bit flat. Can we make it more dynamic?" Work: annual report layout.
+  Stage: Revision round.
+Set 3: "I showed it to my wife and she thinks the font is too modern."
+  Work: logo for a family accounting firm. Stage: Final approval.
+Set 4: "It's close but it's missing something. Not sure what."
+  Work: campaign concept for a new beer brand. Stage: Revision round.
+Set 5: "The client loves it but wants it to feel more premium."
+  Work: packaging design for a boutique skincare range. Stage: Final approval.
+
+JURY:
+Set 1: Billboard concept: "Your commute is lying to you." Cycling gear brand.
+  Medium: OOH. Audience: Sydney inner-city commuters.
+Set 2: TV spot concept: a pensioner teaching a teenager to cook.
+  Product: a superannuation fund. Medium: Film. Audience: 18 to 30 Australians.
+Set 3: Social campaign: people posting photos of their most-used object.
+  Brand: a repair cafe movement. Medium: Social. Audience: sustainability-minded 25 to 40s.
+Set 4: Integrated concept: silence as the product benefit.
+  Brand: noise-cancelling headphones. Medium: Integrated. Audience: open plan office workers.
+Set 5: Print ad: entirely white page. One line at the bottom.
+  "Everything else is noise." Brand: a meditation app. Medium: Print. Audience: burned-out professionals.
+
+COLOUR INTELLIGENCE:
+Set 1: Sustainable homewares brand. Industry: Retail. Mood: Earthy, Minimal, Warm.
+  Output: Website.
+Set 2: Independent legal firm wanting to stand apart. Industry: Professional Services.
+  Mood: Sophisticated, Dark, Minimal. Output: Website and Print.
+Set 3: Street food brand from Western Sydney. Industry: Food and Drink.
+  Mood: Bold, Warm, Playful. Output: Packaging and Social Media.
+Set 4: Mental health app for teenagers. Industry: Health.
+  Mood: Calm, Fresh, Warm. Output: App UI.
+Set 5: Independent record label. Industry: Arts and Culture.
+  Mood: Bold, Dark, Electric. Output: Website and Social Media.
+
+WORDMARK ROOM:
+Set 1: Brand name: Groundwork. One word: Reliable. Style: Minimal.
+Set 2: Brand name: Ember. One word: Warmth. Style: Editorial.
+Set 3: Brand name: Vantage. One word: Precision. Style: Geometric.
+Set 4: Brand name: Ruckus. One word: Energy. Style: Bold.
+Set 5: Brand name: Fern & Folk. One word: Handmade. Style: Handcrafted.
+
+Each style direction gets three genuinely distinct typographic concepts.
+Minimal: clean, restrained, lots of space.
+Editorial: magazine-influenced, considered weight contrast.
+Geometric: built on grids and circles, systematic.
+Bold: high contrast, commanding, unapologetic weight.
+Handcrafted: organic, warm, imperfect edges.
+
+LIBRARY:
+Set 1: Discipline: Copywriting. Level: Just starting.
+Set 2: Discipline: Graphic Design. Level: Getting serious.
+Set 3: Discipline: Brand Strategy. Level: Ready to go deeper.
+Set 4: Discipline: Advertising. Level: Getting serious.
+Set 5: Discipline: Freelancing. Level: Just starting.
+
+Each demo response must include all four tabs fully populated:
+Books (4 titles), YouTube channels (3), Websites (3), Free Courses (2).
+All titles and names must be real and genuinely useful.
+Week One Plan included on every tab.
+
+FIRST DRAFT:
+Set 1: Brief: Get young Australians to care about superannuation.
+  Stuck because: Everything feels done before.
+Set 2: Brief: Make people choose tap water over bottled.
+  Stuck because: Brief is too vague.
+Set 3: Brief: Convince tradies to wear sunscreen every day.
+  Stuck because: Ideas feel too safe.
+Set 4: Brief: Launch a new local gym that is not about looks.
+  Stuck because: Blank page.
+Set 5: Brief: Get small business owners to back themselves publicly.
+  Stuck because: Too many ideas, wrong direction.
+
+====================================================
+ROOM TEMPLATE DEMO FLOW
+====================================================
+
+When mode is DEMO:
+
+1. Room loads. Input fields are empty and disabled.
+   Small label above first field: Departure Mono 11px warm-grey.
+   "DEMO MODE — WATCH THE ENTRY. PRESS ENTER TO RUN."
+
+2. After 800ms delay, Typewriter component begins typing
+   the first field value of entry set index 0 at 38 chars/sec.
+
+3. When first field completes, 300ms pause, then next field begins.
+   Fields type in sequence. All fields type before submit is enabled.
+
+4. When all fields complete: submit button activates.
+   Button text changes from "WAITING..." to "GET THE OUTSIDE EYE"
+   Departure Mono 13px uppercase.
+   User presses Enter key or clicks button.
+
+5. Hardcoded response from demoEntries.js renders immediately.
+   No loading state. Response appears in 200ms.
+   isDemo: true flag triggers demo notice above output.
+
+6. Regenerate button appears below output.
+   "TRY ANOTHER EXAMPLE" Departure Mono 12px amber uppercase.
+   Hairline border. No fill. Padding 10px 20px.
+   Click: clears output, increments entry index, restarts typewriter sequence.
+   Index cycles 0 through 4 then back to 0.
+
+When mode is LIVE:
+Fields are empty and editable. User types their own content.
+Submit fires callOutsideEye. Loading state shows.
+No typewriter. No demo entries. Normal flow.
+
+====================================================
+HOW IT WORKS PAGE (/howitworks)
+====================================================
+
+Heading: "Your key. Two minutes."
+Fraunces 40px warm-white weight 600.
+
+Subhead: DM Sans 17px warm-grey. Max-width 580px.
+"The Outside Eye works with any key you already have.
+If you have used any of these services before, you already have one.
+If not, all of them have a free tier. Pick the one that suits you."
+
+Gap 40px. 1px hairline. Gap 40px.
+
+Six provider tabs in a row.
+Tab labels: GEMINI, CLAUDE, OPENAI, DEEPSEEK, QWEN, GROQ
+Departure Mono 13px uppercase. 20px gap between tabs.
+Active tab: amber text, 2px amber underline.
+Inactive: warm-grey. Hover: warm-white. 150ms ease.
+GEMINI tab active by default.
+
+Each tab contains:
+
+Provider name: Fraunces 24px amber weight 600.
+Free tier note: DM Sans 15px warm-grey.
+Get key link: Departure Mono 13px amber. Opens new tab.
+
+Then numbered steps. DM Sans 15px warm-white. Line-height 1.65.
+Each step on its own row. Number in amber Departure Mono 13px.
+One action per step. No compound instructions.
+
+GEMINI TAB:
+Free tier: 1,500 requests per day. No credit card needed.
+Link: aistudio.google.com
+
+Steps:
+1. Go to aistudio.google.com
+2. Sign in with any Google account you already have.
+3. Click "Get API Key" in the left sidebar.
+4. Click "Create API key."
+5. Copy the key that appears. It starts with AIza.
+6. Go to Settings in The Outside Eye.
+7. Paste the key and click Save.
+8. Done. The app detects Gemini automatically.
+
+CLAUDE TAB:
+Free tier: trial credits on signup. Check current offer at signup.
+Link: console.anthropic.com
+
+Steps:
+1. Go to console.anthropic.com
+2. Create an account or sign in.
+3. Go to API Keys in the left menu.
+4. Click "Create Key." Give it any name.
+5. Copy the key. It starts with sk-ant-
+6. Go to Settings in The Outside Eye.
+7. Paste the key and click Save.
+8. The app detects Claude automatically.
+
+OPENAI TAB:
+Free tier: pay as you go. Very low cost per request.
+Link: platform.openai.com
+
+Steps:
+1. Go to platform.openai.com
+2. Create an account or sign in.
+3. Go to API Keys in the top menu.
+4. Click "Create new secret key."
+5. Copy the key. It starts with sk-proj-
+6. Go to Settings in The Outside Eye.
+7. Paste the key and click Save.
+8. The app detects OpenAI automatically.
+
+DEEPSEEK TAB:
+Free tier: generous free tier included on signup.
+Link: platform.deepseek.com
+
+Steps:
+1. Go to platform.deepseek.com
+2. Create an account or sign in.
+3. Go to API Keys in the dashboard.
+4. Click "Create new API key."
+5. Copy the key.
+6. Go to Settings in The Outside Eye.
+7. Paste the key. Select DeepSeek from the dropdown.
+8. Click Save.
+
+QWEN TAB:
+Free tier: free tier available on signup.
+Link: dashscope-intl.aliyuncs.com
+
+Steps:
+1. Go to dashscope-intl.aliyuncs.com
+2. Create an account or sign in.
+3. Go to API Key Management.
+4. Create and copy your key.
+5. Go to Settings in The Outside Eye.
+6. Paste the key. Select Qwen from the dropdown.
+7. Click Save.
+
+GROQ TAB:
+Free tier: free tier with fast response times.
+Link: console.groq.com
+
+Steps:
+1. Go to console.groq.com
+2. Create an account or sign in.
+3. Go to API Keys in the left menu.
+4. Click "Create API Key."
+5. Copy the key. It starts with gsk_
+6. Go to Settings in The Outside Eye.
+7. Paste the key and click Save.
+8. The app detects Groq automatically.
+
+Gap 40px. 1px hairline. Gap 32px.
+
+Note below all tabs:
+Departure Mono 12px warm-grey uppercase. Max-width 560px.
+"YOUR KEY IS STORED ONLY IN YOUR BROWSER.
+IT IS NEVER SENT TO ANY SERVER EXCEPT THE PROVIDER YOU CHOSE.
+CLEAR IT ANY TIME IN SETTINGS."
+
+Gap 32px.
+
+CTA row:
+"Ready? Go to Settings and paste your key."
+DM Sans 15px warm-grey.
+Inline link "Settings" in amber. Routes to /settings.
+
+====================================================
+SETTINGS PAGE (/settings)
+====================================================
+
+Heading: "Your Key" Fraunces 40px warm-white weight 600.
+Subhead: DM Sans 17px warm-grey. Max-width 560px.
+"The Outside Eye works with any key you already have.
+Use Demo Mode to explore first. Add a key when you are ready."
+
+Gap 40px. 1px hairline. Gap 24px.
+
+Link row: DM Sans 14px warm-grey.
+"Not sure how to get a key?"
+Inline link "Read How It Works" amber. Routes to /howitworks.
+
+Gap 40px.
+
+Key input section:
+Label: Departure Mono 12px amber uppercase. "PASTE YOUR KEY"
+Input field full width. Global input style.
+Placeholder: "AIza, sk-ant-, sk-proj-, gsk_, or any other key"
+
+On input change: run detectProvider().
+If detected: signal chip below. Departure Mono 12px.
+"DETECTED: [PROVIDER NAME]" signal colour.
+If unknown: dropdown below. "WHICH PROVIDER IS THIS KEY FOR?"
+Options: OpenAI, DeepSeek, Qwen, Other.
+
+Save button: full width amber. Darkroom text. Departure Mono 13px uppercase.
+"SAVE KEY AND GO LIVE"
+On save: store to localStorage. Body class switches to mode-live.
+Confirmation: "SAVED. YOU ARE NOW LIVE." signal colour. Fades 2 seconds.
+
+Clear button: text only. Departure Mono 13px amber underline.
+"Clear saved key and return to Demo Mode"
+On clear: remove from localStorage. Body class switches to mode-demo.
+
+====================================================
+FOOTER.JSX
+====================================================
+
+Background: navy #0A0F1E. Full width. Clean break from page.
+Padding: 56px top, 48px bottom.
+Max-width 740px centred inside.
+All content centre aligned. Deliberate.
+
+Wordmark:
+"the outside eye" Fraunces weight 600 18px moonlight.
+Below: Departure Mono 12px drift uppercase letter-spacing 0.08em.
+"A FREE CREATIVE MENTOR. NO ACCOUNT. NO SUBSCRIPTION."
+
+Gap 36px. Full-width 1px rule #1A2536. Gap 28px.
+
+App names. Centre aligned. Two rows. 7 and 6.
+Row 1: compyr · alertss · turnd · yourrr · novlit · sharpend · moodframe
+Row 2: the outside eye · rostrr · platd · sortd · earnt · kindd
+DM Sans 13px drift. Separator " · " same colour.
+No links. Plain text.
+
+Gap 20px.
+
+Division links. Centre aligned.
+tbcworldwide.com · brezaplusyou.com.au · taracollective.org · celes13.com.au
+DM Sans 13px breeze. Linked. No underline default. Underline on hover.
+Separator " · " drift colour.
+
+Gap 20px.
+
+Contact. Centre aligned.
+connect@tbcworldwide.com
+DM Sans 13px breeze. Linked as mailto.
+
+Gap 36px. Full-width 1px rule #1A2536. Gap 28px.
+
+Social icons. Centre aligned. Inline row. 28px gap.
+LinkedIn, Instagram, X, YouTube. Lucide React icons. 20px square.
+Colour drift. Hover moonlight. 150ms ease. No href yet.
+
+Gap 20px.
+
+Credit and copyright. Centre aligned.
+Line 1: "Part of Breza + You. Tech Division of TBC Worldwide."
+DM Sans 13px drift.
+Line 2: "2026 The Outside Eye. All rights reserved."
+DM Sans 13px colour #3A4A65.
+
+====================================================
+src/lib/detect.js
+====================================================
+
+Export function detectProvider(key):
+  starts with "AIza"      → "gemini"
+  starts with "sk-ant-"   → "claude"
+  starts with "sk-proj-"  → "openai"
+  starts with "gsk_"      → "groq"
+  starts with "sk-"       → "openai_ambiguous"
+  else                    → "unknown"
+
+Export function getModel(provider):
+  gemini   → "gemini-2.5-flash"
+  claude   → "claude-haiku-4-5-20251001"
+  openai   → "gpt-4o-mini"
+  groq     → "llama-3.3-70b-versatile"
+  deepseek → "deepseek-chat"
+  qwen     → "qwen-plus"
+  default  → "gemini-2.5-flash"
+
+====================================================
+src/lib/ai.js
+====================================================
+
+Import detectProvider and getModel from detect.js.
+
+Export async function callOutsideEye(userPrompt, systemPrompt):
+
+  const stored = JSON.parse(localStorage.getItem('outsideeye_key') || 'null')
+  If null: throw new Error('NO_KEY')
+
+  const { provider, key } = stored
+  const model = getModel(provider)
+
+  GEMINI handler:
+    endpoint: https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}
+    body: {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      generationConfig: { temperature: 0.8, maxOutputTokens: 1500 }
+    }
+    Parse: data.candidates[0].content.parts[0].text
+
+  CLAUDE handler:
+    endpoint: https://api.anthropic.com/v1/messages
+    headers: {
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    }
+    body: { model, max_tokens: 1500, system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }] }
+    Parse: data.content[0].text
+
+  OPENAI-COMPATIBLE handler (openai, groq, deepseek, qwen):
+    endpoints per provider as previously specified.
+    headers: { 'Authorization': `Bearer ${key}` }
+    body: { model, max_tokens: 1500, temperature: 0.8,
+      messages: [{ role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }] }
+    Parse: data.choices[0].message.content
+
+  Error handling:
+    401 or 403: throw new Error('BAD_KEY')
+    429: throw new Error('RATE_LIMIT')
+    all others: throw new Error('API_ERROR')
+
+  All responses return raw text strings.
+  Each room parses as JSON.
+  Every room prompt: return ONLY valid JSON, no markdown fences, no preamble.
+
+====================================================
+ALL NINE ROOMS — FULL SPEC
+====================================================
+
+All rooms follow RoomTemplate.
+ModeToggle sits at top of every room.
+Demo flow as specified above.
+Live flow: user types, submits, API fires, response renders.
+
+CRITIQUE ROOM (/critique)
+System prompt: senior creative director, 25 years. Direct, honest,
+intolerant of safe thinking. Never soften. End with one thing to fix.
+Return ONLY JSON.
+
+Return JSON:
+{ gutReaction, whatIsWorking: [], whatIsNotWorking: [],
+  theBigProblem, specificFixes: [], theOneThing }
+
+Input form:
+Toggle: Upload image / Paste copy or describe.
+If image: dashed drop zone. PNG/JPG.
+If text: textarea 5 rows.
+Dropdown: work type. Logo/Ad/Layout/Copy/Social Post/Concept/Website/Packaging/Other.
+Text input: who is it for.
+Textarea 3 rows: what were you going for.
+
+BRIEF DECODER (/brief)
+System prompt: senior creative strategist. Break down a confusing brief.
+Specific. Direct. Return ONLY JSON.
+
+Return JSON:
+{ whatTheySaid, whatTheyActuallyWant,
+  whatTheyDidntSayButExpect: [], lazyExecutionsToAvoid: [], theLine }
+
+Input:
+Textarea 8 rows: paste the brief, email, or instruction.
+Dropdown: category. Print/Digital/Social/Film/OOH/Brand/Campaign/Other.
+
+THE BRIDGE (/bridge)
+System prompt: poet and strategist. Find three surprising connections.
+Poetic, specific, usable. Not obvious. Return ONLY JSON.
+
+Return JSON:
+{ thingOne, thingTwo,
+  connections: [{ angle, metaphor, theLine, startHere }] }
+
+Input:
+Two text inputs side by side desktop, stacked mobile.
+Label one: FIRST THING. Label two: SECOND THING.
+Note below: "These can be brands, feelings, places, words, memories, objects."
+
+FEEDBACK TRANSLATOR (/translate)
+System prompt: senior creative who has sat across from a thousand clients.
+Decode the feedback. Give something useful to do. Return ONLY JSON.
+
+Return JSON:
+{ whatTheySaid, whatTheyProbablyMean, whatTheyAreActuallyAfraidOf,
+  diagnosticQuestions: [], executionDirections: [] }
+
+Input:
+Textarea 5 rows: paste the client feedback.
+Text input: what was the work they were reacting to.
+Dropdown: project stage. First presentation/Revision round/Final approval/Pitch.
+
+THE JURY (/jury)
+System prompt: pre-mortem on a creative concept. Three very different people.
+Specific. Honest. No kindness for kindness sake. Return ONLY JSON.
+
+Return JSON:
+{ concept, jurors: [{ role, reaction, whyItMightFail, whyItMightLand }],
+  overallVerdict }
+Three jurors: Senior Creative Director, The Actual Target Audience, The Client's CFO.
+
+Input:
+Textarea 6 rows: describe concept or paste copy.
+Dropdown: medium. Print/Film/Digital/OOH/Social/Integrated/Pitch deck.
+Text input: who is the audience.
+
+COLOUR INTELLIGENCE (/colour)
+System prompt: colour strategist and art director. Three distinct palettes.
+Never generic. Six colour tokens per palette. Return ONLY JSON.
+
+Return JSON:
+{ palettes: [{ name, rationale,
+  colours: [{ role, hex, name, usage }],
+  pairingLogic, bestFor, avoidUsing, emotionalSignal }] }
+
+Input:
+Textarea 4 rows: describe brand or project.
+Dropdown: industry. Tech/Food and Drink/Fashion/Health/Finance/Education/
+Non-profit/Entertainment/Travel/Retail/Trades/Professional Services/
+Arts and Culture/Sport/Other.
+Multi-select tags: mood. Bold/Calm/Playful/Luxe/Minimal/Earthy/
+Electric/Clinical/Warm/Dark/Fresh/Sophisticated.
+Dropdown: output used for. Website/Print/App UI/Social Media/Packaging/All.
+
+Render palettes: three cards. Six swatches per card. Click to copy hex.
+
+WORDMARK ROOM (/wordmark)
+System prompt: typographic designer. Three distinct concepts using Google Fonts.
+Genuinely different personalities. Justify each specifically. Return ONLY JSON.
+
+Return JSON:
+{ concepts: [{ conceptName, font, weight, letterSpacing, caseStyle,
+  textColour, backgroundColour, reasoning, personality }] }
+
+Style directions: Minimal, Bold, Geometric, Editorial, Handcrafted.
+Each direction produces three genuinely distinct concepts.
+No two concepts feel like variations of the same idea.
+
+Input:
+Text input: brand name.
+Text input: one word that describes this brand.
+Five button toggle: Minimal/Bold/Geometric/Editorial/Handcrafted.
+
+Render: three concept cards. Live wordmark render using Google Fonts
+injected dynamically. 48px desktop. Download SVG button per concept.
+
+THE LIBRARY (/library)
+System prompt: creative mentor. Real resources only. Actually valuable.
+Prioritise free. No made-up titles. Return ONLY JSON.
+
+Return JSON:
+{ discipline, level,
+  books: [{ title, author, whyItMatters, free }],
+  youtubeChannels: [{ name, whyItMatters }],
+  websites: [{ name, url, whyItMatters }],
+  freeCourses: [{ name, platform }],
+  weekOnePlan }
+
+All four tabs fully populated in every response.
+Books: 4 titles minimum. YouTube: 3 channels. Websites: 3. Free Courses: 2.
+FREE badge on books where free is true.
+Week One Plan at bottom of every active tab. Same content across tabs.
+
+Input:
+11 discipline card buttons 2-column grid:
+Copywriting, Graphic Design, Brand Strategy, Advertising,
+UX Design, Marketing, Running a Small Business, Freelancing,
+Art Direction, Content Strategy, Media Planning,
+PR and Communications, Social Media.
+Three level buttons: Just starting/Getting serious/Ready to go deeper.
+
+THE FIRST DRAFT (/spark)
+System prompt: creative director helping someone get unstuck.
+Three wildly different directions. No safe ideas. One sentence, drawable sketch.
+Return ONLY JSON.
+
+Return JSON:
+{ directions: [{ territory, oneSentence, startHere,
+  whyItHasntBeenDone, warning }] }
+
+Input:
+Text input: brief in one line.
+Five button toggle: Blank page/Ideas feel too safe/Brief is too vague/
+Everything feels done before/Too many ideas wrong direction.
+
+Render: three direction cards. Territory in Fraunces 26px amber.
+One sentence in Fraunces italic 20px warm-white, left border 3px amber.
+Warning in Departure Mono 12px pulse uppercase.
+
+====================================================
+OUTPUT CARD (OutputCard.jsx)
+====================================================
+
+Background surface1. No border radius. Border 1px hairline. Padding 32px.
+Field label: Departure Mono 11px amber uppercase. 1px hairline below. 12px gap.
+Content: DM Sans 17px warm-white line-height 1.65.
+Arrays: vertical list. Padding-left 16px. Border-left 2px hairline.
+Special fields (theOneThing, verdict, theLine, overallVerdict):
+Fraunces italic 24px amber. Left border 3px amber. Padding-left 20px. Margin 32px 0.
+
+====================================================
+GLOBAL INPUT STYLE
+====================================================
+
+Background surface2 #1C1C1C. Border 1px hairline. Border-radius 0.
+Padding 14px. DM Sans 15px warm-white. Placeholder warm-grey.
+Focus: border-color amber. Outline none. 150ms ease.
+Textarea: resize vertical only.
+Dropdowns: same. Amber chevron.
+Toggle button groups: hairline border, no radius, Departure Mono 12px warm-grey uppercase.
+Selected: amber background, darkroom text, amber border.
+Hover unselected: warm-grey border. 150ms ease.
+
+====================================================
+GLOBAL RULES
+====================================================
+
+No TypeScript. Plain JavaScript only.
+No em dashes or en dashes in any UI copy.
+Never use the word AI in any user-facing string.
+No system dark mode detection. Always darkroom.
+localStorage for key object only. No other localStorage use.
+No cookies. No analytics. No external scripts except Google Fonts.
+No account creation. No email capture.
+Mobile responsive. Single column always inside content.
+Spine borders: two vertical 1px hairline lines flanking 740px column.
+Fixed full height. z-index 0. Visible above 768px only.
+All routes work without 404 on Cloudflare Pages.
+
+/public/_redirects:
+/* /index.html 200
+
+====================================================
+DEPLOY TARGET
+====================================================
+
+Cloudflare Pages. Static.
+Vite build output: /dist.
+All asset paths relative.
+No environment variables. All config in localStorage.
+
+====================================================
+END PROMPT
+====================================================

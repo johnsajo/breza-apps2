@@ -12,7 +12,7 @@ const rooms = [
   { num: "07", key: "wordmark", name: "The Wordmark Room", desc: "Type a brand name. Get three typographic wordmark concepts.", href: "/wordmark" },
   { num: "08", key: "library", name: "The Library", desc: "Books, channels, and resources worth your time. Curated by discipline.", href: "/library" },
   { num: "09", key: "spark", name: "The First Draft", desc: "Stuck on a blank page. Get three wildly different starting points.", href: "/spark" },
-  { num: "10", key: "tone", name: "The Voice Room", desc: "Describe your brand. Get a full tone of voice guide with rewrite examples.", href: "/tone" },
+  { num: "10", key: "tone", name: "The Voice Room", desc: "Describe your brand. Get a full tone of voice guide with rewrite examples.", href: "/tone", isNew: true },
 ];
 
 export default function Home() {
@@ -115,7 +115,7 @@ export default function Home() {
                 flexShrink: 0,
               }}
             />
-            {visited.length} of 9 rooms tried
+            {visited.length} of 10 rooms tried
           </p>
         </div>
       )}
@@ -183,17 +183,35 @@ export default function Home() {
                   </span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p
-                    className="fraunces-label"
-                    style={{
-                      fontSize: 22,
-                      fontWeight: 500,
-                      color: hasVisited ? "#F5F0E8" : "#F5F0E8",
-                      marginBottom: 4,
-                    }}
-                  >
-                    {room.name}
-                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                    <p
+                      className="fraunces-label"
+                      style={{
+                        fontSize: 22,
+                        fontWeight: 500,
+                        color: "#F5F0E8",
+                      }}
+                    >
+                      {room.name}
+                    </p>
+                    {"isNew" in room && room.isNew && (
+                      <span
+                        style={{
+                          fontFamily: "'DM Sans', system-ui, sans-serif",
+                          fontSize: 10,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          color: "#0D0D0D",
+                          backgroundColor: "#F5A623",
+                          padding: "2px 7px",
+                          flexShrink: 0,
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        New
+                      </span>
+                    )}
+                  </div>
                   <p
                     style={{
                       fontFamily: "'DM Sans', system-ui, sans-serif",

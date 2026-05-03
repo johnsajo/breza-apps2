@@ -1,4 +1,15 @@
 import { Link } from "wouter";
+import ProviderPill from "./ProviderPill";
+
+const navLinkStyle: React.CSSProperties = {
+  fontFamily: "'DM Sans', system-ui, sans-serif",
+  fontSize: 13,
+  letterSpacing: "0.06em",
+  textTransform: "uppercase" as const,
+  color: "#B8B2A8",
+  cursor: "pointer",
+  transition: "color 150ms ease",
+};
 
 export default function Nav() {
   return (
@@ -37,22 +48,21 @@ export default function Nav() {
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <ProviderPill />
+          <Link href="/howitworks">
+            <span
+              style={navLinkStyle}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
+            >
+              How It Works
+            </span>
+          </Link>
           <Link href="/settings">
             <span
-              style={{
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 15,
-                fontWeight: 500,
-                color: "#B8B2A8",
-                cursor: "pointer",
-                transition: "color 150ms ease",
-              }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLElement).style.color = "#F5F0E8")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLElement).style.color = "#B8B2A8")
-              }
+              style={navLinkStyle}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
             >
               Settings
             </span>

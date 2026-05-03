@@ -166,4 +166,20 @@
     text-transform: uppercase;
     color: #B8B2A8;
   }
+
+  .bg-illustration {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.15;
+    transition: opacity 600ms ease;
+    pointer-events: none;
+  }
+
+  .mode-live .bg-illustration {
+    opacity: 0;
+  }
 }
