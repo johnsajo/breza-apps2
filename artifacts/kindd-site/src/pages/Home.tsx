@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoMercator, geoPath } from "d3-geo";
 import {
-  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink,
+  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink, Download,
   Linkedin, Instagram, Twitter, Youtube,
 } from "lucide-react";
 import { clusters } from "@/data/guides";
@@ -337,6 +337,37 @@ const STATE_INFO: Record<string, StateInfo> = {
   },
 };
 
+// ─── ICS calendar export ─────────────────────────────────────────────────────
+const MONTHS_MAP: Record<string, string> = {
+  Jan:"01", Feb:"02", Mar:"03", Apr:"04", May:"05", Jun:"06",
+  Jul:"07", Aug:"08", Sep:"09", Oct:"10", Nov:"11", Dec:"12",
+};
+
+function buildICS(stateName: string, holidays: StateHoliday[]): string {
+  const events = holidays
+    .filter((h) => !h.date.startsWith("TBC"))
+    .map((h) => {
+      const parts = h.date.split(" ");
+      const mm = MONTHS_MAP[parts[1]] ?? "01";
+      const dd = parts[0].padStart(2, "0");
+      const next = new Date(2026, parseInt(mm) - 1, parseInt(parts[0]) + 1);
+      const eMm = String(next.getMonth() + 1).padStart(2, "0");
+      const eDd = String(next.getDate()).padStart(2, "0");
+      return `BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:2026${mm}${dd}\r\nDTEND;VALUE=DATE:2026${eMm}${eDd}\r\nSUMMARY:${h.name}\r\nEND:VEVENT`;
+    });
+  return ["BEGIN:VCALENDAR","VERSION:2.0",`PRODID:-//KINDD//Public Holidays 2026 - ${stateName}//EN`,"CALSCALE:GREGORIAN","METHOD:PUBLISH",...events,"END:VCALENDAR"].join("\r\n");
+}
+
+function downloadICS(info: StateInfo, code: string) {
+  const blob = new Blob([buildICS(info.name, info.holidays)], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement("a"), { href: url, download: `kindd-holidays-${code.toLowerCase()}-2026.ics` });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ─── Geographic Australia Map (d3-geo, stable mainland projection) ───────────
 const GEO_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson";
 const MAP_W = 800;
@@ -528,7 +559,16 @@ function AustraliaMap() {
 
               <div style={{ height: 1, background: "#E8E0D0", marginBottom: 20 }} />
 
-              <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, marginBottom: 12 }}>Public holidays 2026.</p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, margin: 0 }}>Public holidays 2026.</p>
+                <button
+                  onClick={() => downloadICS(info, selected!)}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 11px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, background: "transparent", fontFamily: SANS, fontWeight: 500, fontSize: 12, cursor: "pointer" }}
+                >
+                  <Download style={{ width: 12, height: 12 }} />
+                  Download (.ics)
+                </button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "4px 24px", marginBottom: 20 }}>
                 {info.holidays.map((h) => (
                   <div key={h.date + h.name} style={{ display: "flex", gap: 12, padding: "5px 0", borderBottom: "1px solid rgba(15,23,42,0.06)", alignItems: "baseline" }}>
@@ -1046,6 +1086,9 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: SANS, background: C.white, color: C.navy, overflowX: "hidden" }}>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-[#0F172A] focus:px-4 focus:py-2 focus:rounded-lg focus:font-sans focus:font-medium" style={{ fontFamily: SANS }}>
+        Skip to main content
+      </a>
 
       {/* ── NAV ─────────────────────────────────────────────────────────────── */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, backdropFilter: scrolled ? "blur(14px)" : "none", background: scrolled ? "rgba(255,255,255,0.93)" : "transparent", transition: "background 0.3s, backdrop-filter 0.3s", borderBottom: scrolled ? "1px solid rgba(15,23,42,0.07)" : "none" }}>
@@ -1066,6 +1109,7 @@ export default function Home() {
             </a>
           </div>
           <button className="flex lg:hidden" onClick={() => setMobileOpen(true)}
+            aria-label="Open navigation menu"
             style={{ background: "none", border: "none", cursor: "pointer", color: C.navy, padding: 4 }}>
             <Menu style={{ width: 24, height: 24 }} />
           </button>
@@ -1079,7 +1123,7 @@ export default function Home() {
             style={{ position: "fixed", inset: 0, background: C.white, zIndex: 100, padding: 24, display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 36 }}>
               <span style={{ fontFamily: SERIF, fontSize: 22, color: C.navy }}>kindd</span>
-              <button onClick={() => setMobileOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: C.navy }}>
+              <button onClick={() => setMobileOpen(false)} aria-label="Close navigation menu" style={{ background: "none", border: "none", cursor: "pointer", color: C.navy }}>
                 <X style={{ width: 24, height: 24 }} />
               </button>
             </div>
@@ -1099,6 +1143,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      <div id="main-content" />
+
       {/* ── S1: HERO ────────────────────────────────────────────────────────── */}
       <section id="home" style={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}>
         <img src={heroImg} alt="Australian suburban street" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
@@ -1117,6 +1163,7 @@ export default function Home() {
           {scrollY < 120 && (
             <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}
               animate={{ opacity: [1, 0.4, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}
+              aria-hidden="true"
               style={{ position: "absolute", bottom: 48, left: "50%", transform: "translateX(-50%)" }}>
               <ChevronDown style={{ width: 28, height: 28, color: C.grey }} />
             </motion.div>
@@ -1472,6 +1519,12 @@ export default function Home() {
               <a href="mailto:connect@tbcworldwide.com" className="text-sm text-[#B8D4E8] hover:opacity-80 transition-opacity">connect@tbcworldwide.com</a>
             </div>
           </div>
+          <div className="text-center py-4 border-t border-[#6B6B5E]/30">
+            <a href="/privacy" className="text-xs hover:text-[#007BA7] transition-colors" style={{ fontFamily: SANS, fontWeight: 400, color: "#A89880", textDecoration: "none" }}>Privacy Policy</a>
+            <span className="mx-2" style={{ color: "#6B6B5E" }}>·</span>
+            <a href="/terms" className="text-xs hover:text-[#007BA7] transition-colors" style={{ fontFamily: SANS, fontWeight: 400, color: "#A89880", textDecoration: "none" }}>Terms of Use</a>
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-t border-[#6B6B5E]/30 pt-8">
             <div className="flex items-center gap-4 text-[#FAF6E8]/40">
               <a href="#" className="hover:text-[#FAF6E8] transition-colors"><Linkedin className="h-5 w-5" /></a>
@@ -1493,6 +1546,7 @@ export default function Home() {
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => scrollTo("home")}
+            aria-label="Back to top"
             style={{ position: "fixed", bottom: 32, right: 32, width: 48, height: 48, borderRadius: "50%", background: C.white, border: "none", boxShadow: "0 2px 12px rgba(15,23,42,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, color: C.navy }}
           >
             <ArrowUp style={{ width: 20, height: 20 }} />

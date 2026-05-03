@@ -1,0 +1,137 @@
+ONE. ROUTING. ADD THESE NOW.
+Install react-router-dom if not already installed.
+npm install react-router-dom
+Wrap the app in BrowserRouter. Create three routes.
+Route one. / renders the existing single page app. Unchanged.
+Route two. /privacy renders a new PrivacyPolicy.jsx component.
+Route three. /terms renders a new Terms.jsx component.
+Route four. * renders a new NotFound.jsx component. This catches all bad URLs.
+
+TWO. 404 PAGE. NotFound.jsx.
+Full viewport height. Background Midnight Navy #0F172A. Centred content vertically and horizontally.
+Wordmark: "kindd" DM Serif Display 36px warm cream #FAF6E8.
+Large number: "404" DM Serif Display 120px. Colour #1E3A5F. Line-height 1.
+Message below: "That page does not exist. But this one does." DM Serif Display 28px warm cream. Margin-top 24px.
+Sub-line: "Whatever you were looking for, we probably have something useful." DM Sans 400 16px #A89880. Margin-top 12px.
+Button below: "Back to KINDD" Cerulean fill white text border-radius 32px padding 16px 40px DM Sans 500 16px. Links to /.
+
+THREE. PRIVACY POLICY PAGE. PrivacyPolicy.jsx.
+White background. Max-width 720px centred. Padding 80px 24px.
+Back link top: Lucide ArrowLeft small Cerulean. "Back to KINDD" DM Sans 500 14px Cerulean. Links to /. Margin-bottom 48px.
+Heading: "Privacy Policy." DM Serif Display 48px Midnight Navy.
+Last updated line: Geist Mono 12px warm grey. "Last updated: May 2026."
+All body text DM Sans 400 16px warm grey #6B6B5E. Line-height 1.75. Headings within the page DM Sans 600 18px Midnight Navy.
+Content:
+Heading: What KINDD collects.
+Body: KINDD does not collect any personal information. There is no account system, no login, no registration, and no tracking. We do not know who you are and we do not want to.
+Heading: localStorage.
+Body: KINDD uses your browser's localStorage to remember which guides you have expanded during a session. This data never leaves your device. Clear your browser data and it is gone. We cannot see it.
+Heading: External links.
+Body: KINDD links to Australian government websites. Once you leave KINDD, the privacy policy of that site applies. We have no control over those sites and no affiliation with them beyond linking to publicly available information.
+Heading: Analytics.
+Body: KINDD does not currently use any analytics or tracking scripts. When analytics are added, we will update this policy and use a privacy-first tool that does not track individuals or use cookies.
+Heading: Contact.
+Body: Questions about privacy can be sent to connect@tbcworldwide.com.
+Footer on this page: same footer component as the main site.
+
+FOUR. TERMS OF USE PAGE. Terms.jsx.
+Same layout as Privacy Policy page. Same back link. Same font treatment.
+Heading: "Terms of Use." DM Serif Display 48px Midnight Navy.
+Last updated: Geist Mono 12px warm grey. "Last updated: May 2026."
+Content:
+Heading: Information not advice.
+Body: KINDD provides plain-language information sourced from Australian government websites. It is not legal advice, financial advice, tax advice, medical advice, or immigration advice. Nothing on this site should be treated as a substitute for professional advice relevant to your individual circumstances.
+Heading: Accuracy.
+Body: We make every effort to keep information current and accurate. Government policies, laws, and procedures change. Always check the official government source linked in each guide before making any decision. The last reviewed date shown on each guide is when we last checked the source, not a guarantee of current accuracy.
+Heading: External links.
+Body: KINDD links to third-party government websites. We are not responsible for the content, availability, or accuracy of those sites. Links are provided for convenience and do not constitute an endorsement.
+Heading: Tools and calculators.
+Body: The calculators and tools on KINDD produce estimates only. They are not accurate enough to rely on for tax, financial, or legal decisions. Use them as a starting point only. For accurate figures, consult a registered professional or use the official government tool linked within each calculator.
+Heading: Free to use.
+Body: KINDD is free. There is no paid tier. There is no premium content. If you are ever asked to pay to access KINDD content, that is not us.
+Heading: Contact.
+Body: Questions about these terms can be sent to connect@tbcworldwide.com.
+Footer: same footer component.
+
+FIVE. FOOTER UPDATE.
+Add one new row to the footer. Between the social icons row and the credit line row.
+New row: two links. "Privacy Policy" and "Terms of Use." DM Sans 400 12px warm grey #A89880. Hover Cerulean. Links to /privacy and /terms respectively. Separated by a mid-dot. Centred.
+
+SIX. META TAGS. UPDATE index.html HEAD.
+Replace the existing head content with the following. Keep the font imports already in place. Add everything else.
+html<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Free plain-language guides to Australian life. Tax, renting, health, work rights, citizenship, and more. Sourced from government. Updated monthly." />
+<meta name="theme-color" content="#0F172A" />
+<meta property="og:title" content="KINDD. A plain-language guide to Australian life." />
+<meta property="og:description" content="Free guides to tax, renting, health, citizenship, work rights, and more. Sourced from Australian government. Updated monthly. Always free." />
+<meta property="og:image" content="/og-image.png" />
+<meta property="og:url" content="https://kindd.brezaplusyou.com.au" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="KINDD. A plain-language guide to Australian life." />
+<meta name="twitter:description" content="Free plain-language guides to Australian life. Always free. No account. No catch." />
+<meta name="twitter:image" content="/og-image.png" />
+<link rel="canonical" href="https://kindd.brezaplusyou.com.au" />
+<title>KINDD. A plain-language guide to Australian life.</title>
+
+SEVEN. PUBLIC FOLDER FILES.
+Create these four files in the public folder.
+robots.txt:
+User-agent: *
+Allow: /
+Sitemap: https://kindd.brezaplusyou.com.au/sitemap.xml
+sitemap.xml:
+xml<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://kindd.brezaplusyou.com.au/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://kindd.brezaplusyou.com.au/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://kindd.brezaplusyou.com.au/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
+favicon.svg. Create a simple SVG favicon. 32x32 viewBox. Background circle fill Midnight Navy #0F172A. Letter "k" centred in DM Serif Display style, fill warm cream #FAF6E8, font-size 20px. Place in public folder and reference in index.html head as:
+html<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+og-image.png. Create a static 1200x630px image using an HTML canvas script or a simple React component that Replit renders and saves. Background Midnight Navy #0F172A. Centred content: "kindd" DM Serif Display 80px warm cream. Below that: "A plain-language guide to Australian life." DM Sans 400 28px #A89880. Below that: "Free. No account. No catch." DM Sans 400 20px Cerulean #007BA7. Save to public/og-image.png. If Replit cannot generate this as a PNG automatically, create og-image-placeholder.html in the public folder with the same content so it can be screenshot and saved manually.
+
+EIGHT. ACCESSIBILITY FIXES.
+Add to every icon-only button in the codebase:
+Hamburger button: aria-label="Open navigation menu"
+Close drawer button: aria-label="Close navigation menu"
+Modal X button: aria-label="Close"
+Go-to-top button: aria-label="Back to top"
+Scroll down arrow: aria-label="Scroll down" aria-hidden="true"
+Add to the hero image background. If using a div with background-image, add role="img" aria-label="Illustrated Australian suburban street with a kookaburra on a fence post, a red letterbox, and a jacaranda tree."
+Add skip to content link. First element inside body, before the nav:
+html<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-midnight-navy focus:px-4 focus:py-2 focus:rounded-lg focus:font-sans focus:font-medium">Skip to main content</a>
+Add id="main-content" to the first section after the nav.
+Add visible focus styles globally in the CSS:
+css:focus-visible {
+  outline: 2px solid #007BA7;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+NINE. CONTACT SECTION CHECK.
+Find the contact section. Confirm the form or mailto link sends to connect@tbcworldwide.com. The subject line should pre-fill as "KINDD enquiry." If using a mailto link the href should be:
+mailto:connect@tbcworldwide.com?subject=KINDD%20enquiry
+If there is a form that submits nowhere, replace it with the mailto link approach. No backend. No Formspree. Just the email client opening with the fields pre-filled from whatever the user typed in the name, subject, and message fields using a JavaScript mailto builder on the Send button click.
+
+TEN. VERCEL CONFIGURATION.
+Create vercel.json in the project root:
+json{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+This ensures React Router routes work correctly on Vercel. Without this, direct navigation to /privacy or /terms returns a 404 from Vercel rather than React.

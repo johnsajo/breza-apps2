@@ -245,6 +245,14 @@
  * Even without handling focused or not, this is six possible combinations that
  * need to be distinguished from eachother visually.
  */
+@layer base {
+  :focus-visible {
+    outline: 2px solid #007BA7;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
 @layer utilities {
 
   /* Hide ugly search cancel button in Chrome until we can style it properly */

@@ -1,0 +1,45 @@
+Fix the modal content formatting for four tiles only. Australia at a Glance, States and Territories, Time Zones, Daylight Saving. Do not touch any other modal or component.
+Replace the plain paragraph body text in these four modals with structured label and value rows.
+FORMAT FOR EACH ROW.
+Each data point gets its own line. Two elements side by side. Label left, value right. On mobile they stack vertically.
+Label: DM Sans 600 13px Midnight Navy #0F172A. Uppercase. Letter-spacing 0.06em.
+Value: DM Sans 400 15px warm grey #6B6B5E. Line-height 1.6.
+Each row: padding 12px 0. Border-bottom 1px #EEEDE9. Last row no border.
+
+AUSTRALIA AT A GLANCE. Replace paragraph with these rows.
+OFFICIAL NAME / Commonwealth of Australia
+CAPITAL / Canberra
+POPULATION / Approximately 27 million (ABS 2024)
+CURRENCY / Australian dollar (AUD)
+OFFICIAL LANGUAGE / None legislated. English is the de facto language.
+GOVERNMENT / Federal parliamentary constitutional monarchy
+HEAD OF STATE / King Charles III
+GOVERNOR-GENERAL / Appointed by the King on advice of the Prime Minister
+HEAD OF GOVERNMENT / Prime Minister
+Source line below all rows. Geist Mono 12px warm grey. "Source: australia.gov.au"
+
+STATES AND TERRITORIES. Replace paragraph with these rows.
+SIX STATES / New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), South Australia (Adelaide), Western Australia (Perth), Tasmania (Hobart)
+SELF-GOVERNING TERRITORIES / Australian Capital Territory (Canberra), Northern Territory (Darwin)
+EXTERNAL TERRITORIES / Christmas Island, Cocos (Keeling) Islands, Norfolk Island, Jervis Bay Territory, Ashmore and Cartier Islands, Coral Sea Islands, Heard Island and McDonald Islands
+NOTE / Most Australians cannot name all seven external territories. Now you can.
+Source: australia.gov.au
+
+TIME ZONES. Replace paragraph with these rows.
+AEST UTC+10 / New South Wales, Victoria, Queensland, Tasmania, ACT
+AEDT UTC+11 / New South Wales, Victoria, Tasmania, ACT during daylight saving
+ACST UTC+9:30 / South Australia, Northern Territory
+ACDT UTC+10:30 / South Australia during daylight saving
+AWST UTC+8 / Western Australia
+NO DAYLIGHT SAVING / Western Australia, Queensland, Northern Territory
+LORD HOWE ISLAND / UTC+10:30 in winter, UTC+11 in summer
+Source: bom.gov.au
+
+DAYLIGHT SAVING. Replace paragraph with these rows.
+PERIOD / First Sunday in October to first Sunday in April
+OCTOBER / Clocks go forward one hour
+APRIL / Clocks go back one hour
+STATES THAT OBSERVE / New South Wales, Victoria, South Australia, Tasmania, ACT
+STATES THAT DO NOT / Queensland, Western Australia, Northern Territory
+QLD REFERENDUMS / Held in 1992 and 2010. Voted no both times.
+Source: australia.gov.au
