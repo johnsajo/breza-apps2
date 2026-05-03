@@ -40,7 +40,7 @@ export default function Trophy() {
           "You don't need all four fields. A category alone works. An era alone works. A feeling alone — like 'work that made juries uncomfortable but still won' — works best of all.",
           "The Trophy Room doesn't give you a list of winners. It tells you what was happening in the world that gave certain work permission to exist. That context is where the real lesson is.",
         ],
-        example: "e.g. Fevicol. Or: outdoor, 1990s. Or just a feeling: work that won by refusing to look like advertising.",
+        example: "e.g. Category: outdoor. Era: 1990s. Or just a feeling: work that won by refusing to look like advertising.",
       }}
       demoKey="trophy"
       systemPrompt={SYSTEM}
@@ -50,13 +50,13 @@ export default function Trophy() {
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>
-            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Category, brand, or campaign</p>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Category or campaign</p>
             <input
               type="text"
               className="field-base"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. Fevicol, outdoor, Nike, VW Think Small, 1990s film"
+              placeholder="e.g. outdoor, film, print, VW Think Small, 1990s integrated"
             />
           </div>
 
