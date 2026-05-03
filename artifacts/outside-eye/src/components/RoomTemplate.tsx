@@ -140,7 +140,7 @@ export default function RoomTemplate({
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
-          <OutputCard data={output} isDemo={isDemo} />
+          <OutputCard data={output} isDemo={isDemo} feedbackKey={demoKey} />
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={handleSubmit}

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
+import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
 import HowToUse from "@/components/HowToUse";
+import FeedbackRow from "@/components/FeedbackRow";
 
 const disciplines = [
   "Copywriting", "Graphic Design", "Brand Strategy", "Advertising",
@@ -31,6 +33,13 @@ export default function Library() {
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("books");
+  const [rating, setRating] = useState<Rating | null>(() => getFeedback("library"));
+
+  function handleRating(r: Rating) {
+    const next = rating === r ? null : r;
+    setRating(next);
+    if (next) saveFeedback("library", next);
+  }
 
   const isValid = discipline.length > 0 && level.length > 0;
 
@@ -197,6 +206,7 @@ export default function Library() {
               Try again
             </button>
           </div>
+          <FeedbackRow rating={rating} onRate={handleRating} />
         </div>
       )}
       <div style={{ marginTop: 88 }} />

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { saveFeedback, getFeedback, type Rating } from "@/lib/feedback";
 
 const PULL_QUOTE_FIELDS = new Set([
   "theOneThing",
@@ -16,7 +17,6 @@ function flattenToText(obj: Record<string, unknown>, depth = 0): string {
         .replace(/^./, (s) => s.toUpperCase())
         .trim()
         .toUpperCase();
-
       const content = flattenValue(value, depth);
       return `${label}\n${content}`;
     })
@@ -149,10 +149,60 @@ function renderObjectFields(obj: Record<string, unknown>): React.ReactNode {
 interface OutputCardProps {
   data: Record<string, unknown>;
   isDemo?: boolean;
+  feedbackKey?: string;
 }
 
-export default function OutputCard({ data, isDemo }: OutputCardProps) {
+function GhostButton({
+  onClick,
+  active,
+  activeColor,
+  disabled,
+  children,
+}: {
+  onClick: () => void;
+  active: boolean;
+  activeColor: string;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  const color = active ? activeColor : hovered ? "#F5F0E8" : "#B8B2A8";
+  const borderColor = active ? activeColor : hovered ? "#F5F0E8" : "#2A2A2A";
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        fontFamily: "'Departure Mono', 'Courier New', monospace",
+        fontSize: 13,
+        color,
+        background: "none",
+        border: "1px solid",
+        borderColor,
+        padding: "4px 10px",
+        cursor: disabled ? "default" : "pointer",
+        transition: "color 150ms ease, border-color 150ms ease",
+        lineHeight: 1,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProps) {
   const [copied, setCopied] = useState(false);
+  const [rating, setRating] = useState<Rating | null>(null);
+
+  useEffect(() => {
+    if (feedbackKey) {
+      setRating(getFeedback(feedbackKey));
+    }
+  }, [feedbackKey]);
 
   const entries = Object.entries(data).filter(([k]) => k !== "isDemo");
 
@@ -162,6 +212,12 @@ export default function OutputCard({ data, isDemo }: OutputCardProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  }
+
+  function handleRating(r: Rating) {
+    const next = rating === r ? null : r;
+    setRating(next);
+    if (feedbackKey && next) saveFeedback(feedbackKey, next);
   }
 
   return (
@@ -197,36 +253,13 @@ export default function OutputCard({ data, isDemo }: OutputCardProps) {
             marginBottom: 20,
           }}
         >
-          <button
+          <GhostButton
             onClick={handleCopy}
-            style={{
-              fontFamily: "'Departure Mono', 'Courier New', monospace",
-              fontSize: 11,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: copied ? "#7CBA6A" : "#B8B2A8",
-              background: "none",
-              border: "1px solid",
-              borderColor: copied ? "#7CBA6A" : "#2A2A2A",
-              padding: "5px 12px",
-              cursor: "pointer",
-              transition: "color 200ms ease, border-color 200ms ease",
-            }}
-            onMouseEnter={(e) => {
-              if (!copied) {
-                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!copied) {
-                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
-              }
-            }}
+            active={copied}
+            activeColor="#7CBA6A"
           >
             {copied ? "Copied" : "Copy"}
-          </button>
+          </GhostButton>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
@@ -251,6 +284,49 @@ export default function OutputCard({ data, isDemo }: OutputCardProps) {
               {renderValue(value, key)}
             </div>
           ))}
+        </div>
+
+        <div
+          style={{
+            marginTop: 32,
+            paddingTop: 20,
+            borderTop: "1px solid #2A2A2A",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'Departure Mono', 'Courier New', monospace",
+              fontSize: 11,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: rating ? "#B8B2A8" : "#5A5550",
+            }}
+          >
+            {rating === "up"
+              ? "Marked useful"
+              : rating === "down"
+              ? "Marked not useful"
+              : "Was this useful?"}
+          </p>
+          <div style={{ display: "flex", gap: 8 }}>
+            <GhostButton
+              onClick={() => handleRating("up")}
+              active={rating === "up"}
+              activeColor="#7CBA6A"
+            >
+              ↑
+            </GhostButton>
+            <GhostButton
+              onClick={() => handleRating("down")}
+              active={rating === "down"}
+              activeColor="#F87171"
+            >
+              ↓
+            </GhostButton>
+          </div>
         </div>
       </div>
     </div>
