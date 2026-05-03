@@ -2,6 +2,54 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { getVisited } from "@/lib/visited";
 
+const STEALS = [
+  {
+    steal: "1990s outdoor won by removing half the words they thought they needed. Take your current headline and cut it by two-thirds. If the idea collapses without the words, it was never an outdoor idea — it was a print ad pretending to be one.",
+    room: "The Trophy Room",
+    href: "/trophy",
+  },
+  {
+    steal: "Before you brief a campaign on an insight, ask: where did I first notice this? If you cannot name a specific moment — a queue, a conversation, a room — you have an observation. Go back.",
+    room: "The Insight Room",
+    href: "/insight",
+  },
+  {
+    steal: "The defining work of the 2010s only existed once an audience engaged with it. Before you brief your next campaign, ask whether the idea is complete without anyone responding to it. If it is, you are broadcasting.",
+    room: "The Trophy Room",
+    href: "/trophy",
+  },
+  {
+    steal: "Describe your current idea in one sentence. Then search for the oldest version of that sentence you can find. The gap between that version and yours is where the real creative work begins.",
+    room: "The Lineage Room",
+    href: "/lineage",
+  },
+  {
+    steal: "Before you show your work to anyone, identify the one visual or tonal convention that every other brand in your category uses without thinking. Describe your work as if that convention does not exist. See what survives.",
+    room: "The Trophy Room",
+    href: "/trophy",
+  },
+  {
+    steal: "Find the last brief or client email you received. Find the sentence that explains what they want to feel when the work is done. If that sentence is not there, you do not have a brief yet — you have a to-do list.",
+    room: "The Brief Decoder",
+    href: "/brief",
+  },
+  {
+    steal: "Find one piece of work that is better than the thing you are currently making. Ask: what would this look like if it had been made by the people who made that? Answer specifically, not generally.",
+    room: "The Critique",
+    href: "/critique",
+  },
+  {
+    steal: "Pick the dominant colour in your current project. Ask: what does every other brand in this category default to instead? If your answer is the same colour, you are not making a choice — you are making a habit.",
+    room: "Colour Intelligence",
+    href: "/colour",
+  },
+];
+
+function getCurrentSteal() {
+  const weekIndex = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  return STEALS[weekIndex % STEALS.length];
+}
+
 const rooms = [
   { num: "01", key: "critique", name: "The Critique", desc: "Upload your work or paste your copy. Get specific, honest feedback.", href: "/critique" },
   { num: "02", key: "brief", name: "The Brief Decoder", desc: "Paste any brief or client email. Understand what they actually want.", href: "/brief" },
@@ -27,6 +75,9 @@ export default function Home() {
     window.addEventListener("outsideeye:visited", handler);
     return () => window.removeEventListener("outsideeye:visited", handler);
   }, []);
+
+  const steal = getCurrentSteal();
+
   return (
     <div className="content-width" style={{ paddingTop: 40 }}>
       <p
@@ -244,6 +295,56 @@ export default function Home() {
       </div>
 
       <div style={{ marginTop: 88 }} />
+      <hr className="hr-hairline" />
+      <div style={{ marginTop: 64 }} />
+
+      <p
+        style={{
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          fontSize: 11,
+          fontWeight: 600,
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: "#F5A623",
+          marginBottom: 20,
+        }}
+      >
+        Steal of the Week
+      </p>
+
+      <p
+        style={{
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          fontSize: 18,
+          color: "#F5F0E8",
+          lineHeight: 1.7,
+          maxWidth: 600,
+          marginBottom: 20,
+        }}
+      >
+        {steal.steal}
+      </p>
+
+      <Link href={steal.href}>
+        <span
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: "#B8B2A8",
+            cursor: "pointer",
+            transition: "color 150ms ease",
+          }}
+          onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+          onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
+        >
+          → {steal.room}
+        </span>
+      </Link>
+
+      <div style={{ marginTop: 64 }} />
       <hr className="hr-hairline" />
       <div style={{ marginTop: 88 }} />
 
