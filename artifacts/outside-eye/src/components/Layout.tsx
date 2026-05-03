@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import Nav from "./Nav";
 import Footer from "./Footer";
+import ScrollToTop from "./ScrollToTop";
 
 function useModeClass() {
   useEffect(() => {
@@ -104,6 +105,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }
