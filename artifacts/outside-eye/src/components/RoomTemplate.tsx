@@ -5,7 +5,7 @@ import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
 import ModeBadge from "./ModeBadge";
 import { callOutsideEye } from "@/lib/ai";
-import { DEMO_RESPONSES } from "@/lib/demo";
+import { getDemoResponse } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
 import { encodeShare, type ShareState } from "@/lib/sharelink";
@@ -48,6 +48,7 @@ export default function RoomTemplate({
   const [inDemoMode, setInDemoMode] = useState(
     () => localStorage.getItem("outsideeye_mode") === "demo"
   );
+  const [demoIndex, setDemoIndex] = useState(0);
 
   useEffect(() => {
     const saved = loadSession(demoKey);
@@ -78,10 +79,11 @@ export default function RoomTemplate({
     markVisited(demoKey);
 
     if (localStorage.getItem("outsideeye_mode") === "demo") {
-      const demo = DEMO_RESPONSES[demoKey];
+      const demo = getDemoResponse(demoKey, demoIndex);
       if (demo) {
         setOutput(demo as Record<string, unknown>);
         setIsDemo(true);
+        setDemoIndex((prev) => prev + 1);
         saveSession(demoKey, demo as Record<string, unknown>, true);
       } else {
         setError("Add your key in Settings to use this room.");
@@ -114,6 +116,17 @@ export default function RoomTemplate({
     setOutput(null);
     setRestored(null);
     setIsDemo(false);
+  }
+
+  function handleNextDemo() {
+    const demo = getDemoResponse(demoKey, demoIndex);
+    if (demo) {
+      setOutput(demo as Record<string, unknown>);
+      setIsDemo(true);
+      setDemoIndex((prev) => prev + 1);
+      setRestored(null);
+      saveSession(demoKey, demo as Record<string, unknown>, true);
+    }
   }
 
   function handleCopyShareLink() {
@@ -307,32 +320,54 @@ export default function RoomTemplate({
           <OutputCard data={output} isDemo={isDemo} feedbackKey={demoKey} />
 
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 11,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "#B8B2A8",
-                background: "none",
-                border: "1px solid #2A2A2A",
-                padding: "5px 12px",
-                cursor: "pointer",
-                transition: "color 150ms ease, border-color 150ms ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
-              }}
-            >
-              Try again
-            </button>
+            {isDemo ? (
+              <button
+                onClick={handleNextDemo}
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#F5A623",
+                  background: "none",
+                  border: "1px solid #F5A623",
+                  padding: "5px 12px",
+                  cursor: "pointer",
+                  transition: "opacity 150ms ease",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+              >
+                Try another example →
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#B8B2A8",
+                  background: "none",
+                  border: "1px solid #2A2A2A",
+                  padding: "5px 12px",
+                  cursor: "pointer",
+                  transition: "color 150ms ease, border-color 150ms ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
+                }}
+              >
+                Try again
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
-import { DEMO_RESPONSES } from "@/lib/demo";
+import { getDemoResponse } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
@@ -114,7 +114,7 @@ export default function ToneOfVoice() {
     }
     const saved = loadSession("tone");
     if (saved) {
-      setOutput(saved.output as ToneData);
+      setOutput(saved.output as unknown as ToneData);
       setIsDemo(saved.isDemo);
       setRestored(saved.savedAt);
     }
@@ -139,11 +139,24 @@ export default function ToneOfVoice() {
     saveNote("tone", n);
   }
 
+  const [demoIndex, setDemoIndex] = useState(0);
+
   function handleClear() {
     clearSession("tone");
     setOutput(null);
     setRestored(null);
     setIsDemo(false);
+  }
+
+  function handleNextDemo() {
+    const demo = getDemoResponse("tone", demoIndex) as ToneData;
+    if (demo) {
+      setOutput(demo);
+      setIsDemo(true);
+      setDemoIndex((prev) => prev + 1);
+      setRestored(null);
+      saveSession("tone", demo as unknown as Record<string, unknown>, true);
+    }
   }
 
   function handleCopyShareLink() {
@@ -161,8 +174,9 @@ export default function ToneOfVoice() {
     setIsDemo(false);
     markVisited("tone");
     if (localStorage.getItem("outsideeye_mode") === "demo") {
-      const demo = DEMO_RESPONSES.tone as ToneData;
+      const demo = getDemoResponse("tone", demoIndex) as ToneData;
       setOutput(demo); setIsDemo(true);
+      setDemoIndex((prev) => prev + 1);
       saveSession("tone", demo as unknown as Record<string, unknown>, true);
       return;
     }
@@ -186,9 +200,10 @@ export default function ToneOfVoice() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
-        const demo = DEMO_RESPONSES.tone as ToneData;
+        const demo = getDemoResponse("tone", demoIndex) as ToneData;
         setOutput(demo);
         setIsDemo(true);
+        setDemoIndex((prev) => prev + 1);
         saveSession("tone", demo as unknown as Record<string, unknown>, true);
       } else if (msg === "BAD_KEY") {
         setError("Your key was rejected. Check it in Settings.");
@@ -464,15 +479,21 @@ export default function ToneOfVoice() {
           )}
 
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
-            >
-              Try again
-            </button>
+            {isDemo ? (
+              <button onClick={handleNextDemo} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#F5A623", background: "none", border: "1px solid #F5A623", padding: "5px 12px", cursor: "pointer", transition: "opacity 150ms ease" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+              >
+                Try another example →
+              </button>
+            ) : (
+              <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
+              >
+                Try again
+              </button>
+            )}
           </div>
           <FeedbackRow rating={rating} onRate={handleRating} note={note} onNote={handleNote} />
         </div>

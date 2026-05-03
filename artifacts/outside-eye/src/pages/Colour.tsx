@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
-import { DEMO_RESPONSES } from "@/lib/demo";
+import { getDemoResponse } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
@@ -59,6 +59,7 @@ export default function Colour() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [demoIndex, setDemoIndex] = useState(0);
   const [restored, setRestored] = useState<number | null>(null);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("colour"));
   const [note, setNote] = useState(() => getNote("colour"));
@@ -105,6 +106,17 @@ export default function Colour() {
     setIsDemo(false);
   }
 
+  function handleNextDemo() {
+    const demo = getDemoResponse("colour", demoIndex) as { palettes: Palette[] };
+    if (demo) {
+      setOutput(demo);
+      setIsDemo(true);
+      setDemoIndex((prev) => prev + 1);
+      setRestored(null);
+      saveSession("colour", demo as unknown as Record<string, unknown>, true);
+    }
+  }
+
   function handleCopyShareLink() {
     const url = encodeShare({ desc, industry, selectedMoods, usage, inspirationUrl });
     navigator.clipboard.writeText(url).then(() => {
@@ -117,8 +129,9 @@ export default function Colour() {
     setError(null); setOutput(null); setRestored(null); setIsDemo(false);
     markVisited("colour");
     if (localStorage.getItem("outsideeye_mode") === "demo") {
-      const demo = DEMO_RESPONSES.colour as { palettes: Palette[] };
+      const demo = getDemoResponse("colour", demoIndex) as { palettes: Palette[] };
       setOutput(demo); setIsDemo(true);
+      setDemoIndex((prev) => prev + 1);
       saveSession("colour", demo as unknown as Record<string, unknown>, true);
       return;
     }
@@ -150,9 +163,10 @@ export default function Colour() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
-        const demo = DEMO_RESPONSES.colour as { palettes: Palette[] };
+        const demo = getDemoResponse("colour", demoIndex) as { palettes: Palette[] };
         setOutput(demo);
         setIsDemo(true);
+        setDemoIndex((prev) => prev + 1);
         saveSession("colour", demo as unknown as Record<string, unknown>, true);
       } else if (msg === "BAD_KEY") setError("Your key was rejected. Check it in Settings.");
       else if (msg === "RATE_LIMIT") setError("Rate limit hit. Try again in a moment.");
@@ -281,12 +295,21 @@ export default function Colour() {
             ))}
           </div>
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
-            <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
-            >
-              Try again
-            </button>
+            {isDemo ? (
+              <button onClick={handleNextDemo} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#F5A623", background: "none", border: "1px solid #F5A623", padding: "5px 12px", cursor: "pointer", transition: "opacity 150ms ease" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.65"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+              >
+                Try another example →
+              </button>
+            ) : (
+              <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
+              >
+                Try again
+              </button>
+            )}
           </div>
           <FeedbackRow rating={rating} onRate={handleRating} note={note} onNote={handleNote} />
         </div>
