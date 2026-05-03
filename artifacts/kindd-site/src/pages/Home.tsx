@@ -146,6 +146,7 @@ interface StateInfo {
   capital: string;
   timezone: string;
   dst: string;
+  population: string;
   siteLabel: string;
   siteUrl: string;
   holidays: StateHoliday[];
@@ -157,6 +158,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Sydney",
     timezone: "AEST UTC+10",
     dst: "Observed",
+    population: "8.4 million",
     siteLabel: "nsw.gov.au",
     siteUrl: "https://www.nsw.gov.au",
     holidays: [
@@ -180,6 +182,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Melbourne",
     timezone: "AEST UTC+10",
     dst: "Observed",
+    population: "6.9 million",
     siteLabel: "vic.gov.au",
     siteUrl: "https://www.vic.gov.au",
     holidays: [
@@ -203,6 +206,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Brisbane",
     timezone: "AEST UTC+10",
     dst: "Not observed",
+    population: "5.5 million",
     siteLabel: "qld.gov.au",
     siteUrl: "https://www.qld.gov.au",
     holidays: [
@@ -224,6 +228,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Adelaide",
     timezone: "ACST UTC+9:30",
     dst: "Observed",
+    population: "1.8 million",
     siteLabel: "sa.gov.au",
     siteUrl: "https://www.sa.gov.au",
     holidays: [
@@ -245,6 +250,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Perth",
     timezone: "AWST UTC+8",
     dst: "Not observed",
+    population: "2.9 million",
     siteLabel: "wa.gov.au",
     siteUrl: "https://www.wa.gov.au",
     holidays: [
@@ -265,6 +271,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Hobart",
     timezone: "AEST UTC+10",
     dst: "Observed",
+    population: "570,000",
     siteLabel: "tas.gov.au",
     siteUrl: "https://www.tas.gov.au",
     holidays: [
@@ -287,6 +294,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Darwin",
     timezone: "ACST UTC+9:30",
     dst: "Not observed",
+    population: "250,000",
     siteLabel: "nt.gov.au",
     siteUrl: "https://www.nt.gov.au",
     holidays: [
@@ -308,6 +316,7 @@ const STATE_INFO: Record<string, StateInfo> = {
     capital: "Canberra",
     timezone: "AEST UTC+10",
     dst: "Observed",
+    population: "460,000",
     siteLabel: "act.gov.au",
     siteUrl: "https://www.act.gov.au",
     holidays: [
@@ -329,13 +338,13 @@ const STATE_INFO: Record<string, StateInfo> = {
 };
 
 // ─── Geographic Australia Map (d3-geo, stable mainland projection) ───────────
-const GEO_URL = "https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.min.geojson";
+const GEO_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson";
 const MAP_W = 800;
 const MAP_H = 560;
 
+// Natural Earth 50m admin1 — reliable `name` + `admin` properties, no inconsistencies
+// Previous rowanhogan source had inconsistent property names for SA/QLD/NSW/VIC.
 // Anchor projection to the MAINLAND bounding box only.
-// fitExtent on the raw GeoJSON would include offshore territories (Cocos, Christmas Island, etc.)
-// and shrink mainland Australia to a tiny corner. Using a fixed bbox avoids this entirely.
 const _MAINLAND_BBOX = {
   type: "Feature" as const,
   properties: {},
@@ -421,7 +430,9 @@ function AustraliaMap() {
           <rect x={0} y={0} width={MAP_W} height={MAP_H} fill={C.softWhite} />
 
           {features.map((feat, i) => {
-            const stateName = feat.properties.STATE_NAME ?? feat.properties.name ?? "";
+            // Natural Earth uses `admin === "Australia"` for country filter and `name` for state name
+            if (feat.properties.admin !== "Australia") return null;
+            const stateName = feat.properties.name ?? "";
             const code = NAME_TO_CODE[stateName];
             if (!code) return null;
             const isSelected = selected === code;
@@ -496,10 +507,14 @@ function AustraliaMap() {
                 </button>
               </div>
 
-              <div className="flex flex-col sm:flex-row" style={{ gap: "12px 32px", marginBottom: 20 }}>
+              <div className="grid grid-cols-2 sm:grid-cols-4" style={{ gap: "12px 24px", marginBottom: 20 }}>
                 <div>
                   <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Capital</p>
                   <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.capital}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Population</p>
+                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.population}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Time zone</p>
