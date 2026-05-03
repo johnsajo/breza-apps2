@@ -64,6 +64,9 @@ export default function Terms() {
           </div>
           <div className="space-y-8 mb-16">
             <div className="text-sm text-[#6B6B5E] leading-relaxed">
+              compyr <span className="mx-2">·</span> alertss <span className="mx-2">·</span> turnd <span className="mx-2">·</span> yourrr <span className="mx-2">·</span> novlit <span className="mx-2">·</span> sharpend <span className="mx-2">·</span> moodframe <span className="mx-2">·</span> the outside eye <span className="mx-2">·</span> rostrr <span className="mx-2">·</span> platd <span className="mx-2">·</span> sortd <span className="mx-2">·</span> earnt
+            </div>
+            <div className="text-sm text-[#6B6B5E] leading-relaxed">
               <a href="https://tbcworldwide.com" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">tbcworldwide.com</a> <span className="mx-2">·</span>
               <a href="https://techbrandcraft.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">techbrandcraft.com.au</a> <span className="mx-2">·</span>
               <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" className="hover:text-[#B8D4E8] transition-colors">brezaplusyou.com.au</a> <span className="mx-2">·</span>
