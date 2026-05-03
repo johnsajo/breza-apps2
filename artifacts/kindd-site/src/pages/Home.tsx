@@ -1,36 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-const clusters = [
-  {
-    name: "Money and Work",
-    desc: "Tax, income, super, consumer rights.",
-    guides: ["Tax Basics", "Side Income and Gig Work", "Money and Super", "Consumer Rights"],
-  },
-  {
-    name: "Home and Renting",
-    desc: "Where you live, who you live near, what it costs.",
-    guides: ["Renting and Tenancy", "Neighbours and Community", "Council and Local Government", "Utilities and Cost of Living"],
-  },
-  {
-    name: "Health and Family",
-    desc: "Bodies, minds, kids, carers.",
-    guides: ["Health and Medicare", "Mental Health and Wellbeing", "Kids and Families", "Disability and Carer Support"],
-  },
-  {
-    name: "Civic and Legal",
-    desc: "Voting, legal basics, safety.",
-    guides: ["Voting and Civic Life", "Legal Basics", "Safety and Family Violence"],
-  },
-  {
-    name: "New to Australia",
-    desc: "If you arrived recently, start here.",
-    guides: ["Settling In", "Health", "Banking", "Schools", "Community", "Qualifications"],
-  },
-];
+import { clusters } from "@/data/guides";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -205,22 +176,23 @@ export default function Home() {
               <div key={i} className="bg-background rounded-xl p-8 border border-accent/30 shadow-sm">
                 <h3 className="text-xl font-medium text-primary mb-2">{cluster.name}</h3>
                 <p className="text-sm text-muted-foreground mb-8">{cluster.desc}</p>
-                
+
                 <div className="space-y-4">
                   {cluster.guides.map((guide) => {
-                    const id = `${cluster.name}-${guide}`;
+                    const id = `${cluster.name}-${guide.name}`;
                     const isOpen = openGuide === id;
-                    
+
                     return (
-                      <div key={guide} className="border-b border-border/50 last:border-0 pb-4 last:pb-0">
+                      <div key={guide.name} className="border-b border-border/50 last:border-0 pb-4 last:pb-0">
                         <button
                           onClick={() => setOpenGuide(isOpen ? null : id)}
                           className="flex items-center justify-between w-full text-left text-ring font-medium hover:opacity-80 transition-opacity"
+                          data-testid={`btn-guide-${id.replace(/\s+/g, "-").toLowerCase()}`}
                         >
-                          <span>{guide}</span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                          <span>{guide.name}</span>
+                          <ChevronDown className={`h-4 w-4 flex-shrink-0 ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </button>
-                        
+
                         <AnimatePresence>
                           {isOpen && (
                             <motion.div
@@ -231,18 +203,23 @@ export default function Home() {
                             >
                               <div className="pt-4 space-y-4">
                                 <p className="text-sm text-muted-foreground leading-relaxed">
-                                  Guide content coming. Will include plain-language overview, what to expect, and direct links to official government sources.
+                                  {guide.description}
                                 </p>
                                 <p className="text-xs font-mono text-muted-foreground">
-                                  Last updated: May 2026. Always check the official source for current information.
+                                  Last updated: {guide.lastUpdated}. Always check the official source for current information.
                                 </p>
                                 <div className="flex flex-wrap gap-3 pt-2">
-                                  <a href="#" className="inline-block px-4 py-2 border border-ring text-ring rounded hover:bg-ring hover:text-primary-foreground transition-colors text-sm font-medium">
-                                    Visit ato.gov.au
-                                  </a>
-                                  <a href="#" className="inline-block px-4 py-2 border border-ring text-ring rounded hover:bg-ring hover:text-primary-foreground transition-colors text-sm font-medium">
-                                    Visit servicesaustralia.gov.au
-                                  </a>
+                                  {guide.links.map((link) => (
+                                    <a
+                                      key={link.url}
+                                      href={link.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-block px-4 py-2 border border-ring text-ring rounded hover:bg-ring hover:text-primary-foreground transition-colors text-sm font-medium"
+                                    >
+                                      {link.label}
+                                    </a>
+                                  ))}
                                 </div>
                               </div>
                             </motion.div>
