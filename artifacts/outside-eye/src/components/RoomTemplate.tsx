@@ -45,6 +45,7 @@ export default function RoomTemplate({
   const [isDemo, setIsDemo] = useState(false);
   const [restored, setRestored] = useState<number | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
+  const [roomLinkCopied, setRoomLinkCopied] = useState(false);
   const [inDemoMode, setInDemoMode] = useState(
     () => localStorage.getItem("outsideeye_mode") === "demo"
   );
@@ -138,6 +139,14 @@ export default function RoomTemplate({
     }
   }
 
+  function handleCopyRoomLink() {
+    const url = window.location.href.split("?")[0];
+    navigator.clipboard.writeText(url).then(() => {
+      setRoomLinkCopied(true);
+      setTimeout(() => setRoomLinkCopied(false), 2000);
+    });
+  }
+
   function handleCopyShareLink() {
     if (!shareState) return;
     const state = isDemo
@@ -174,18 +183,49 @@ export default function RoomTemplate({
         </Link>
       </div>
 
-      <p
-        style={{
-          fontFamily: "'DM Sans', system-ui, sans-serif",
-          fontSize: 12,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "#F5A623",
-          marginBottom: 8,
-        }}
-      >
-        {roomNumber}
-      </p>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <p
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 12,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#F5A623",
+          }}
+        >
+          {roomNumber}
+        </p>
+        <button
+          onClick={handleCopyRoomLink}
+          title="Copy link to this room"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            padding: 0,
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 11,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: roomLinkCopied ? "#7CBA6A" : "#3A3A3A",
+            transition: "color 150ms ease",
+          }}
+          onMouseEnter={(e) => { if (!roomLinkCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
+          onMouseLeave={(e) => { if (!roomLinkCopied) (e.currentTarget as HTMLButtonElement).style.color = "#3A3A3A"; }}
+        >
+          {roomLinkCopied ? (
+            "Copied"
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+            </svg>
+          )}
+        </button>
+      </div>
 
       <h1
         className="fraunces-display"
