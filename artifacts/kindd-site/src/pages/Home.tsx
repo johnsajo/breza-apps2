@@ -197,6 +197,9 @@ function loanMonthly(P: number, annualRate: number, years: number): number {
   return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
 }
 
+// ─── Spotlight result type ────────────────────────────────────────────────────
+type SpotResult = { kind: "guide" | "tool" | "ref"; label: string; sub: string; id: string };
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Home() {
   // Nav / scroll
@@ -244,9 +247,10 @@ export default function Home() {
   // Reference
   const [openTile, setOpenTile] = useState<string | null>(null);
 
-  // Contact
-  const [contactForm, setContactForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [contactSent, setContactSent] = useState(false);
+  // Spotlight
+  const [spotOpen, setSpotOpen] = useState(false);
+  const [spotQ, setSpotQ] = useState("");
+  const [spotIdx, setSpotIdx] = useState(0);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > window.innerHeight * 0.45);
@@ -254,17 +258,47 @@ export default function Home() {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSpotOpen((v) => !v); }
+      if (e.key === "Escape") { setSpotOpen(false); setSpotQ(""); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const { name, email, subject, message } = contactForm;
-    window.location.href = `mailto:connect@tbcworldwide.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
-    setContactSent(true);
-    setTimeout(() => setContactSent(false), 4000);
+  // Spotlight results
+  const spotResults = useMemo<SpotResult[]>(() => {
+    const q = spotQ.trim().toLowerCase();
+    if (!q) return [];
+    const out: SpotResult[] = [];
+    clusters.forEach((c) => c.guides.forEach((g) => {
+      if (g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+        out.push({ kind: "guide", label: g.name, sub: c.name, id: `${c.name}|${g.name}` });
+    }));
+    tools.forEach((t) => {
+      if (t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q))
+        out.push({ kind: "tool", label: t.name, sub: "Tools", id: t.id });
+    });
+    referenceTiles.forEach((r) => {
+      if (r.title.toLowerCase().includes(q) || r.intro.toLowerCase().includes(q))
+        out.push({ kind: "ref", label: r.title, sub: "Reference", id: r.id });
+    });
+    return out.slice(0, 12);
+  }, [spotQ]);
+
+  const handleSpotSelect = (r: SpotResult) => {
+    setSpotOpen(false);
+    setSpotQ("");
+    setSpotIdx(0);
+    if (r.kind === "guide") { scrollTo("guides"); setTimeout(() => setOpenGuide(r.id), 400); }
+    else if (r.kind === "tool") { scrollTo("tools"); setTimeout(() => setOpenTool(r.id as ToolId), 400); }
+    else { scrollTo("reference"); setTimeout(() => setOpenTile(r.id), 400); }
   };
 
   // Guide search
@@ -624,6 +658,14 @@ export default function Home() {
                 {label}
               </button>
             ))}
+            <button
+              onClick={() => setSpotOpen(true)}
+              style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 10px", borderRadius: 8, border: `1px solid ${C.breeze}90`, background: "none", cursor: "pointer", color: C.grey, fontSize: "0.75rem", fontWeight: 400 }}
+              title="Search (⌘K)"
+            >
+              <Search style={{ width: 13, height: 13 }} />
+              <span style={{ fontFamily: "'Geist Mono', monospace", letterSpacing: "0.04em" }}>⌘K</span>
+            </button>
             <a href="https://brezaplusyou.com.au" target="_blank" rel="noreferrer" style={{ color: C.breeze, textDecoration: "none", fontWeight: 500 }}>
               Part of Breza + You
             </a>
@@ -1084,51 +1126,108 @@ export default function Home() {
       </section>
 
       {/* ── CONTACT ─────────────────────────────────────────────────────────── */}
-      <section id="contact" style={{ padding: "96px 24px", background: C.cream }}>
-        <div style={{ maxWidth: 640, margin: "0 auto" }}>
+      <section id="contact" style={{ padding: "80px 24px", background: C.cream }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "2rem", fontWeight: 700, color: C.navy, marginBottom: 12 }}>Get in touch.</h2>
-          <p style={{ color: C.grey, marginBottom: 40, lineHeight: 1.7 }}>Questions, feedback, or just want to say hello. Fill in the form and your email client will open with everything pre-filled.</p>
-
-          {contactSent && (
-            <div style={{ marginBottom: 24, padding: "14px 18px", borderRadius: 8, background: C.offCream, border: `1px solid ${C.breeze}60`, fontFamily: "'Geist Mono', monospace", fontSize: "0.82rem", color: C.grey }}>
-              Your email client should be opening now. If nothing happened, write directly to{" "}
-              <a href="mailto:connect@tbcworldwide.com" style={{ color: C.cerulean }}>connect@tbcworldwide.com</a>.
-            </div>
-          )}
-
-          <form onSubmit={handleContactSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {[
-                { id: "name", label: "Name", type: "text", placeholder: "Your name", key: "name" },
-                { id: "email", label: "Email", type: "email", placeholder: "you@example.com", key: "email" },
-              ].map(({ id, label, type, placeholder, key }) => (
-                <div key={id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label htmlFor={id} style={{ fontSize: "0.85rem", fontWeight: 500, color: C.navy }}>{label}</label>
-                  <input id={id} type={type} required placeholder={placeholder} value={contactForm[key as keyof typeof contactForm]}
-                    onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.value })}
-                    style={{ background: C.offCream, border: `1px solid ${C.breeze}60`, borderRadius: 8, padding: "10px 14px", color: C.navy, fontSize: "0.9rem", outline: "none" }} />
-                </div>
-              ))}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label htmlFor="subject" style={{ fontSize: "0.85rem", fontWeight: 500, color: C.navy }}>Subject</label>
-              <input id="subject" type="text" required placeholder="What is this about?" value={contactForm.subject}
-                onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
-                style={{ background: C.offCream, border: `1px solid ${C.breeze}60`, borderRadius: 8, padding: "10px 14px", color: C.navy, fontSize: "0.9rem", outline: "none" }} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label htmlFor="message" style={{ fontSize: "0.85rem", fontWeight: 500, color: C.navy }}>Message</label>
-              <textarea id="message" required rows={5} placeholder="Write your message here." value={contactForm.message}
-                onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                style={{ background: C.offCream, border: `1px solid ${C.breeze}60`, borderRadius: 8, padding: "10px 14px", color: C.navy, fontSize: "0.9rem", outline: "none", resize: "none" }} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-              <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.75rem", color: C.grey }}>Sends via your email client to connect@tbcworldwide.com</p>
-              <CtaButton>Open in email client.</CtaButton>
-            </div>
-          </form>
+          <p style={{ color: C.grey, marginBottom: 36, lineHeight: 1.7, fontSize: "1rem" }}>
+            Questions, feedback, or just want to say hello.
+          </p>
+          <a
+            href="mailto:connect@tbcworldwide.com?subject=KINDD%20enquiry"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 28px", background: C.navy, color: C.cream, borderRadius: 32, fontSize: "0.9375rem", fontWeight: 500, textDecoration: "none", transition: "background 0.2s" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = C.cerulean)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = C.navy)}
+          >
+            Open in email client ↗
+          </a>
+          <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.72rem", color: C.grey, marginTop: 20, letterSpacing: "0.02em" }}>
+            connect@tbcworldwide.com
+          </p>
         </div>
       </section>
+
+      {/* ── SPOTLIGHT SEARCH MODAL ───────────────────────────────────────────── */}
+      <AnimatePresence>
+        {spotOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => { setSpotOpen(false); setSpotQ(""); }}
+            style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", backdropFilter: "blur(4px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "14vh" }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{ width: "min(640px, 92vw)", background: C.white, borderRadius: 16, boxShadow: "0 24px 64px rgba(15,23,42,0.22)", overflow: "hidden" }}
+            >
+              {/* Search input row */}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "15px 20px", borderBottom: `1px solid ${C.offCream}` }}>
+                <Search style={{ width: 18, height: 18, color: C.grey, flexShrink: 0 }} />
+                <input
+                  autoFocus
+                  value={spotQ}
+                  onChange={(e) => { setSpotQ(e.target.value); setSpotIdx(0); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowDown") { e.preventDefault(); setSpotIdx((i) => Math.min(i + 1, spotResults.length - 1)); }
+                    else if (e.key === "ArrowUp") { e.preventDefault(); setSpotIdx((i) => Math.max(i - 1, 0)); }
+                    else if (e.key === "Enter" && spotResults[spotIdx]) handleSpotSelect(spotResults[spotIdx]);
+                    else if (e.key === "Escape") { setSpotOpen(false); setSpotQ(""); }
+                  }}
+                  placeholder="Search guides, tools, reference…"
+                  style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: "1rem", color: C.navy, fontFamily: "'Geist', Inter, sans-serif" }}
+                />
+                <kbd style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", color: C.grey, background: C.offCream, borderRadius: 4, padding: "2px 7px", flexShrink: 0 }}>Esc</kbd>
+              </div>
+
+              {/* Results */}
+              <div style={{ maxHeight: 420, overflowY: "auto" }}>
+                {spotQ.trim() && spotResults.length === 0 ? (
+                  <div style={{ padding: "36px 20px", textAlign: "center", color: C.grey, fontSize: "0.9rem" }}>
+                    No results for &ldquo;{spotQ}&rdquo;
+                  </div>
+                ) : spotQ.trim() ? (
+                  <div style={{ padding: "8px 0" }}>
+                    {spotResults.map((r, i) => (
+                      <button key={r.id} onClick={() => handleSpotSelect(r)}
+                        onMouseEnter={() => setSpotIdx(i)}
+                        style={{ width: "100%", textAlign: "left", padding: "11px 20px", background: i === spotIdx ? C.offCream : "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, transition: "background 0.1s" }}
+                      >
+                        <span style={{ fontSize: "0.9rem", color: C.navy, fontWeight: i === spotIdx ? 500 : 400, fontFamily: "'Geist', Inter, sans-serif" }}>{r.label}</span>
+                        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", color: C.cerulean, background: `${C.cerulean}18`, borderRadius: 4, padding: "2px 8px", flexShrink: 0 }}>{r.sub}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  /* Empty state — show categories */
+                  <div style={{ padding: "20px 0 12px" }}>
+                    {([["Guides", clusters.slice(0, 4).flatMap((c) => c.guides.slice(0, 1).map((g) => ({ label: g.name, sub: c.name, kind: "guide" as const, id: `${c.name}|${g.name}` })))], ["Tools", tools.slice(0, 3).map((t) => ({ label: t.name, sub: "Tools", kind: "tool" as const, id: t.id }))], ["Reference", referenceTiles.slice(0, 3).map((r) => ({ label: r.title, sub: "Reference", kind: "ref" as const, id: r.id }))]] as [string, SpotResult[]][]).map(([section, items]) => (
+                      <div key={section} style={{ marginBottom: 12 }}>
+                        <p style={{ fontFamily: "'Geist Mono', monospace", fontSize: "0.68rem", fontWeight: 600, color: C.grey, letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 20px 6px" }}>{section}</p>
+                        {items.map((item) => (
+                          <button key={item.id} onClick={() => handleSpotSelect(item)}
+                            style={{ width: "100%", textAlign: "left", padding: "9px 20px", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, fontFamily: "'Geist', Inter, sans-serif" }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = C.offCream; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
+                          >
+                            <span style={{ fontSize: "0.875rem", color: C.navy }}>{item.label}</span>
+                            <span style={{ fontSize: "0.75rem", color: C.grey }}>{item.sub}</span>
+                          </button>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Footer hints */}
+              <div style={{ padding: "10px 20px", borderTop: `1px solid ${C.offCream}`, display: "flex", gap: 16, fontSize: "0.7rem", fontFamily: "'Geist Mono', monospace", color: C.grey }}>
+                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>↑↓</kbd>navigate</span>
+                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>↵</kbd>open</span>
+                <span><kbd style={{ background: C.offCream, borderRadius: 3, padding: "1px 5px", marginRight: 4 }}>Esc</kbd>close</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── FOOTER — DO NOT MODIFY ───────────────────────────────────────────── */}
       <footer className="bg-[#0F172A] text-[#FAF6E8] pt-20 pb-12 px-6">
