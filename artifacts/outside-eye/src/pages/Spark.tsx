@@ -9,16 +9,18 @@ const stuckReasons = [
   "Too many ideas, wrong direction",
 ];
 
-const SYSTEM = `You are a creative director helping someone get unstuck. Give three wildly different creative directions. Each must be genuinely surprising. No safe ideas. No obvious approaches. Each direction must be explainable in one sentence and drawable as a simple sketch. Return ONLY a JSON object. No markdown.`;
+const SYSTEM = `You are a creative director helping someone get unstuck. Give three wildly different creative directions. Each must be genuinely surprising. No safe ideas. No obvious approaches. Each direction must be explainable in one sentence and drawable as a simple sketch. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
 export default function Spark() {
   const [brief, setBrief] = useState("");
   const [stuckReason, setStuckReason] = useState("");
+  const [inspirationUrl, setInspirationUrl] = useState("");
 
   const isValid = brief.trim().length > 0 && stuckReason.length > 0;
 
   function buildUserPrompt() {
-    return `Brief in one line: "${brief}". I am stuck because: ${stuckReason}.`;
+    const base = `Brief in one line: "${brief}". I am stuck because: ${stuckReason}.`;
+    return inspirationUrl.trim() ? `${base} Inspiration/reference: ${inspirationUrl}` : base;
   }
 
   return (
@@ -64,6 +66,17 @@ export default function Spark() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
+            <input
+              type="url"
+              className="field-base"
+              value={inspirationUrl}
+              onChange={(e) => setInspirationUrl(e.target.value)}
+              placeholder="e.g. a campaign or work you admire..."
+            />
           </div>
         </div>
       }

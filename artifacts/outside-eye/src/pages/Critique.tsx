@@ -1,21 +1,57 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
 
-const workTypes = ["Logo", "Ad", "Layout", "Copy", "Social Post", "Concept", "Website", "Packaging", "Other"];
+const workTypes = [
+  "Ad", "Brand Identity", "Campaign", "Concept", "Copy", "Layout",
+  "Logo", "Packaging", "Social Post", "Website", "Other",
+];
 
-const SYSTEM = `You are a senior creative director with 25 years across advertising, branding, and design. You review work from emerging creatives. You are direct, honest, generous with specific guidance, and completely intolerant of safe or generic thinking. Never soften feedback. Never give hollow praise. Always end with one specific thing they must fix before this work goes anywhere. Return ONLY a JSON object. No markdown. No explanation outside the JSON.`;
+const SYSTEM = `You are a senior creative director with 25 years across advertising, branding, and design. You review work from emerging creatives. You are direct, honest, generous with specific guidance, and completely intolerant of safe or generic thinking. Never soften feedback. Never give hollow praise. When reviewing advertising work such as ads, campaigns, social posts, or concepts, always evaluate the headline, baseline/tagline, visual concept, layout, and call to action as distinct dimensions in your response. Always end with one specific thing they must fix before this work goes anywhere. Return ONLY a raw JSON object. No markdown code fences. No backticks. No preamble.`;
 
 export default function Critique() {
-  const [mode, setMode] = useState<"text" | "image">("text");
+  const [mode, setMode] = useState<"file" | "text">("text");
   const [pastedText, setPastedText] = useState("");
   const [workType, setWorkType] = useState("");
   const [audience, setAudience] = useState("");
   const [intent, setIntent] = useState("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [imageBase64, setImageBase64] = useState("");
+  const [imageType, setImageType] = useState("");
+  const [inspirationUrl, setInspirationUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isValid = (mode === "text" ? pastedText.trim().length > 0 : true) && workType && audience && intent.trim().length > 0;
+  const isValid = workType.length > 0 && audience.trim().length > 0 && intent.trim().length > 0;
+
+  function handleFileSelect(file: File) {
+    setUploadedFile(file);
+    if (file.type.startsWith("image/")) {
+      setUploadedImageUrl(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setImageBase64(result.split(",")[1] ?? "");
+        setImageType(file.type);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setUploadedImageUrl("");
+      setImageBase64("");
+      setImageType("");
+    }
+  }
 
   function buildUserPrompt() {
-    return `Work type: ${workType}. Intended for: ${audience}. What I was going for: ${intent}. ${mode === "text" && pastedText ? `The copy reads: ${pastedText}` : ""}`.trim();
+    const parts: string[] = [];
+    parts.push(`Work type: ${workType}.`);
+    parts.push(`Intended audience: ${audience}.`);
+    parts.push(`What I was going for: ${intent}.`);
+    if (pastedText.trim()) parts.push(`Copy or description: ${pastedText}`);
+    if (uploadedFile && !uploadedFile.type.startsWith("image/")) {
+      parts.push(`File uploaded: ${uploadedFile.name}`);
+    }
+    if (inspirationUrl.trim()) parts.push(`Inspiration/reference: ${inspirationUrl}`);
+    return parts.join(" ");
   }
 
   return (
@@ -25,31 +61,33 @@ export default function Critique() {
       tagline="Upload your work or paste your copy. Get specific, honest feedback."
       howToUse={{
         paragraphs: [
-          "Describe what you made, who it is for, and what you were going for. The more specific you are, the more useful the feedback will be.",
-          "If you have copy, paste it. If it is a visual piece, describe it in as much detail as you can. Treat this as a brief to a critical colleague.",
+          "Describe what you made, who it is for, and what you were going for. Upload an image of your work, or paste copy. The more specific, the more useful the feedback.",
+          "For ad work, the AI evaluates headline, baseline/tagline, layout, and CTA as separate dimensions.",
         ],
-        example: "e.g. Logo for a local bakery targeting 25-40 year old women. Going for warmth and craft without being cliche.",
+        example: "e.g. Logo for a local bakery targeting 25-40 year old women. Going for warmth and craft without being cliché.",
       }}
       demoKey="critique"
       systemPrompt={SYSTEM}
       buildUserPrompt={buildUserPrompt}
-      isValid={!!isValid}
+      isValid={isValid}
+      imageBase64={imageBase64 || undefined}
+      imageType={imageType || undefined}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ display: "flex", gap: 0 }}>
             <button
-              className={`toggle-btn ${mode === "image" ? "active" : ""}`}
+              className={`toggle-btn ${mode === "file" ? "active" : ""}`}
               style={{ flex: 1 }}
-              onClick={() => setMode("image")}
+              onClick={() => setMode("file")}
             >
-              Upload an image
+              Upload file
             </button>
             <button
               className={`toggle-btn ${mode === "text" ? "active" : ""}`}
               style={{ flex: 1, marginLeft: -1 }}
               onClick={() => setMode("text")}
             >
-              Paste copy or describe your work
+              Paste copy or describe
             </button>
           </div>
 
@@ -66,17 +104,74 @@ export default function Critique() {
               />
             </div>
           ) : (
-            <div
-              style={{
-                border: "1px dashed #2A2A2A",
-                padding: 32,
-                textAlign: "center",
-              }}
-            >
-              <p className="label-mono-grey">Drop image or click to upload</p>
-              <p style={{ fontFamily: "'DM Sans'", fontSize: 13, color: "#B8B2A8", marginTop: 8 }}>
-                PNG or JPG. For visual feedback, use the describe option for best results.
-              </p>
+            <div>
+              <p className="label-mono-grey" style={{ marginBottom: 8 }}>Upload your work</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf,.doc,.docx"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileSelect(file);
+                }}
+              />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) handleFileSelect(file);
+                }}
+                style={{
+                  border: "1px dashed #3A3A3A",
+                  padding: 32,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  backgroundColor: "#141414",
+                  transition: "border-color 150ms ease",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.borderColor = "#F5A623")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.borderColor = "#3A3A3A")}
+              >
+                {uploadedFile ? (
+                  <div>
+                    {uploadedImageUrl && (
+                      <img
+                        src={uploadedImageUrl}
+                        alt="Preview"
+                        style={{ maxHeight: 160, maxWidth: "100%", marginBottom: 12, objectFit: "contain" }}
+                      />
+                    )}
+                    <p className="label-mono-grey" style={{ marginBottom: 4 }}>{uploadedFile.name}</p>
+                    <p style={{ fontFamily: "'DM Sans'", fontSize: 12, color: "#5A5550" }}>Click to replace</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="label-mono-grey" style={{ marginBottom: 8 }}>Click or drag to upload</p>
+                    <p style={{ fontFamily: "'DM Sans'", fontSize: 13, color: "#5A5550" }}>
+                      Image (PNG, JPG), PDF, or Word document
+                    </p>
+                  </>
+                )}
+              </div>
+              {uploadedFile && !uploadedFile.type.startsWith("image/") && (
+                <p style={{ fontFamily: "'DM Sans'", fontSize: 13, color: "#B8B2A8", marginTop: 8 }}>
+                  Tip: paste or describe the key content below for the most detailed analysis.
+                </p>
+              )}
+              <div style={{ marginTop: 12 }}>
+                <p className="label-mono-grey" style={{ marginBottom: 8 }}>Additional context (optional)</p>
+                <textarea
+                  className="field-base"
+                  rows={3}
+                  value={pastedText}
+                  onChange={(e) => setPastedText(e.target.value)}
+                  placeholder="Add any copy, notes, or context about this work..."
+                  style={{ resize: "vertical" }}
+                />
+              </div>
             </div>
           )}
 
@@ -113,6 +208,17 @@ export default function Critique() {
               onChange={(e) => setIntent(e.target.value)}
               placeholder="Describe the feeling, idea, or effect you were trying to create..."
               style={{ resize: "vertical" }}
+            />
+          </div>
+
+          <div>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
+            <input
+              type="url"
+              className="field-base"
+              value={inspirationUrl}
+              onChange={(e) => setInspirationUrl(e.target.value)}
+              placeholder="e.g. https://..."
             />
           </div>
         </div>

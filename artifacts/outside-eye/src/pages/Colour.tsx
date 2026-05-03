@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
@@ -7,9 +8,14 @@ import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
 const industries = [
-  "Tech", "Food and Drink", "Fashion", "Health", "Finance", "Education",
-  "Non-profit", "Entertainment", "Travel", "Retail", "Trades",
-  "Professional Services", "Arts and Culture", "Sport", "Other",
+  "Advertising and Marketing", "Arts and Culture", "Automotive",
+  "Beauty and Wellness", "Creative Agency", "Education", "Entertainment",
+  "Fashion and Apparel", "Finance and Banking", "Food and Drink",
+  "Government and Public Sector", "Health and Wellness", "Hospitality and Tourism",
+  "Media and Publishing", "Non-profit and Charity", "PR and Communications",
+  "Professional Services", "Real Estate", "Retail and E-commerce",
+  "Sport and Fitness", "Tech and Software", "Trades and Construction",
+  "Travel", "Other",
 ];
 const moods = ["Bold", "Calm", "Playful", "Luxe", "Minimal", "Earthy", "Electric", "Clinical", "Warm", "Dark", "Fresh", "Sophisticated"];
 const outputUsages = ["Website", "Print", "App UI", "Social Media", "Packaging", "All of the above"];
@@ -38,13 +44,14 @@ function ColourSwatch({ token }: { token: ColourToken }) {
   );
 }
 
-const SYSTEM = `You are a colour strategist and art director. Return three distinct, professionally considered palette options. Be specific about usage. Never return generic palettes. Each palette must have exactly six colour tokens: primary, secondary, accent, background, surface, text. Return ONLY a JSON object. No markdown.`;
+const SYSTEM = `You are a colour strategist and art director. Return three distinct, professionally considered palette options. Be specific about usage. Never return generic palettes. Each palette must have exactly six colour tokens: primary, secondary, accent, background, surface, text. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
 export default function Colour() {
   const [desc, setDesc] = useState("");
   const [industry, setIndustry] = useState("");
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [usage, setUsage] = useState("");
+  const [inspirationUrl, setInspirationUrl] = useState("");
   const [output, setOutput] = useState<{ palettes: Palette[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +79,14 @@ export default function Colour() {
   async function handleSubmit() {
     setError(null); setOutput(null); setLoading(true); setIsDemo(false);
     markVisited("colour");
-    const prompt = `Brand/project description: ${desc}. Industry: ${industry}. Mood: ${selectedMoods.join(", ") || "unspecified"}. Output usage: ${usage || "unspecified"}.`;
+    const parts = [
+      `Brand/project description: ${desc}.`,
+      `Industry: ${industry}.`,
+      `Mood: ${selectedMoods.join(", ") || "unspecified"}.`,
+      `Output usage: ${usage || "unspecified"}.`,
+    ];
+    if (inspirationUrl.trim()) parts.push(`Inspiration/reference: ${inspirationUrl}`);
+    const prompt = parts.join(" ");
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
       const data = JSON.parse(raw);
@@ -100,7 +114,28 @@ export default function Colour() {
   }
 
   return (
-    <div className="content-width" style={{ paddingTop: 56 }}>
+    <div className="content-width" style={{ paddingTop: 40 }}>
+      <div style={{ marginBottom: 28 }}>
+        <Link href="/">
+          <span
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "#B8B2A8",
+              cursor: "pointer",
+              transition: "color 150ms ease",
+            }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
+          >
+            ← All rooms
+          </span>
+        </Link>
+      </div>
+
       <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>06</p>
       <h1 className="fraunces-display" style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 600, color: "#F5F0E8", lineHeight: 1.1, marginBottom: 12 }}>Colour Intelligence</h1>
       <p style={{ fontFamily: "'DM Sans'", fontSize: 17, color: "#B8B2A8", marginBottom: 32 }}>Describe your project. Get three palette options with full rationale.</p>
@@ -116,7 +151,7 @@ export default function Colour() {
 
         <div>
           <p className="label-mono-grey" style={{ marginBottom: 8 }}>Industry</p>
-          <select className="field-base" value={industry} onChange={(e) => setIndustry(e.target.value)} style={{ appearance: "none" }}>
+          <select className="field-base" value={industry} onChange={(e) => setIndustry(e.target.value)} style={{ appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F5A623' d='M6 8L1 3h10z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center" }}>
             <option value="">Select industry...</option>
             {industries.map((i) => <option key={i} value={i}>{i}</option>)}
           </select>
@@ -133,10 +168,21 @@ export default function Colour() {
 
         <div>
           <p className="label-mono-grey" style={{ marginBottom: 8 }}>Output will be used for</p>
-          <select className="field-base" value={usage} onChange={(e) => setUsage(e.target.value)} style={{ appearance: "none" }}>
+          <select className="field-base" value={usage} onChange={(e) => setUsage(e.target.value)} style={{ appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F5A623' d='M6 8L1 3h10z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center" }}>
             <option value="">Select usage...</option>
             {outputUsages.map((u) => <option key={u} value={u}>{u}</option>)}
           </select>
+        </div>
+
+        <div>
+          <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
+          <input
+            type="url"
+            className="field-base"
+            value={inspirationUrl}
+            onChange={(e) => setInspirationUrl(e.target.value)}
+            placeholder="e.g. a brand whose palette you admire..."
+          />
         </div>
       </div>
 
@@ -178,26 +224,9 @@ export default function Colour() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              style={{
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 11,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "#B8B2A8",
-                background: "none",
-                border: "1px solid #2A2A2A",
-                padding: "5px 12px",
-                cursor: "pointer",
-                transition: "color 150ms ease, border-color 150ms ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
-              }}
+              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
             >
               Try again
             </button>

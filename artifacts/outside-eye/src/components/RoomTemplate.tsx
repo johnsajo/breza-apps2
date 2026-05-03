@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { Link } from "wouter";
 import HowToUse from "./HowToUse";
 import OutputCard from "./OutputCard";
 import { callOutsideEye } from "@/lib/ai";
@@ -16,6 +17,8 @@ interface RoomTemplateProps {
   buildUserPrompt: () => string;
   inputSection: ReactNode;
   isValid: boolean;
+  imageBase64?: string;
+  imageType?: string;
 }
 
 export default function RoomTemplate({
@@ -28,6 +31,8 @@ export default function RoomTemplate({
   buildUserPrompt,
   inputSection,
   isValid,
+  imageBase64,
+  imageType,
 }: RoomTemplateProps) {
   const [output, setOutput] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,7 +47,7 @@ export default function RoomTemplate({
     markVisited(demoKey);
 
     try {
-      const raw = await callOutsideEye(buildUserPrompt(), systemPrompt);
+      const raw = await callOutsideEye(buildUserPrompt(), systemPrompt, imageBase64, imageType);
       const parsed = JSON.parse(raw);
       setOutput(parsed);
     } catch (err: unknown) {
@@ -68,7 +73,28 @@ export default function RoomTemplate({
   }
 
   return (
-    <div className="content-width" style={{ paddingTop: 56 }}>
+    <div className="content-width" style={{ paddingTop: 40 }}>
+      <div style={{ marginBottom: 28 }}>
+        <Link href="/">
+          <span
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "#B8B2A8",
+              cursor: "pointer",
+              transition: "color 150ms ease",
+            }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
+          >
+            ← All rooms
+          </span>
+        </Link>
+      </div>
+
       <p
         style={{
           fontFamily: "'DM Sans', system-ui, sans-serif",
@@ -171,6 +197,7 @@ export default function RoomTemplate({
           </div>
         </div>
       )}
+      <div style={{ marginTop: 88 }} />
     </div>
   );
 }

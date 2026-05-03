@@ -8,10 +8,16 @@ const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
 });
 
+type ImageContent =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string; detail: "high" } };
+
 router.post("/ai/chat", async (req, res) => {
-  const { systemPrompt, userPrompt } = req.body as {
+  const { systemPrompt, userPrompt, imageBase64, imageType } = req.body as {
     systemPrompt?: string;
     userPrompt?: string;
+    imageBase64?: string;
+    imageType?: string;
   };
 
   if (!systemPrompt || !userPrompt) {
@@ -19,17 +25,36 @@ router.post("/ai/chat", async (req, res) => {
     return;
   }
 
+  const userContent: string | ImageContent[] = imageBase64
+    ? [
+        {
+          type: "image_url" as const,
+          image_url: {
+            url: `data:${imageType || "image/png"};base64,${imageBase64}`,
+            detail: "high" as const,
+          },
+        },
+        { type: "text" as const, text: userPrompt },
+      ]
+    : userPrompt;
+
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-5.1",
-      max_completion_tokens: 1500,
+      model: "gpt-4o",
+      max_tokens: 2000,
+      response_format: { type: "json_object" },
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "user", content: userContent },
       ],
     });
 
-    const text = completion.choices[0]?.message?.content ?? "";
+    const raw = completion.choices[0]?.message?.content ?? "";
+    const text = raw
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
     res.json({ text });
   } catch (err: unknown) {
     req.log.error({ err }, "AI chat error");

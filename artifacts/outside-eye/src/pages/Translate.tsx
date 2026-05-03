@@ -3,17 +3,23 @@ import RoomTemplate from "@/components/RoomTemplate";
 
 const stages = ["First presentation", "Revision round", "Final approval", "Pitch"];
 
-const SYSTEM = `You are a senior creative who has sat across from a thousand clients. A junior creative has brought you feedback they do not understand. Decode it plainly and give them something useful to do. Return ONLY a JSON object. No markdown.`;
+const SYSTEM = `You are a senior creative who has sat across from a thousand clients. A junior creative has brought you feedback they do not understand. Decode it plainly and give them something useful to do. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
 export default function Translate() {
   const [feedback, setFeedback] = useState("");
   const [workDesc, setWorkDesc] = useState("");
   const [stage, setStage] = useState("");
+  const [inspirationUrl, setInspirationUrl] = useState("");
 
   const isValid = feedback.trim().length > 0 && workDesc.trim().length > 0 && stage.length > 0;
 
   function buildUserPrompt() {
-    return `The client feedback was: "${feedback}". The work they were reacting to: ${workDesc}. Project stage: ${stage}.`;
+    const parts: string[] = [];
+    parts.push(`The client feedback was: "${feedback}".`);
+    parts.push(`The work they were reacting to: ${workDesc}.`);
+    parts.push(`Project stage: ${stage}.`);
+    if (inspirationUrl.trim()) parts.push(`Reference: ${inspirationUrl}`);
+    return parts.join(" ");
   }
 
   return (
@@ -71,6 +77,17 @@ export default function Translate() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Reference or context URL (optional)</p>
+            <input
+              type="url"
+              className="field-base"
+              value={inspirationUrl}
+              onChange={(e) => setInspirationUrl(e.target.value)}
+              placeholder="e.g. link to the work or brief..."
+            />
           </div>
         </div>
       }

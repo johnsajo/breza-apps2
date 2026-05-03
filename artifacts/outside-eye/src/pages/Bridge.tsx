@@ -1,16 +1,18 @@
 import { useState } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
 
-const SYSTEM = `You are a poet and a strategist. Two things have been placed in front of you. Find three genuinely surprising threads that connect them. Each connection must be poetic, specific, and usable as a creative starting point. Not obvious. Not generic. Return ONLY a JSON object. No markdown.`;
+const SYSTEM = `You are a poet and a strategist. Two things have been placed in front of you. Find three genuinely surprising threads that connect them. Each connection must be poetic, specific, and usable as a creative starting point. Not obvious. Not generic. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
 export default function Bridge() {
   const [thingOne, setThingOne] = useState("");
   const [thingTwo, setThingTwo] = useState("");
+  const [inspirationUrl, setInspirationUrl] = useState("");
 
   const isValid = thingOne.trim().length > 0 && thingTwo.trim().length > 0;
 
   function buildUserPrompt() {
-    return `Connect these two things and find three surprising creative threads: "${thingOne}" and "${thingTwo}"`;
+    const base = `Connect these two things and find three surprising creative threads: "${thingOne}" and "${thingTwo}"`;
+    return inspirationUrl.trim() ? `${base}. Inspiration/reference: ${inspirationUrl}` : base;
   }
 
   return (
@@ -30,7 +32,7 @@ export default function Bridge() {
       buildUserPrompt={buildUserPrompt}
       isValid={isValid}
       inputSection={
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div
             style={{
               display: "grid",
@@ -59,16 +61,20 @@ export default function Bridge() {
               />
             </div>
           </div>
-          <p
-            style={{
-              fontFamily: "'DM Sans'",
-              fontSize: 14,
-              color: "#B8B2A8",
-              marginTop: 12,
-            }}
-          >
+          <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8" }}>
             These can be brands, feelings, places, words, memories, objects. Anything.
           </p>
+
+          <div>
+            <p className="label-mono-grey" style={{ marginBottom: 8 }}>Inspiration or reference URL (optional)</p>
+            <input
+              type="url"
+              className="field-base"
+              value={inspirationUrl}
+              onChange={(e) => setInspirationUrl(e.target.value)}
+              placeholder="e.g. a campaign, an image, a reference..."
+            />
+          </div>
         </div>
       }
     />

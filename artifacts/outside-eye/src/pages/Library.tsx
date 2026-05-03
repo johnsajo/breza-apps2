@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
@@ -7,8 +8,10 @@ import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
 const disciplines = [
-  "Copywriting", "Graphic Design", "Brand Strategy", "Advertising",
-  "UX Design", "Marketing", "Running a Small Business", "Freelancing",
+  "Advertising", "Art Direction", "Brand Strategy", "Content Strategy",
+  "Copywriting", "Freelancing", "Graphic Design", "Marketing",
+  "Media Planning", "PR and Communications", "Running a Small Business",
+  "Social Media", "UX Design",
 ];
 const levels = ["Just starting", "Getting serious", "Ready to go deeper"];
 type Tab = "books" | "youtube" | "websites" | "courses";
@@ -23,7 +26,7 @@ interface LibraryData {
   weekOnePlan: string;
 }
 
-const SYSTEM = `You are a creative mentor building a real reading and watching list. Return only resources that genuinely exist and are actually valuable. Prioritise free resources. Be specific. No padding. No filler. No made-up titles. Return ONLY a JSON object. No markdown.`;
+const SYSTEM = `You are a creative mentor building a real reading and watching list. Return only resources that genuinely exist and are actually valuable. Prioritise free resources. Be specific. No padding. No filler. No made-up titles. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
 export default function Library() {
   const [discipline, setDiscipline] = useState("");
@@ -83,7 +86,28 @@ export default function Library() {
   }
 
   return (
-    <div className="content-width" style={{ paddingTop: 56 }}>
+    <div className="content-width" style={{ paddingTop: 40 }}>
+      <div style={{ marginBottom: 28 }}>
+        <Link href="/">
+          <span
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "#B8B2A8",
+              cursor: "pointer",
+              transition: "color 150ms ease",
+            }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#F5A623")}
+            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "#B8B2A8")}
+          >
+            ← All rooms
+          </span>
+        </Link>
+      </div>
+
       <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>08</p>
       <h1 className="fraunces-display" style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 600, color: "#F5F0E8", lineHeight: 1.1, marginBottom: 12 }}>The Library</h1>
       <p style={{ fontFamily: "'DM Sans'", fontSize: 17, color: "#B8B2A8", marginBottom: 32 }}>Books, channels, and resources worth your time. Curated by discipline.</p>
@@ -195,26 +219,9 @@ export default function Library() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              style={{
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 11,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "#B8B2A8",
-                background: "none",
-                border: "1px solid #2A2A2A",
-                padding: "5px 12px",
-                cursor: "pointer",
-                transition: "color 150ms ease, border-color 150ms ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
-              }}
+              style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A"; }}
             >
               Try again
             </button>
