@@ -1,0 +1,111 @@
+Here is the updated section only. Drop this into the prompt replacing the existing NAV, PROVIDER PILL, and MODE TOGGLE sections.
+
+---
+
+====================================================
+NAV.JSX
+====================================================
+
+Background: darkroom #0D0D0D. 1px hairline rule below.
+Max width 740px. Centred. Padding 20px horizontal, 18px vertical.
+Sticky top on desktop. Static on mobile.
+
+Left: "The Outside Eye"
+Fraunces weight 600. 19px. Amber #F5A623. Link to /.
+
+Right: inline row, 24px gap.
+1. ModePill component.
+2. "How It Works" Departure Mono 12px warm-grey uppercase. Link to /howitworks.
+3. "Settings" Departure Mono 12px warm-grey uppercase. Link to /settings.
+Hover on text links: amber. 150ms ease.
+
+====================================================
+MODEPILL COMPONENT (ModePill.jsx)
+====================================================
+
+A single pill container. Two halves. One active at a time.
+Sits in nav top right. Persistent across all pages.
+
+Container:
+Background surface2 #1C1C1C.
+Border 1px hairline #2A2A2A.
+Border-radius 999px. Pill shape.
+Padding 3px. Display inline-flex.
+No box shadow.
+
+Two inner buttons: DEMO and LIVE.
+Each: Departure Mono 12px uppercase. Padding 6px 14px.
+Border-radius 999px.
+Transition: background 300ms ease, color 300ms ease.
+
+DEMO button active state:
+Background amber #F5A623.
+Text darkroom #0D0D0D.
+Font-weight bold.
+
+DEMO button inactive state:
+Background transparent.
+Text warm-grey #B8B2A8.
+
+LIVE button active state:
+Background signal #A3E635.
+Text darkroom #0D0D0D.
+Font-weight bold.
+
+LIVE button inactive state:
+Background transparent.
+Text warm-grey #B8B2A8.
+
+The active fill does not slide. It fades. 300ms ease.
+No sliding animation. Clean cross-fade between states.
+This avoids animation glitches on mobile.
+
+DEMO is active by default when no key saved.
+LIVE is active when key is saved in localStorage.
+
+Clicking DEMO when LIVE is active:
+Switches to demo mode. Body class becomes mode-demo.
+Illustration fades in over 600ms.
+
+Clicking LIVE when key is saved:
+Switches to live mode. Body class becomes mode-live.
+Illustration fades out over 600ms.
+
+Clicking LIVE when no key saved:
+Pill does not switch.
+A small tooltip appears below the pill.
+Tooltip: "Add a key in Settings first."
+Departure Mono 11px warm-grey.
+Background surface1. Border 1px hairline. Padding 6px 12px.
+Border-radius 4px.
+Appears for 2000ms then fades out. 150ms fade.
+Tooltip arrow pointing up toward LIVE button.
+
+====================================================
+ROOM MODE TOGGLE
+====================================================
+
+Remove the separate ModeToggle component from room pages entirely.
+The ModePill in nav handles all mode switching globally.
+No per-room toggle needed.
+
+Rooms read current mode from body class or a global context value.
+If mode-demo: demo flow runs. Typewriter, hardcoded entries, Enter to fire.
+If mode-live: normal flow. User types, API fires.
+
+The label above the first input field in demo remains:
+Departure Mono 11px warm-grey.
+"DEMO MODE — WATCH THE ENTRY. PRESS ENTER TO RUN."
+This label disappears when mode is live.
+
+====================================================
+BACKGROUND STATE SYSTEM (unchanged)
+====================================================
+
+mode-demo: illustration at 0.15 opacity. 600ms fade in.
+mode-live: illustration at 0 opacity. 600ms fade out. Pure black.
+Transition on body class change triggered by ModePill.
+
+---
+
+That is the full replacement. Everything else in the prompt stays as written.

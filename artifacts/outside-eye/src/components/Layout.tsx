@@ -6,13 +6,19 @@ import Footer from "./Footer";
 function useModeClass() {
   useEffect(() => {
     function sync() {
+      const override = localStorage.getItem("outsideeye_mode");
       const hasKey = !!localStorage.getItem("outsideeye_key");
-      document.body.classList.toggle("mode-demo", !hasKey);
-      document.body.classList.toggle("mode-live", hasKey);
+      const isLive = override === "live" || (override !== "demo" && hasKey);
+      document.body.classList.toggle("mode-demo", !isLive);
+      document.body.classList.toggle("mode-live", isLive);
     }
     sync();
     window.addEventListener("outsideeye:keychange", sync);
-    return () => window.removeEventListener("outsideeye:keychange", sync);
+    window.addEventListener("outsideeye:modechange", sync);
+    return () => {
+      window.removeEventListener("outsideeye:keychange", sync);
+      window.removeEventListener("outsideeye:modechange", sync);
+    };
   }, []);
 }
 

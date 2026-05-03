@@ -18,7 +18,7 @@ export default function Settings() {
   const [detectedProvider, setDetectedProvider] = useState("");
   const [manualProvider, setManualProvider] = useState("");
   const [savedMsg, setSavedMsg] = useState(false);
-  const [geminiOpen, setGeminiOpen] = useState(false);
+  const [guideTab, setGuideTab] = useState("gemini");
   const [sessionStats, setSessionStats] = useState({ tried: 0, rated: 0, up: 0 });
 
   useEffect(() => {
@@ -208,70 +208,90 @@ export default function Settings() {
       <div style={{ marginTop: 40 }} />
 
       <div>
-        <button
-          onClick={() => setGeminiOpen((v) => !v)}
+        <p
           style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 11,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#F5A623",
+            marginBottom: 14,
           }}
         >
-          <span
-            style={{
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontSize: 13,
-              color: "#F5A623",
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-            }}
-          >
-            How to get a free Gemini key in two minutes
-          </span>
-          <span
-            style={{
-              color: "#F5A623",
-              fontSize: 14,
-              transform: geminiOpen ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 200ms ease",
-            }}
-          >
-            ▾
-          </span>
-        </button>
+          How to get a key
+        </p>
 
-        {geminiOpen && (
-          <ol
-            style={{
-              marginTop: 20,
-              paddingLeft: 20,
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-            }}
-          >
-            {[
-              "Go to aistudio.google.com",
-              "Sign in with any Google account",
-              "Click Get API Key then Create API Key",
-              "Copy the key that appears",
-              "Paste it above and click Save Key",
-              "Done. Free. No credit card.",
-            ].map((step, i) => (
-              <li
-                key={i}
-                style={{
-                  fontFamily: "'DM Sans'",
-                  fontSize: 15,
-                  color: "#B8B2A8",
-                  lineHeight: 1.5,
-                }}
-              >
-                {step}
-              </li>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+          {[
+            { id: "gemini", label: "Gemini" },
+            { id: "claude", label: "Claude" },
+            { id: "openai", label: "OpenAI" },
+            { id: "deepseek", label: "DeepSeek" },
+            { id: "qwen", label: "Qwen" },
+            { id: "groq", label: "Groq" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setGuideTab(t.id)}
+              style={{
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                fontWeight: 700,
+                padding: "5px 12px",
+                borderRadius: 999,
+                border: guideTab === t.id ? "1px solid #F5A623" : "1px solid #2A2A2A",
+                background: guideTab === t.id ? "rgba(245,166,35,0.12)" : "transparent",
+                color: guideTab === t.id ? "#F5A623" : "#B8B2A8",
+                cursor: "pointer",
+                transition: "all 150ms ease",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {guideTab === "gemini" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to aistudio.google.com", "Sign in with any Google account", "Click Get API Key → Create API Key", "Copy the key and paste it above", "Free. 1,500 requests per day. No card needed."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
+            ))}
+          </ol>
+        )}
+        {guideTab === "claude" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to console.anthropic.com", "Create an account", "Go to API Keys and click Create Key", "Copy the key and paste it above", "Free trial credits included on signup."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
+            ))}
+          </ol>
+        )}
+        {guideTab === "openai" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to platform.openai.com", "Create an account or sign in", "Go to API Keys and click Create new secret key", "Copy the key and paste it above", "$5 trial credit on new accounts."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
+            ))}
+          </ol>
+        )}
+        {guideTab === "deepseek" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to platform.deepseek.com", "Create an account", "Go to API Keys → Create API Key", "Copy the key and paste it above", "Generous free tier available."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
+            ))}
+          </ol>
+        )}
+        {guideTab === "qwen" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to dashscope.aliyun.com", "Create an Alibaba Cloud account", "Enable DashScope and go to API Keys", "Copy the key (starts with sk-) and paste it above", "Free tier available."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
+            ))}
+          </ol>
+        )}
+        {guideTab === "groq" && (
+          <ol style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+            {["Go to console.groq.com", "Sign up for a free account", "Go to API Keys → Create API Key", "Copy the key and paste it above", "Free tier. Very fast inference."].map((s, i) => (
+              <li key={i} style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6 }}>{s}</li>
             ))}
           </ol>
         )}
