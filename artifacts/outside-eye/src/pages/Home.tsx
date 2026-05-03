@@ -172,7 +172,7 @@ export default function Home() {
                   )}
                   <span
                     style={{
-                      fontFamily: "'Departure Mono', 'Courier New', monospace",
+                      fontFamily: "'DM Sans', system-ui, sans-serif",
                       fontSize: 13,
                       color: hasVisited ? "#F5A623" : "#F5A623",
                       opacity: hasVisited ? 1 : 0.5,
@@ -207,7 +207,7 @@ export default function Home() {
                 <span
                   className="room-arrow"
                   style={{
-                    fontFamily: "'Departure Mono', monospace",
+                    fontFamily: "'DM Sans', system-ui, sans-serif",
                     fontSize: 16,
                     color: "#F5A623",
                     opacity: 0,

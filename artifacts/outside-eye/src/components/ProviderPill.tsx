@@ -28,7 +28,7 @@ export default function ProviderPill() {
     return (
       <span
         style={{
-          fontFamily: "'Departure Mono', 'Courier New', monospace",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
           fontSize: 12,
           letterSpacing: "0.08em",
           textTransform: "uppercase",
@@ -56,7 +56,7 @@ export default function ProviderPill() {
   return (
     <span
       style={{
-        fontFamily: "'Departure Mono', 'Courier New', monospace",
+        fontFamily: "'DM Sans', system-ui, sans-serif",
         fontSize: 12,
         letterSpacing: "0.08em",
         textTransform: "uppercase",

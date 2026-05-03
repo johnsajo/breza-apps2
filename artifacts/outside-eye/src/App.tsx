@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import Layout from "@/components/Layout";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Home from "@/pages/Home";
 import Critique from "@/pages/Critique";
 import Brief from "@/pages/Brief";
@@ -39,7 +40,9 @@ function Router() {
 function App() {
   return (
     <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-      <Router />
+      <ErrorBoundary>
+        <Router />
+      </ErrorBoundary>
     </WouterRouter>
   );
 }

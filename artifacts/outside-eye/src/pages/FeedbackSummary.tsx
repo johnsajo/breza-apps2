@@ -156,7 +156,7 @@ export default function FeedbackSummary() {
     <div className="content-width" style={{ paddingTop: 56, paddingBottom: 88 }}>
       <p
         style={{
-          fontFamily: "'Departure Mono', 'Courier New', monospace",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
           fontSize: 12,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -218,7 +218,7 @@ export default function FeedbackSummary() {
             >
               <p
                 style={{
-                  fontFamily: "'Departure Mono', 'Courier New', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 11,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
@@ -257,7 +257,7 @@ export default function FeedbackSummary() {
               <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
                 <span
                   style={{
-                    fontFamily: "'Departure Mono', 'Courier New', monospace",
+                    fontFamily: "'DM Sans', system-ui, sans-serif",
                     fontSize: 12,
                     color: "#F5A623",
                     flexShrink: 0,
@@ -278,7 +278,7 @@ export default function FeedbackSummary() {
                   {!wasVisited ? (
                     <span
                       style={{
-                        fontFamily: "'Departure Mono', monospace",
+                        fontFamily: "'DM Sans', system-ui, sans-serif",
                         fontSize: 11,
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
@@ -291,7 +291,7 @@ export default function FeedbackSummary() {
                     <>
                       <span
                         style={{
-                          fontFamily: "'Departure Mono', monospace",
+                          fontFamily: "'DM Sans', system-ui, sans-serif",
                           fontSize: 11,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
@@ -302,7 +302,7 @@ export default function FeedbackSummary() {
                       </span>
                       <span
                         style={{
-                          fontFamily: "'Departure Mono', monospace",
+                          fontFamily: "'DM Sans', system-ui, sans-serif",
                           fontSize: 16,
                           color: entry.rating === "up" ? "#7CBA6A" : "#F87171",
                           lineHeight: 1,
@@ -314,7 +314,7 @@ export default function FeedbackSummary() {
                   ) : (
                     <span
                       style={{
-                        fontFamily: "'Departure Mono', monospace",
+                        fontFamily: "'DM Sans', system-ui, sans-serif",
                         fontSize: 11,
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
@@ -331,7 +331,7 @@ export default function FeedbackSummary() {
               {entry?.note && (
                 <p
                   style={{
-                    fontFamily: "'Departure Mono', 'Courier New', monospace",
+                    fontFamily: "'DM Sans', system-ui, sans-serif",
                     fontSize: 11,
                     color: "#5A5550",
                     fontStyle: "italic",
@@ -368,7 +368,7 @@ export default function FeedbackSummary() {
             >
               <span
                 style={{
-                  fontFamily: "'Departure Mono', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 11,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
@@ -403,7 +403,7 @@ export default function FeedbackSummary() {
             >
               <pre
                 style={{
-                  fontFamily: "'Departure Mono', 'Courier New', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 12,
                   lineHeight: 1.9,
                   color: "#B8B2A8",
@@ -430,7 +430,7 @@ export default function FeedbackSummary() {
             <button
               onClick={handleCopy}
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
@@ -464,7 +464,7 @@ export default function FeedbackSummary() {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "'Departure Mono', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 color: "#5A5550",
                 letterSpacing: "0.06em",

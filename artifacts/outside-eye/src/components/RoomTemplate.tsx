@@ -71,7 +71,7 @@ export default function RoomTemplate({
     <div className="content-width" style={{ paddingTop: 56 }}>
       <p
         style={{
-          fontFamily: "'Departure Mono', 'Courier New', monospace",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
           fontSize: 12,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -125,7 +125,7 @@ export default function RoomTemplate({
       {error && (
         <p
           style={{
-            fontFamily: "'Departure Mono', 'Courier New', monospace",
+            fontFamily: "'DM Sans', system-ui, sans-serif",
             fontSize: 12,
             color: "#F87171",
             marginTop: 16,
@@ -146,7 +146,7 @@ export default function RoomTemplate({
               onClick={handleSubmit}
               disabled={loading}
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",

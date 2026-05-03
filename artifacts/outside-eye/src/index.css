@@ -17,7 +17,7 @@
   --color-breeze: #B8D4E8;
 
   --font-fraunces: 'Fraunces', Georgia, serif;
-  --font-mono: 'Departure Mono', 'Courier New', monospace;
+  --font-mono: 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
 
   --max-width-content: 740px;
@@ -91,9 +91,9 @@
     width: 100%;
     background-color: #F5A623;
     color: #0D0D0D;
-    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 13px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 16px;
     border: none;
@@ -116,9 +116,9 @@
     border: 1px solid #2A2A2A;
     border-radius: 0;
     background: transparent;
-    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 12px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #B8B2A8;
     padding: 10px 16px;
@@ -150,17 +150,19 @@
   }
 
   .label-mono {
-    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 11px;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #F5A623;
   }
 
   .label-mono-grey {
-    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 12px;
-    letter-spacing: 0.08em;
+    font-weight: 600;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
     color: #B8B2A8;
   }

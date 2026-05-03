@@ -29,7 +29,7 @@ function RateButton({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        fontFamily: "'Departure Mono', 'Courier New', monospace",
+        fontFamily: "'DM Sans', system-ui, sans-serif",
         fontSize: 13,
         color,
         background: "none",
@@ -80,7 +80,7 @@ export default function FeedbackRow({ rating, onRate, note, onNote }: FeedbackRo
       >
         <p
           style={{
-            fontFamily: "'Departure Mono', 'Courier New', monospace",
+            fontFamily: "'DM Sans', system-ui, sans-serif",
             fontSize: 11,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
@@ -128,7 +128,7 @@ export default function FeedbackRow({ rating, onRate, note, onNote }: FeedbackRo
               border: "none",
               borderBottom: `1px solid ${focused ? "#5A5550" : "#2A2A2A"}`,
               outline: "none",
-              fontFamily: "'Departure Mono', 'Courier New', monospace",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: 12,
               color: "#B8B2A8",
               padding: "4px 0",
@@ -138,7 +138,7 @@ export default function FeedbackRow({ rating, onRate, note, onNote }: FeedbackRo
           {saved && (
             <span
               style={{
-                fontFamily: "'Departure Mono', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 10,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",

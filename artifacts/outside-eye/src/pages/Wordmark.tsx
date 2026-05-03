@@ -36,7 +36,7 @@ function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: str
 
   return (
     <div style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 32, marginBottom: 24 }}>
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 13, color: "#F5A623", marginBottom: 16, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 13, color: "#F5A623", marginBottom: 16, letterSpacing: "0.08em", textTransform: "uppercase" }}>
         {concept.conceptName} — {concept.personality}
       </p>
 
@@ -57,12 +57,12 @@ function WordmarkCard({ concept, brandName }: { concept: Concept; brandName: str
       <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#B8B2A8", lineHeight: 1.6, marginBottom: 16 }}>{concept.reasoning}</p>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-        <button onClick={downloadSvg} style={{ background: "none", border: "1px solid #2A2A2A", cursor: "pointer", padding: "8px 16px", fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#F5A623", letterSpacing: "0.08em", textTransform: "uppercase", transition: "border-color 150ms ease" }}
+        <button onClick={downloadSvg} style={{ background: "none", border: "1px solid #2A2A2A", cursor: "pointer", padding: "8px 16px", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F5A623", letterSpacing: "0.08em", textTransform: "uppercase", transition: "border-color 150ms ease" }}
           onMouseEnter={(e) => ((e.target as HTMLElement).style.borderColor = "#F5A623")}
           onMouseLeave={(e) => ((e.target as HTMLElement).style.borderColor = "#2A2A2A")}>
           Download SVG
         </button>
-        <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 11, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+        <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.04em" }}>
           Typographic concept using Google Fonts. Not a generated logo.
         </p>
       </div>
@@ -118,7 +118,7 @@ export default function Wordmark() {
 
   return (
     <div className="content-width" style={{ paddingTop: 56 }}>
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>07</p>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>07</p>
       <h1 className="fraunces-display" style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 600, color: "#F5F0E8", lineHeight: 1.1, marginBottom: 12 }}>The Wordmark Room</h1>
       <p style={{ fontFamily: "'DM Sans'", fontSize: 17, color: "#B8B2A8", marginBottom: 32 }}>Type a brand name. Get three typographic wordmark concepts.</p>
       <hr className="hr-hairline" style={{ marginBottom: 40 }} />
@@ -150,19 +150,19 @@ export default function Wordmark() {
         </button>
       </div>
 
-      {error && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
+      {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
-          {isDemo && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
+          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
           {(Array.isArray(output.concepts) ? output.concepts : []).map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={handleSubmit}
               disabled={loading}
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",

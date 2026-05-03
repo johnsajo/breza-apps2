@@ -25,7 +25,7 @@ export default function HowToUse({ paragraphs, example }: HowToUseProps) {
       >
         <span
           style={{
-            fontFamily: "'Departure Mono', 'Courier New', monospace",
+            fontFamily: "'DM Sans', system-ui, sans-serif",
             fontSize: 13,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
@@ -36,7 +36,7 @@ export default function HowToUse({ paragraphs, example }: HowToUseProps) {
         </span>
         <span
           style={{
-            fontFamily: "'Departure Mono', monospace",
+            fontFamily: "'DM Sans', system-ui, sans-serif",
             fontSize: 16,
             color: "#F5A623",
             display: "inline-block",

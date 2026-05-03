@@ -30,10 +30,10 @@ function ColourSwatch({ token }: { token: ColourToken }) {
   return (
     <div style={{ textAlign: "center", cursor: "pointer" }} onClick={copy} title="Click to copy">
       <div style={{ width: 48, height: 48, backgroundColor: token.hex, border: "1px solid #2A2A2A" }} />
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 10, color: copied ? "#F5A623" : "#B8B2A8", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 10, color: copied ? "#F5A623" : "#B8B2A8", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>
         {copied ? "Copied" : token.role}
       </p>
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 10, color: "#B8B2A8" }}>{token.hex}</p>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 10, color: "#B8B2A8" }}>{token.hex}</p>
     </div>
   );
 }
@@ -101,7 +101,7 @@ export default function Colour() {
 
   return (
     <div className="content-width" style={{ paddingTop: 56 }}>
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>06</p>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>06</p>
       <h1 className="fraunces-display" style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 600, color: "#F5F0E8", lineHeight: 1.1, marginBottom: 12 }}>Colour Intelligence</h1>
       <p style={{ fontFamily: "'DM Sans'", fontSize: 17, color: "#B8B2A8", marginBottom: 32 }}>Describe your project. Get three palette options with full rationale.</p>
       <hr className="hr-hairline" style={{ marginBottom: 40 }} />
@@ -146,12 +146,12 @@ export default function Colour() {
         </button>
       </div>
 
-      {error && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
+      {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
-          {isDemo && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings for real palette generation.</p>}
+          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings for real palette generation.</p>}
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             {output.palettes.map((palette, pi) => (
               <div key={pi} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 32 }}>
@@ -167,7 +167,7 @@ export default function Colour() {
                   { label: "Emotional Signal", value: palette.emotionalSignal },
                 ].map((field) => (
                   <div key={field.label} style={{ marginBottom: 16 }}>
-                    <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 11, color: "#F5A623", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{field.label}</p>
+                    <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#F5A623", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{field.label}</p>
                     <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", lineHeight: 1.6 }}>{field.value}</p>
                   </div>
                 ))}
@@ -179,7 +179,7 @@ export default function Colour() {
               onClick={handleSubmit}
               disabled={loading}
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",

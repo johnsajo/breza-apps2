@@ -84,7 +84,7 @@ export default function Library() {
 
   return (
     <div className="content-width" style={{ paddingTop: 56 }}>
-      <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>08</p>
+      <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5A623", marginBottom: 8 }}>08</p>
       <h1 className="fraunces-display" style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 600, color: "#F5F0E8", lineHeight: 1.1, marginBottom: 12 }}>The Library</h1>
       <p style={{ fontFamily: "'DM Sans'", fontSize: 17, color: "#B8B2A8", marginBottom: 32 }}>Books, channels, and resources worth your time. Curated by discipline.</p>
       <hr className="hr-hairline" style={{ marginBottom: 40 }} />
@@ -116,18 +116,18 @@ export default function Library() {
         </button>
       </div>
 
-      {error && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
+      {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
 
       {output && !loading && (
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
-          {isDemo && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key for your actual discipline and level.</p>}
+          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key for your actual discipline and level.</p>}
 
           <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #2A2A2A", marginBottom: 32 }}>
             {(["books", "youtube", "websites", "courses"] as Tab[]).map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)} style={{
                 background: "none", border: "none", cursor: "pointer", padding: "12px 20px",
-                fontFamily: "'Departure Mono', monospace", fontSize: 12, letterSpacing: "0.08em",
+                fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, letterSpacing: "0.08em",
                 textTransform: "uppercase", color: activeTab === tab ? "#F5A623" : "#B8B2A8",
                 borderBottom: activeTab === tab ? "2px solid #F5A623" : "2px solid transparent",
                 marginBottom: -1, transition: "color 150ms ease",
@@ -143,7 +143,7 @@ export default function Library() {
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 8 }}>
                     <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8" }}>{book.title}</p>
-                    {book.free && <span style={{ fontFamily: "'Departure Mono', monospace", fontSize: 11, color: "#A3E635", letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0 }}>Free</span>}
+                    {book.free && <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#A3E635", letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0 }}>Free</span>}
                   </div>
                   <p style={{ fontFamily: "'DM Sans'", fontSize: 13, color: "#B8B2A8", marginBottom: 8 }}>{book.author}</p>
                   <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", lineHeight: 1.6 }}>{book.whyItMatters}</p>
@@ -169,7 +169,7 @@ export default function Library() {
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8" }}>{site.name}</p>
-                    <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Departure Mono', monospace", fontSize: 11, color: "#F5A623", letterSpacing: "0.06em" }}
+                    <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#F5A623", letterSpacing: "0.06em" }}
                       onMouseEnter={(e) => ((e.target as HTMLElement).style.textDecoration = "underline")}
                       onMouseLeave={(e) => ((e.target as HTMLElement).style.textDecoration = "none")}>Visit →</a>
                   </div>
@@ -184,7 +184,7 @@ export default function Library() {
               {(Array.isArray(output.freeCourses) ? output.freeCourses : []).map((course, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8", marginBottom: 4 }}>{course.name}</p>
-                  <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{course.platform}</p>
+                  <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{course.platform}</p>
                 </div>
               ))}
             </div>
@@ -196,7 +196,7 @@ export default function Library() {
               onClick={handleSubmit}
               disabled={loading}
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",

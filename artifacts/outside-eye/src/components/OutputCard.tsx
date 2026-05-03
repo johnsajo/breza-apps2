@@ -128,7 +128,7 @@ function renderObjectFields(obj: Record<string, unknown>): React.ReactNode {
           <div key={key}>
             <p
               style={{
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 11,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
@@ -177,7 +177,7 @@ function GhostButton({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        fontFamily: "'Departure Mono', 'Courier New', monospace",
+        fontFamily: "'DM Sans', system-ui, sans-serif",
         fontSize: 13,
         color,
         background: "none",
@@ -243,7 +243,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
         <div style={{ marginBottom: 24 }}>
           <p
             style={{
-              fontFamily: "'Departure Mono', 'Courier New', monospace",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: 12,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
@@ -284,7 +284,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
             <div key={key}>
               <p
                 style={{
-                  fontFamily: "'Departure Mono', 'Courier New', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 11,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
@@ -315,7 +315,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
         >
           <p
             style={{
-              fontFamily: "'Departure Mono', 'Courier New', monospace",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: 11,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
@@ -371,7 +371,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
                 border: "none",
                 borderBottom: `1px solid ${noteFocused ? "#5A5550" : "#2A2A2A"}`,
                 outline: "none",
-                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 12,
                 color: "#B8B2A8",
                 padding: "4px 0",
@@ -381,7 +381,7 @@ export default function OutputCard({ data, isDemo, feedbackKey }: OutputCardProp
             {noteSaved && (
               <span
                 style={{
-                  fontFamily: "'Departure Mono', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 10,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",

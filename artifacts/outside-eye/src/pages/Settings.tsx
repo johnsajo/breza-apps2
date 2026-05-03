@@ -108,7 +108,7 @@ export default function Settings() {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontFamily: "'Departure Mono', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 13,
                 color: "#F5A623",
                 letterSpacing: "0.04em",
@@ -143,7 +143,7 @@ export default function Settings() {
         {detectedProvider && !needsManual && (
           <p
             style={{
-              fontFamily: "'Departure Mono', monospace",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: 12,
               color: "#A3E635",
               marginTop: 10,
@@ -157,7 +157,7 @@ export default function Settings() {
 
         {needsManual && keyInput.trim() && (
           <div style={{ marginTop: 12 }}>
-            <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
               Which provider is this key for?
             </p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -192,7 +192,7 @@ export default function Settings() {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "'Departure Mono', monospace",
+                fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: 13,
                 color: "#F5A623",
                 textDecoration: "underline",
@@ -222,7 +222,7 @@ export default function Settings() {
         >
           <span
             style={{
-              fontFamily: "'Departure Mono', monospace",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: 13,
               color: "#F5A623",
               letterSpacing: "0.06em",
@@ -283,7 +283,7 @@ export default function Settings() {
 
       <p
         style={{
-          fontFamily: "'Departure Mono', monospace",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
           fontSize: 12,
           color: "#B8B2A8",
           letterSpacing: "0.08em",
@@ -316,7 +316,7 @@ export default function Settings() {
             <div>
               <p
                 style={{
-                  fontFamily: "'Departure Mono', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 11,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
@@ -344,7 +344,7 @@ export default function Settings() {
             <Link href="/feedback-summary">
               <button
                 style={{
-                  fontFamily: "'Departure Mono', monospace",
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: 11,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
