@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoMercator, geoPath } from "d3-geo";
 import {
@@ -328,10 +328,26 @@ const STATE_INFO: Record<string, StateInfo> = {
   },
 };
 
-// ─── Geographic Australia Map (d3-geo + fitExtent) ───────────────────────────
+// ─── Geographic Australia Map (d3-geo, stable mainland projection) ───────────
 const GEO_URL = "https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.min.geojson";
 const MAP_W = 800;
 const MAP_H = 560;
+
+// Anchor projection to the MAINLAND bounding box only.
+// fitExtent on the raw GeoJSON would include offshore territories (Cocos, Christmas Island, etc.)
+// and shrink mainland Australia to a tiny corner. Using a fixed bbox avoids this entirely.
+const _MAINLAND_BBOX = {
+  type: "Feature" as const,
+  properties: {},
+  geometry: {
+    type: "Polygon" as const,
+    // [W, N] → [E, N] → [E, S] → [W, S] → close
+    coordinates: [[[112, -10], [154, -10], [154, -44], [112, -44], [112, -10]]],
+  },
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MAP_PROJ = geoMercator().fitExtent([[24, 16], [MAP_W - 24, MAP_H - 16]], _MAINLAND_BBOX as any);
+const MAP_PATH = geoPath(MAP_PROJ);
 
 const NAME_TO_CODE: Record<string, string> = {
   "New South Wales":              "NSW",
@@ -344,7 +360,7 @@ const NAME_TO_CODE: Record<string, string> = {
   "Australian Capital Territory": "ACT",
 };
 
-// Geographic centroids [lng, lat] — projected after fitExtent resolves
+// Geographic label centroids [lng, lat]
 const LABEL_CENTROIDS: Record<string, [number, number]> = {
   WA:  [121, -26],
   NT:  [133, -20],
@@ -357,111 +373,100 @@ const LABEL_CENTROIDS: Record<string, [number, number]> = {
 };
 
 type GeoFeature = { type: string; properties: Record<string, string>; geometry: unknown };
-type GeoCollection = { type: string; features: GeoFeature[] };
 
 function AustraliaMap() {
-  const [geoData,  setGeoData]  = useState<GeoCollection | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [hovered,  setHovered]  = useState<string | null>(null);
+  const [features,  setFeatures] = useState<GeoFeature[]>([]);
+  const [loading,   setLoading]  = useState(true);
+  const [selected,  setSelected] = useState<string | null>(null);
+  const [hovered,   setHovered]  = useState<string | null>(null);
 
   useEffect(() => {
     fetch(GEO_URL)
       .then((r) => r.json())
-      .then((data) => setGeoData(data as GeoCollection))
-      .catch(() => {});
+      .then((data: { features?: GeoFeature[] }) => {
+        setFeatures(data.features ?? []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
-
-  // fitExtent auto-scales + centres the projection to fit all features — no manual scale/center needed
-  const { proj, pathGen } = useMemo(() => {
-    if (!geoData) return { proj: null, pathGen: null };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const p = geoMercator().fitExtent([[24, 16], [MAP_W - 24, MAP_H - 16]], geoData as any);
-    return { proj: p, pathGen: geoPath(p) };
-  }, [geoData]);
 
   const info = selected ? STATE_INFO[selected] : null;
 
-  // ── Loading skeleton ──────────────────────────────────────────────────────
-  if (!geoData || !proj || !pathGen) {
-    return (
-      <div style={{ maxWidth: 960, margin: "0 auto" }}>
-        <div style={{ width: "100%", paddingBottom: "70%", position: "relative", borderRadius: 12, overflow: "hidden", background: "#E8E4DC" }}>
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)",
-            backgroundSize: "200% 100%",
-            animation: "shimmer 1.6s ease-in-out infinite",
-          }} />
-          {/* Australia silhouette hint — centred text */}
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ fontFamily: SANS, fontSize: 13, color: "#A89880", margin: 0 }}>Loading map…</p>
-          </div>
-        </div>
-        <style>{`@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
-        <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, textAlign: "center", marginTop: 12 }}>
-          Select a state or territory to see local facts and public holidays.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div style={{ maxWidth: 960, margin: "0 auto" }}>
-      {/* ── SVG map ───────────────────────────────────────────────────────── */}
-      <svg
-        viewBox={`0 0 ${MAP_W} ${MAP_H}`}
-        style={{ width: "100%", height: "auto", display: "block" }}
-        aria-label="Interactive map of Australia"
-      >
-        {/* Ocean / light background inside the SVG */}
-        <rect x={0} y={0} width={MAP_W} height={MAP_H} fill={C.softWhite} rx={12} />
+      {/* ── SVG map (always rendered; states fill in once fetched) ─────────── */}
+      <div style={{ position: "relative", width: "100%", paddingBottom: `${(MAP_H / MAP_W) * 100}%`, borderRadius: 12, overflow: "hidden" }}>
+        {/* Loading shimmer — sits behind the SVG, fades out when features arrive */}
+        {loading && (
+          <div style={{ position: "absolute", inset: 0, background: "#E8E4DC", borderRadius: 12 }}>
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 1.6s ease-in-out infinite",
+            }} />
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ fontFamily: SANS, fontSize: 13, color: C.darkSec, margin: 0 }}>Loading map…</p>
+            </div>
+          </div>
+        )}
+        <style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
 
-        {geoData.features.map((feat, i) => {
-          const stateName = feat.properties.STATE_NAME ?? feat.properties.name ?? "";
-          const code = NAME_TO_CODE[stateName];
-          if (!code) return null;
-          const isSelected = selected === code;
-          const isHovered  = hovered  === code;
-          const fill = isSelected ? C.navy : isHovered ? C.cerulean : "#1E3A5F";
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const d = pathGen(feat as any) ?? "";
-          const labelPt = proj(LABEL_CENTROIDS[code]);
-          return (
-            <g key={code + i}>
-              <path
-                d={d}
-                fill={fill}
-                stroke="#FFFFFF"
-                strokeWidth={0.8}
-                style={{ cursor: "pointer", transition: "fill 200ms ease", outline: "none" }}
-                onClick={() => setSelected(isSelected ? null : code)}
-                onMouseEnter={() => setHovered(code)}
-                onMouseLeave={() => setHovered(null)}
-              />
-              {labelPt && (
-                <text
-                  x={labelPt[0]}
-                  y={labelPt[1]}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  style={{
-                    fontFamily: SANS,
-                    fontWeight: 600,
-                    fontSize: code === "ACT" ? 7 : 10,
-                    fill: "#FFFFFF",
-                    pointerEvents: "none",
-                    userSelect: "none",
-                  }}
-                >
-                  {code}
-                </text>
-              )}
-            </g>
-          );
-        })}
-      </svg>
+        <svg
+          viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" }}
+          aria-label="Interactive map of Australia"
+        >
+          {/* Off-white ocean background */}
+          <rect x={0} y={0} width={MAP_W} height={MAP_H} fill={C.softWhite} />
 
-      {/* Hint text — disappears once a state is selected */}
+          {features.map((feat, i) => {
+            const stateName = feat.properties.STATE_NAME ?? feat.properties.name ?? "";
+            const code = NAME_TO_CODE[stateName];
+            if (!code) return null;
+            const isSelected = selected === code;
+            const isHovered  = hovered  === code;
+            const fill = isSelected ? C.navy : isHovered ? C.cerulean : "#1E3A5F";
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const d = MAP_PATH(feat as any) ?? "";
+            const labelPt = MAP_PROJ(LABEL_CENTROIDS[code]);
+            return (
+              <g key={code + i}>
+                <path
+                  d={d}
+                  fill={fill}
+                  stroke="#FFFFFF"
+                  strokeWidth={0.8}
+                  style={{ cursor: "pointer", transition: "fill 200ms ease", outline: "none" }}
+                  onClick={() => setSelected(isSelected ? null : code)}
+                  onMouseEnter={() => setHovered(code)}
+                  onMouseLeave={() => setHovered(null)}
+                />
+                {labelPt && (
+                  <text
+                    x={labelPt[0]}
+                    y={labelPt[1]}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    style={{
+                      fontFamily: SANS,
+                      fontWeight: 600,
+                      fontSize: code === "ACT" ? 7 : 10,
+                      fill: "#FFFFFF",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                  >
+                    {code}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Hint text */}
       {!selected && (
         <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, textAlign: "center", marginTop: 12, marginBottom: 24 }}>
           Select a state or territory to see local facts and public holidays.
