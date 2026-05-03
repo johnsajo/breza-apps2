@@ -1,0 +1,284 @@
+Paste this into Replit.
+
+---
+
+Fix the Australia map in the About Australia section only. Replace the current rectangle-based SVG with a proper geographic map using react-simple-maps.
+
+**INSTALL.**
+
+```
+npm install react-simple-maps
+```
+
+**REPLACE THE MAP COMPONENT ENTIRELY.**
+
+Remove all existing map code. Build a new component called AustraliaMap.jsx.
+
+Import these at the top:
+
+```javascript
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+```
+
+Use this TopoJSON URL as the geography source:
+
+```
+https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json
+```
+
+That gives the world. Filter to Australia only by checking geo.properties.name === "Australia" or ISO code 036.
+
+Actually use this better source specifically for Australian states:
+
+```
+https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.min.geojson
+```
+
+This GeoJSON contains all eight states and territories with correct geographic paths and a STATE_NAME property on each feature.
+
+**MAP COMPONENT SPEC.**
+
+ComposableMap: width 800, height 560. projectionConfig scale 900, center [134, -28]. This centres and sizes Australia correctly within the viewBox.
+
+Geographies: use the GeoJSON URL above.
+
+For each Geography inside the Geographies render:
+
+Extract the state name from geo.properties.STATE_NAME.
+
+Map STATE_NAME values to abbreviations:
+"New South Wales" → NSW
+"Victoria" → VIC
+"Queensland" → QLD
+"South Australia" → SA
+"Western Australia" → WA
+"Tasmania" → TAS
+"Northern Territory" → NT
+"Australian Capital Territory" → ACT
+
+Default fill: #1E3A5F.
+Hover fill: #007BA7 (Cerulean).
+Selected fill: #0F172A (Midnight Navy).
+Stroke: #FFFFFF. Stroke-width 0.5.
+Cursor: pointer.
+Transition: fill 200ms ease.
+
+On click: setSelectedState(stateName). This triggers the info panel below.
+
+Label each state with its abbreviation. Use a separate SVG text element positioned at the geographic centroid of each state. Approximate centroids to hard-code:
+WA: [121, -26]
+NT: [133, -20]
+QLD: [144, -22]
+SA: [136, -30]
+NSW: [146, -32]
+VIC: [145, -37]
+TAS: [147, -42]
+ACT: [149, -35.5]
+
+Text style: DM Sans 500 10px white. text-anchor middle. Pointer-events none so clicks pass through to the Geography below.
+
+**INFO PANEL.**
+
+Below the map. AnimatePresence. When selectedState is not null, animate in a panel.
+
+Panel: background white #FFFFFF. Border-radius 16px. Box-shadow 0 4px 28px rgba(15,23,42,0.11). Padding 32px. Max-width 800px. Margin 24px auto 0. Motion.div initial opacity 0 y 16, animate opacity 1 y 0, exit opacity 0 y 8. Transition duration 0.25s.
+
+Panel top row: state name DM Serif Display 28px Midnight Navy left. X button Lucide X 20px Midnight Navy right. Clicking X sets selectedState to null.
+
+Below heading: three data points in a row on desktop, stacked on mobile.
+Capital: label DM Sans 400 12px warm grey, value DM Sans 600 14px Midnight Navy.
+Time zone: same pattern.
+Daylight saving: same pattern. Value is "Observed" in Australian Green #00843D or "Not observed" in warm grey.
+
+Divider 1px #E8E0D0. Margin 20px 0.
+
+Public holidays heading: DM Sans 600 13px Midnight Navy. "Public holidays 2026."
+
+Holidays list: two-column CSS grid. gap 4px 24px. Each item: date DM Sans 400 12px warm grey left, name DM Sans 500 13px Midnight Navy right.
+
+Government site button: Cerulean outlined button, full width, margin-top 20px. DM Sans 500 13px. Lucide ExternalLink 12px after label. Opens in new tab.
+
+**STATE DATA.**
+
+```javascript
+const stateData = {
+  "New South Wales": {
+    abbr: "NSW",
+    capital: "Sydney",
+    timezone: "AEST UTC+10",
+    daylightSaving: true,
+    site: "https://nsw.gov.au",
+    siteLabel: "nsw.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "4 Apr", name: "Easter Saturday" },
+      { date: "5 Apr", name: "Easter Sunday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "12 Oct", name: "Queen's Birthday" },
+      { date: "4 Aug", name: "Bank Holiday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "Victoria": {
+    abbr: "VIC",
+    capital: "Melbourne",
+    timezone: "AEST UTC+10",
+    daylightSaving: true,
+    site: "https://vic.gov.au",
+    siteLabel: "vic.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "4 Apr", name: "Easter Saturday" },
+      { date: "5 Apr", name: "Easter Sunday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "9 Jun", name: "King's Birthday" },
+      { date: "7 Nov", name: "Melbourne Cup Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "Queensland": {
+    abbr: "QLD",
+    capital: "Brisbane",
+    timezone: "AEST UTC+10",
+    daylightSaving: false,
+    site: "https://qld.gov.au",
+    siteLabel: "qld.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "4 Apr", name: "Easter Saturday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "4 May", name: "Labour Day" },
+      { date: "13 Oct", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "South Australia": {
+    abbr: "SA",
+    capital: "Adelaide",
+    timezone: "ACST UTC+9:30",
+    daylightSaving: true,
+    site: "https://sa.gov.au",
+    siteLabel: "sa.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar", name: "Adelaide Cup" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "4 Apr", name: "Easter Saturday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "9 Jun", name: "King's Birthday" },
+      { date: "3 Aug", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "26 Dec", name: "Proclamation Day" },
+    ]
+  },
+  "Western Australia": {
+    abbr: "WA",
+    capital: "Perth",
+    timezone: "AWST UTC+8",
+    daylightSaving: false,
+    site: "https://wa.gov.au",
+    siteLabel: "wa.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "2 Mar", name: "WA Day" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "22 Sep", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "Tasmania": {
+    abbr: "TAS",
+    capital: "Hobart",
+    timezone: "AEST UTC+10",
+    daylightSaving: true,
+    site: "https://tas.gov.au",
+    siteLabel: "tas.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Feb", name: "Royal Hobart Regatta (south)" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "14 Apr", name: "Easter Tuesday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "9 Jun", name: "King's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "Northern Territory": {
+    abbr: "NT",
+    capital: "Darwin",
+    timezone: "ACST UTC+9:30",
+    daylightSaving: false,
+    site: "https://nt.gov.au",
+    siteLabel: "nt.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "4 May", name: "May Day" },
+      { date: "9 Jun", name: "King's Birthday" },
+      { date: "3 Aug", name: "Picnic Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  },
+  "Australian Capital Territory": {
+    abbr: "ACT",
+    capital: "Canberra",
+    timezone: "AEST UTC+10",
+    daylightSaving: true,
+    site: "https://act.gov.au",
+    siteLabel: "act.gov.au",
+    holidays: [
+      { date: "1 Jan", name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar", name: "Canberra Day" },
+      { date: "3 Apr", name: "Good Friday" },
+      { date: "4 Apr", name: "Easter Saturday" },
+      { date: "6 Apr", name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "25 May", name: "Reconciliation Day" },
+      { date: "9 Jun", name: "King's Birthday" },
+      { date: "26 Oct", name: "Family and Community Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ]
+  }
+};
+```
+
+**HINT TEXT.**
+
+Below the map, above where the panel appears. DM Sans 400 13px warm grey centred. "Select a state or territory to see local facts and public holidays." Disappears when a state is selected.
+
+**RESPONSIVE.**
+
+Map scales down on tablet and mobile. ComposableMap width 100 percent. Height auto. ViewBox stays. On mobile the info panel stacks all data points vertically. Holiday list goes single column on mobile.
+
+**GITHUB.**
+
+Commit message: "Fix: replace rectangle map with react-simple-maps geographic Australia map."

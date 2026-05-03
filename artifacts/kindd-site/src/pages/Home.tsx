@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { geoMercator, geoPath } from "d3-geo";
 import {
   ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink,
   Linkedin, Instagram, Twitter, Youtube,
@@ -327,121 +328,176 @@ const STATE_INFO: Record<string, StateInfo> = {
   },
 };
 
-// ─── SVG map paths (viewBox 0 0 1000 750) ────────────────────────────────────
-const STATE_PATHS: Record<string, string> = {
-  WA:  "M 0,118 L 188,0 L 390,0 L 390,558 L 0,558 Z",
-  NT:  "M 390,0 L 612,0 L 612,358 L 390,358 Z",
-  SA:  "M 390,358 L 683,358 L 683,558 L 390,558 Z",
-  QLD: "M 612,0 L 1000,18 L 1000,412 L 683,412 L 683,358 L 612,358 Z",
-  NSW: "M 683,358 L 1000,358 L 1000,595 L 683,595 Z",
-  VIC: "M 683,595 L 952,595 L 942,648 L 683,640 Z",
-  TAS: "M 780,672 L 878,672 L 872,732 L 780,728 Z",
-  ACT: "M 856,524 L 893,524 L 893,560 L 856,560 Z",
+// ─── Geographic Australia Map (d3-geo + raw GeoJSON fetch) ───────────────────
+const GEO_URL = "https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.min.geojson";
+const MAP_W = 800;
+const MAP_H = 560;
+
+const MAP_PROJECTION = geoMercator().scale(900).center([134, -28]).translate([MAP_W / 2, MAP_H / 2]);
+const MAP_PATH_GEN    = geoPath(MAP_PROJECTION);
+
+const NAME_TO_CODE: Record<string, string> = {
+  "New South Wales":              "NSW",
+  "Victoria":                     "VIC",
+  "Queensland":                   "QLD",
+  "South Australia":              "SA",
+  "Western Australia":            "WA",
+  "Tasmania":                     "TAS",
+  "Northern Territory":           "NT",
+  "Australian Capital Territory": "ACT",
 };
 
-const STATE_LABEL_POS: Record<string, [number, number]> = {
-  WA:  [190, 330],
-  NT:  [501, 185],
-  SA:  [537, 462],
-  QLD: [825, 205],
-  NSW: [843, 477],
-  VIC: [813, 618],
-  TAS: [826, 700],
-  ACT: [874, 542],
+// Geographic centroids [lng, lat] — projected at render time
+const LABEL_CENTROIDS: Record<string, [number, number]> = {
+  WA:  [121, -26],
+  NT:  [133, -20],
+  QLD: [144, -22],
+  SA:  [136, -30],
+  NSW: [146, -32],
+  VIC: [145, -37],
+  TAS: [147, -42],
+  ACT: [149, -35.5],
 };
 
-// ─── Interactive Australia Map ────────────────────────────────────────────────
+type GeoFeature = { type: string; properties: Record<string, string>; geometry: unknown };
+
 function AustraliaMap() {
-  const [selected, setSelected] = useState<string | null>(null);
-  const [hovered,  setHovered]  = useState<string | null>(null);
+  const [features,  setFeatures] = useState<GeoFeature[]>([]);
+  const [selected,  setSelected] = useState<string | null>(null);
+  const [hovered,   setHovered]  = useState<string | null>(null);
 
-  const getFill = (code: string) => {
-    if (selected === code) return C.navy;
-    if (hovered  === code) return C.cerulean;
-    return "#1E3A5F";
-  };
-  const getStroke = (code: string) => selected === code ? C.amber : "#FFFFFF";
-  const getStrokeWidth = (code: string) => selected === code ? 2 : 1.5;
+  useEffect(() => {
+    fetch(GEO_URL)
+      .then((r) => r.json())
+      .then((data) => setFeatures((data as { features: GeoFeature[] }).features ?? []))
+      .catch(() => {});
+  }, []);
 
   const info = selected ? STATE_INFO[selected] : null;
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto" }}>
+      {/* SVG map */}
       <svg
-        viewBox="0 0 1000 750"
+        viewBox={`0 0 ${MAP_W} ${MAP_H}`}
         style={{ width: "100%", height: "auto", display: "block" }}
         aria-label="Interactive map of Australia"
       >
-        {Object.entries(STATE_PATHS).map(([code, path]) => (
-          <g key={code}>
-            <path
-              d={path}
-              fill={getFill(code)}
-              stroke={getStroke(code)}
-              strokeWidth={getStrokeWidth(code)}
-              style={{ cursor: "pointer", transition: "fill 0.2s" }}
-              onClick={() => setSelected(selected === code ? null : code)}
-              onMouseEnter={() => setHovered(code)}
-              onMouseLeave={() => setHovered(null)}
-            />
-            <text
-              x={STATE_LABEL_POS[code][0]}
-              y={STATE_LABEL_POS[code][1]}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{
-                fontFamily: SANS,
-                fontWeight: 500,
-                fontSize: code === "ACT" ? 9 : 12,
-                fill: "#FFFFFF",
-                pointerEvents: "none",
-                userSelect: "none",
-              }}
-            >
-              {code}
-            </text>
-          </g>
-        ))}
+        {features.map((feat, i) => {
+          const stateName = feat.properties.STATE_NAME ?? feat.properties.name ?? "";
+          const code = NAME_TO_CODE[stateName];
+          if (!code) return null;
+          const isSelected = selected === code;
+          const isHovered  = hovered  === code;
+          const fill = isSelected ? C.navy : isHovered ? C.cerulean : "#1E3A5F";
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const d = MAP_PATH_GEN(feat as any) ?? "";
+          const labelPt = MAP_PROJECTION(LABEL_CENTROIDS[code]);
+          return (
+            <g key={code + i}>
+              <path
+                d={d}
+                fill={fill}
+                stroke="#FFFFFF"
+                strokeWidth={0.5}
+                style={{ cursor: "pointer", transition: "fill 200ms ease", outline: "none" }}
+                onClick={() => setSelected(isSelected ? null : code)}
+                onMouseEnter={() => setHovered(code)}
+                onMouseLeave={() => setHovered(null)}
+              />
+              {labelPt && (
+                <text
+                  x={labelPt[0]}
+                  y={labelPt[1]}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  style={{
+                    fontFamily: SANS,
+                    fontWeight: 500,
+                    fontSize: code === "ACT" ? 7 : 10,
+                    fill: "#FFFFFF",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                >
+                  {code}
+                </text>
+              )}
+            </g>
+          );
+        })}
       </svg>
 
-      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, textAlign: "center", marginTop: 12, marginBottom: 24 }}>
-        Select a state or territory to see local facts and public holidays.
-      </p>
+      {/* Hint text — only when nothing selected */}
+      {!selected && (
+        <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, textAlign: "center", marginTop: 12, marginBottom: 24 }}>
+          Select a state or territory to see local facts and public holidays.
+        </p>
+      )}
 
+      {/* Info panel */}
       <AnimatePresence>
         {info && selected && (
           <motion.div
             key={selected}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.25 }}
-            style={{ overflow: "hidden" }}
+            style={{ maxWidth: 800, margin: "24px auto 0" }}
           >
-            <div style={{ background: "#F2F1EE", borderRadius: 16, padding: 28 }}>
-              <div style={{ marginBottom: 20 }}>
-                <h3 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, marginBottom: 10 }}>{info.name}</h3>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 28px" }}>
-                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Capital: <span style={{ fontWeight: 400 }}>{info.capital}</span></span>
-                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Time zone: <span style={{ fontWeight: 400 }}>{info.timezone}</span></span>
-                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Daylight saving: <span style={{ fontWeight: 400 }}>{info.dst}</span></span>
+            <div style={{ background: C.white, borderRadius: 16, boxShadow: "0 4px 28px rgba(15,23,42,0.11)", padding: 32 }}>
+              {/* Top row */}
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+                <h3 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, margin: 0 }}>{info.name}</h3>
+                <button
+                  onClick={() => setSelected(null)}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: C.navy, display: "flex", alignItems: "center" }}
+                  aria-label="Close"
+                >
+                  <X style={{ width: 20, height: 20 }} />
+                </button>
+              </div>
+
+              {/* Three data points */}
+              <div className="flex flex-col sm:flex-row" style={{ gap: "12px 32px", marginBottom: 20 }}>
+                <div>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Capital</p>
+                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.capital}</p>
                 </div>
-                <div style={{ marginTop: 14 }}>
-                  <CerBtn href={info.siteUrl}>{info.siteLabel}</CerBtn>
+                <div>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Time zone</p>
+                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: C.navy, margin: 0 }}>{info.timezone}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, margin: "0 0 2px" }}>Daylight saving</p>
+                  <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 14, color: info.dst === "Observed" ? C.auGreen : C.grey, margin: 0 }}>{info.dst}</p>
                 </div>
               </div>
 
-              <div style={{ height: 1, background: "rgba(15,23,42,0.08)", marginBottom: 20 }} />
+              {/* Divider */}
+              <div style={{ height: 1, background: "#E8E0D0", marginBottom: 20 }} />
 
-              <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.06em" }}>Public Holidays 2026</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 24px" }}>
+              {/* Holidays */}
+              <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.navy, marginBottom: 12 }}>Public holidays 2026.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "4px 24px", marginBottom: 20 }}>
                 {info.holidays.map((h) => (
                   <div key={h.date + h.name} style={{ display: "flex", gap: 12, padding: "5px 0", borderBottom: "1px solid rgba(15,23,42,0.06)", alignItems: "baseline" }}>
-                    <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.darkSec, flexShrink: 0, minWidth: 54 }}>{h.date}</span>
+                    <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, color: C.grey, flexShrink: 0, minWidth: 50 }}>{h.date}</span>
                     <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 13, color: C.navy }}>{h.name}</span>
                   </div>
                 ))}
               </div>
+
+              {/* Government site button */}
+              <a
+                href={info.siteUrl} target="_blank" rel="noreferrer"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 16px", borderRadius: 8, border: `1.5px solid ${C.cerulean}`, color: C.cerulean, fontFamily: SANS, fontWeight: 500, fontSize: 13, textDecoration: "none", transition: "all 0.15s", width: "100%", boxSizing: "border-box" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = C.cerulean; (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = C.cerulean; }}
+              >
+                {info.siteLabel} <ExternalLink style={{ width: 12, height: 12 }} />
+              </a>
             </div>
           </motion.div>
         )}
