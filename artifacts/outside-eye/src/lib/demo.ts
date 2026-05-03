@@ -314,6 +314,46 @@ export const DEMO_RESPONSES: Record<string, object> = {
       "Read the first three chapters of Hey Whipple. Then go to Marketing Examples and spend one hour reading breakdowns of real headlines. Write ten headlines for something you use every day. Do not publish them. Just write them. Do this again tomorrow.",
   },
 
+  tone: {
+    isDemo: true,
+    voiceArchetype: {
+      name: "The Trusted Insider",
+      description: "This is the friend who actually knows about sustainable living and is not precious about it. They share what works, admit what does not, and never make you feel bad for not doing more. The tone earns trust by being specific, never by being earnest.",
+    },
+    manifesto: "Say the true thing plainly, and trust the reader to be an adult.",
+    characterTraits: ["Specific over general", "Confident without swagger", "Warm but not gushing", "Honest about trade-offs"],
+    wordsToUse: ["built", "honest", "made", "real", "worth it", "consider", "actually", "lasts"],
+    wordsToAvoid: ["sustainable", "eco-friendly", "journey", "curated", "elevate", "mindful"],
+    doList: [
+      "Lead with the practical benefit before the values pitch.",
+      "Use the second person 'you' — write to one specific person, not a crowd.",
+      "Give a specific detail where a vague claim would be tempting.",
+      "Let a product do its own talking. Describe what it is before telling them what to feel about it.",
+    ],
+    dontList: [
+      "Do not open with a values statement. Let the product open, then the values follow.",
+      "Do not use sustainability language — it reads as marketing, not belief.",
+      "Do not end sentences with exclamation marks. Confidence does not need them.",
+    ],
+    rewrites: [
+      {
+        label: "Product description",
+        before: "Our eco-friendly linen duvet cover is crafted with sustainability in mind, elevating your bedroom with mindful design.",
+        after: "100% European linen. Gets softer every wash. Built to last a decade, not a season.",
+      },
+      {
+        label: "Error message",
+        before: "Something went wrong. Please try again.",
+        after: "That did not go through. Give it another go — or email us if it keeps happening.",
+      },
+      {
+        label: "Call to action",
+        before: "Shop our sustainable collection today!",
+        after: "See what's in stock",
+      },
+    ],
+  },
+
   spark: {
     isDemo: true,
     directions: [

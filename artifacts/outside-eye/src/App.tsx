@@ -11,6 +11,7 @@ import Colour from "@/pages/Colour";
 import Wordmark from "@/pages/Wordmark";
 import Library from "@/pages/Library";
 import Spark from "@/pages/Spark";
+import ToneOfVoice from "@/pages/ToneOfVoice";
 import Settings from "@/pages/Settings";
 import About from "@/pages/About";
 import FeedbackSummary from "@/pages/FeedbackSummary";
@@ -29,6 +30,7 @@ function Router() {
         <Route path="/wordmark" component={Wordmark} />
         <Route path="/library" component={Library} />
         <Route path="/spark" component={Spark} />
+        <Route path="/tone" component={ToneOfVoice} />
         <Route path="/settings" component={Settings} />
         <Route path="/about" component={About} />
         <Route path="/feedback-summary" component={FeedbackSummary} />

@@ -12,6 +12,7 @@ const rooms = [
   { num: "07", key: "wordmark", name: "The Wordmark Room", desc: "Type a brand name. Get three typographic wordmark concepts.", href: "/wordmark" },
   { num: "08", key: "library", name: "The Library", desc: "Books, channels, and resources worth your time. Curated by discipline.", href: "/library" },
   { num: "09", key: "spark", name: "The First Draft", desc: "Stuck on a blank page. Get three wildly different starting points.", href: "/spark" },
+  { num: "10", key: "tone", name: "The Voice Room", desc: "Describe your brand. Get a full tone of voice guide with rewrite examples.", href: "/tone" },
 ];
 
 export default function Home() {
@@ -60,7 +61,7 @@ export default function Home() {
           marginBottom: 24,
         }}
       >
-        Nine creative tools for designers, writers, marketers, and makers who want
+        Ten creative tools for designers, writers, marketers, and makers who want
         honest feedback on their work. Demo Mode is free. Bring a key you already
         have to use it on your actual work.
       </p>
@@ -89,7 +90,7 @@ export default function Home() {
           marginBottom: 32,
         }}
       >
-        The Nine Rooms
+        The Ten Rooms
       </p>
 
       {visited.length > 0 && (
