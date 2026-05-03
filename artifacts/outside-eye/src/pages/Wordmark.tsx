@@ -138,6 +138,34 @@ export default function Wordmark() {
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
           {isDemo && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
           {output.concepts.map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
+          <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{
+                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#B8B2A8",
+                background: "none",
+                border: "1px solid #2A2A2A",
+                padding: "5px 12px",
+                cursor: "pointer",
+                transition: "color 150ms ease, border-color 150ms ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
+              }}
+            >
+              Try again
+            </button>
+          </div>
         </div>
       )}
       <div style={{ marginTop: 88 }} />

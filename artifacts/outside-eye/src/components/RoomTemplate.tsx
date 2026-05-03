@@ -141,6 +141,34 @@ export default function RoomTemplate({
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
           <OutputCard data={output} isDemo={isDemo} />
+          <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{
+                fontFamily: "'Departure Mono', 'Courier New', monospace",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#B8B2A8",
+                background: "none",
+                border: "1px solid #2A2A2A",
+                padding: "5px 12px",
+                cursor: "pointer",
+                transition: "color 150ms ease, border-color 150ms ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#F5F0E8";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#2A2A2A";
+              }}
+            >
+              Try again
+            </button>
+          </div>
         </div>
       )}
     </div>
