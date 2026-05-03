@@ -55,7 +55,14 @@ export default function Library() {
     const prompt = `Discipline: ${discipline}. Level: ${level}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
-      setOutput(JSON.parse(raw));
+      const data = JSON.parse(raw);
+      const toArr = (v: unknown) =>
+        Array.isArray(v) ? v : v && typeof v === "object" ? Object.values(v as object) : [];
+      data.books = toArr(data.books);
+      data.youtubeChannels = toArr(data.youtubeChannels ?? data.youtube_channels ?? data.YouTubeChannels);
+      data.websites = toArr(data.websites);
+      data.freeCourses = toArr(data.freeCourses ?? data.free_courses);
+      setOutput(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") { setOutput(DEMO_RESPONSES.library as LibraryData); setIsDemo(true); }
@@ -132,7 +139,7 @@ export default function Library() {
 
           {activeTab === "books" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {output.books.map((book, i) => (
+              {(Array.isArray(output.books) ? output.books : []).map((book, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 8 }}>
                     <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8" }}>{book.title}</p>
@@ -147,7 +154,7 @@ export default function Library() {
 
           {activeTab === "youtube" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {output.youtubeChannels.map((ch, i) => (
+              {(Array.isArray(output.youtubeChannels) ? output.youtubeChannels : []).map((ch, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8", marginBottom: 8 }}>{ch.name}</p>
                   <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", lineHeight: 1.6 }}>{ch.whyItMatters}</p>
@@ -158,7 +165,7 @@ export default function Library() {
 
           {activeTab === "websites" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {output.websites.map((site, i) => (
+              {(Array.isArray(output.websites) ? output.websites : []).map((site, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8" }}>{site.name}</p>
@@ -174,7 +181,7 @@ export default function Library() {
 
           {activeTab === "courses" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {output.freeCourses.map((course, i) => (
+              {(Array.isArray(output.freeCourses) ? output.freeCourses : []).map((course, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8", marginBottom: 4 }}>{course.name}</p>
                   <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{course.platform}</p>

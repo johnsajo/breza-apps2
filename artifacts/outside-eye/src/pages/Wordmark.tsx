@@ -102,7 +102,11 @@ export default function Wordmark() {
     const prompt = `Brand name: "${brandName}". Personality word: "${personality}". Style direction: ${styleDir}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
-      setOutput(JSON.parse(raw));
+      const data = JSON.parse(raw);
+      const toArr = (v: unknown) =>
+        Array.isArray(v) ? v : v && typeof v === "object" ? Object.values(v as object) : [];
+      data.concepts = toArr(data.concepts);
+      setOutput(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") { setOutput(DEMO_RESPONSES.wordmark as { concepts: Concept[] }); setIsDemo(true); }
@@ -152,7 +156,7 @@ export default function Wordmark() {
         <div style={{ marginTop: 40 }}>
           <hr className="hr-hairline" style={{ marginBottom: 32 }} />
           {isDemo && <p style={{ fontFamily: "'Departure Mono', monospace", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
-          {output.concepts.map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
+          {(Array.isArray(output.concepts) ? output.concepts : []).map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={handleSubmit}
