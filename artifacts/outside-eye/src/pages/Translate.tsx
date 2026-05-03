@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
+import { decodeShare } from "@/lib/sharelink";
 
 const stages = ["First presentation", "Revision round", "Final approval", "Pitch"];
 
@@ -10,6 +11,15 @@ export default function Translate() {
   const [workDesc, setWorkDesc] = useState("");
   const [stage, setStage] = useState("");
   const [inspirationUrl, setInspirationUrl] = useState("");
+
+  useEffect(() => {
+    const s = decodeShare();
+    if (!s) return;
+    if (typeof s.feedback === "string") setFeedback(s.feedback);
+    if (typeof s.workDesc === "string") setWorkDesc(s.workDesc);
+    if (typeof s.stage === "string") setStage(s.stage);
+    if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+  }, []);
 
   const isValid = feedback.trim().length > 0 && workDesc.trim().length > 0 && stage.length > 0;
 
@@ -38,6 +48,7 @@ export default function Translate() {
       systemPrompt={SYSTEM}
       buildUserPrompt={buildUserPrompt}
       isValid={isValid}
+      shareState={{ feedback, workDesc, stage, inspirationUrl }}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>

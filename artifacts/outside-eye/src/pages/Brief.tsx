@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
+import { decodeShare } from "@/lib/sharelink";
 
 const categories = [
   "Advertising", "Brand", "Campaign", "Content", "Digital",
@@ -15,6 +16,14 @@ export default function Brief() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [inspirationUrl, setInspirationUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const s = decodeShare();
+    if (!s) return;
+    if (typeof s.briefText === "string") setBriefText(s.briefText);
+    if (typeof s.category === "string") setCategory(s.category);
+    if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+  }, []);
 
   const isValid = briefText.trim().length > 0 && category.length > 0;
 
@@ -47,6 +56,7 @@ export default function Brief() {
       systemPrompt={SYSTEM}
       buildUserPrompt={buildUserPrompt}
       isValid={isValid}
+      shareState={{ briefText, category, inspirationUrl }}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>

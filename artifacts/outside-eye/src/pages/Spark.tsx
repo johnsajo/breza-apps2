@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
+import { decodeShare } from "@/lib/sharelink";
 
 const stuckReasons = [
   "Blank page",
@@ -15,6 +16,14 @@ export default function Spark() {
   const [brief, setBrief] = useState("");
   const [stuckReason, setStuckReason] = useState("");
   const [inspirationUrl, setInspirationUrl] = useState("");
+
+  useEffect(() => {
+    const s = decodeShare();
+    if (!s) return;
+    if (typeof s.brief === "string") setBrief(s.brief);
+    if (typeof s.stuckReason === "string") setStuckReason(s.stuckReason);
+    if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+  }, []);
 
   const isValid = brief.trim().length > 0 && stuckReason.length > 0;
 
@@ -39,6 +48,7 @@ export default function Spark() {
       systemPrompt={SYSTEM}
       buildUserPrompt={buildUserPrompt}
       isValid={isValid}
+      shareState={{ brief, stuckReason, inspirationUrl }}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>

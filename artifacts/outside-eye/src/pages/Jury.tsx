@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
+import { decodeShare } from "@/lib/sharelink";
 
 const mediums = [
   "Print", "Film", "Digital", "OOH", "Social", "Integrated",
@@ -18,6 +19,15 @@ export default function Jury() {
   const [imageType, setImageType] = useState("");
   const [inspirationUrl, setInspirationUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const s = decodeShare();
+    if (!s) return;
+    if (typeof s.concept === "string") setConcept(s.concept);
+    if (typeof s.medium === "string") setMedium(s.medium);
+    if (typeof s.audience === "string") setAudience(s.audience);
+    if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+  }, []);
 
   const isValid = concept.trim().length > 0 && medium.length > 0 && audience.trim().length > 0;
 
@@ -67,6 +77,7 @@ export default function Jury() {
       isValid={isValid}
       imageBase64={imageBase64 || undefined}
       imageType={imageType || undefined}
+      shareState={{ concept, medium, audience, inspirationUrl }}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div>

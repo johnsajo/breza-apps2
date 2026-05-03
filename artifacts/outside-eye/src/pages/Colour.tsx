@@ -5,6 +5,7 @@ import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
+import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -60,8 +61,17 @@ export default function Colour() {
   const [restored, setRestored] = useState<number | null>(null);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("colour"));
   const [note, setNote] = useState(() => getNote("colour"));
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
+    const s = decodeShare();
+    if (s) {
+      if (typeof s.desc === "string") setDesc(s.desc);
+      if (typeof s.industry === "string") setIndustry(s.industry);
+      if (Array.isArray(s.selectedMoods)) setSelectedMoods(s.selectedMoods as string[]);
+      if (typeof s.usage === "string") setUsage(s.usage);
+      if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+    }
     const saved = loadSession("colour");
     if (saved) {
       setOutput(saved.output as { palettes: Palette[] });
@@ -69,6 +79,8 @@ export default function Colour() {
       setRestored(saved.savedAt);
     }
   }, []);
+
+  const isValid = desc.trim().length > 0 && industry.length > 0;
 
   function handleRating(r: Rating) {
     const next = rating === r ? null : r;
@@ -92,7 +104,13 @@ export default function Colour() {
     setIsDemo(false);
   }
 
-  const isValid = desc.trim().length > 0 && industry.length > 0;
+  function handleCopyShareLink() {
+    const url = encodeShare({ desc, industry, selectedMoods, usage, inspirationUrl });
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
+  }
 
   async function handleSubmit() {
     setError(null); setOutput(null); setRestored(null); setLoading(true); setIsDemo(false);
@@ -192,10 +210,20 @@ export default function Colour() {
         </div>
       </div>
 
-      <div style={{ marginTop: 32 }}>
-        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid}>
+      <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid} style={{ flex: "none" }}>
           {loading ? "The Outside Eye is reading your work..." : "Get the Outside Eye"}
         </button>
+        {isValid && (
+          <button
+            onClick={handleCopyShareLink}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: shareCopied ? "#7CBA6A" : "#5A5550", padding: 0, transition: "color 150ms ease" }}
+            onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
+            onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
+          >
+            {shareCopied ? "Link copied" : "Copy share link"}
+          </button>
+        )}
       </div>
 
       {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}

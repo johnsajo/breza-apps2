@@ -5,6 +5,7 @@ import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
+import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -79,8 +80,16 @@ export default function Wordmark() {
   const [restored, setRestored] = useState<number | null>(null);
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("wordmark"));
   const [note, setNote] = useState(() => getNote("wordmark"));
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
+    const s = decodeShare();
+    if (s) {
+      if (typeof s.brandName === "string") setBrandName(s.brandName);
+      if (typeof s.personality === "string") setPersonality(s.personality);
+      if (typeof s.styleDir === "string") setStyleDir(s.styleDir);
+      if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+    }
     const saved = loadSession("wordmark");
     if (saved) {
       setOutput(saved.output as { concepts: Concept[] });
@@ -107,6 +116,14 @@ export default function Wordmark() {
     setOutput(null);
     setRestored(null);
     setIsDemo(false);
+  }
+
+  function handleCopyShareLink() {
+    const url = encodeShare({ brandName, personality, styleDir, inspirationUrl });
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
   }
 
   async function handleSubmit() {
@@ -184,10 +201,20 @@ export default function Wordmark() {
         </div>
       </div>
 
-      <div style={{ marginTop: 32 }}>
-        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid}>
+      <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid} style={{ flex: "none" }}>
           {loading ? "The Outside Eye is reading your work..." : "Get the Outside Eye"}
         </button>
+        {isValid && (
+          <button
+            onClick={handleCopyShareLink}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: shareCopied ? "#7CBA6A" : "#5A5550", padding: 0, transition: "color 150ms ease" }}
+            onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
+            onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
+          >
+            {shareCopied ? "Link copied" : "Copy share link"}
+          </button>
+        )}
       </div>
 
       {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
@@ -212,7 +239,7 @@ export default function Wordmark() {
             </div>
           )}
 
-          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key in Settings to generate wordmarks for your brand.</p>}
+          {isDemo && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 24 }}>Demo Response — Add your key to generate wordmarks for your brand.</p>}
           {(Array.isArray(output.concepts) ? output.concepts : []).map((c, i) => <WordmarkCard key={i} concept={c} brandName={brandName || "Groundwork"} />)}
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button onClick={handleSubmit} disabled={loading} style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B8B2A8", background: "none", border: "1px solid #2A2A2A", padding: "5px 12px", cursor: "pointer", transition: "color 150ms ease, border-color 150ms ease" }}

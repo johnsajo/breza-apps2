@@ -5,6 +5,7 @@ import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveFeedback, getFeedback, saveNote, getNote, type Rating } from "@/lib/feedback";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
+import { encodeShare, decodeShare } from "@/lib/sharelink";
 import HowToUse from "@/components/HowToUse";
 import FeedbackRow from "@/components/FeedbackRow";
 
@@ -27,7 +28,34 @@ interface LibraryData {
   weekOnePlan: string;
 }
 
-const SYSTEM = `You are a creative mentor building a real reading and watching list. Return only resources that genuinely exist and are actually valuable. Prioritise free resources. Be specific. No padding. No filler. No made-up titles. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
+// Exhaustive key lookup — AI returns many variants of the same fields
+function findArr(data: Record<string, unknown>, ...candidates: string[]): unknown[] {
+  for (const k of candidates) {
+    if (Array.isArray(data[k]) && (data[k] as unknown[]).length > 0) return data[k] as unknown[];
+  }
+  // Last resort: scan all keys for arrays that look like the right shape
+  for (const k of candidates) {
+    for (const key of Object.keys(data)) {
+      if (key.toLowerCase().includes(k.toLowerCase()) && Array.isArray(data[key])) {
+        return data[key] as unknown[];
+      }
+    }
+  }
+  return [];
+}
+
+const SYSTEM = `You are a creative mentor building a real reading and watching list. Return only resources that genuinely exist and are actually valuable. Prioritise free resources. Be specific. No padding. No filler. No made-up titles.
+
+Return ONLY a raw JSON object with EXACTLY these keys:
+{
+  "books": [ { "title": "...", "author": "...", "whyItMatters": "...", "free": false } ],
+  "youtubeChannels": [ { "name": "...", "whyItMatters": "..." } ],
+  "websites": [ { "name": "...", "url": "https://...", "whyItMatters": "..." } ],
+  "freeCourses": [ { "name": "...", "platform": "..." } ],
+  "weekOnePlan": "A single paragraph of specific, actionable advice for the first week."
+}
+
+No markdown. No backticks. No extra keys. No preamble. The response must be valid JSON parseable by JSON.parse().`;
 
 export default function Library() {
   const [discipline, setDiscipline] = useState("");
@@ -40,8 +68,14 @@ export default function Library() {
   const [activeTab, setActiveTab] = useState<Tab>("books");
   const [rating, setRating] = useState<Rating | null>(() => getFeedback("library"));
   const [note, setNote] = useState(() => getNote("library"));
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
+    const s = decodeShare();
+    if (s) {
+      if (typeof s.discipline === "string") setDiscipline(s.discipline);
+      if (typeof s.level === "string") setLevel(s.level);
+    }
     const saved = loadSession("library");
     if (saved) {
       setOutput(saved.output as LibraryData);
@@ -68,6 +102,14 @@ export default function Library() {
     setIsDemo(false);
   }
 
+  function handleCopyShareLink() {
+    const url = encodeShare({ discipline, level });
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
+  }
+
   const isValid = discipline.length > 0 && level.length > 0;
 
   async function handleSubmit() {
@@ -76,15 +118,34 @@ export default function Library() {
     const prompt = `Discipline: ${discipline}. Level: ${level}.`;
     try {
       const raw = await callOutsideEye(prompt, SYSTEM);
-      const data = JSON.parse(raw);
-      const toArr = (v: unknown) =>
-        Array.isArray(v) ? v : v && typeof v === "object" ? Object.values(v as object) : [];
-      data.books = toArr(data.books);
-      data.youtubeChannels = toArr(data.youtubeChannels ?? data.youtube_channels ?? data.YouTubeChannels);
-      data.websites = toArr(data.websites);
-      data.freeCourses = toArr(data.freeCourses ?? data.free_courses);
-      setOutput(data);
-      saveSession("library", data, false);
+      const data = JSON.parse(raw) as Record<string, unknown>;
+
+      const normalised: LibraryData = {
+        discipline,
+        level,
+        books: findArr(data, "books") as Book[],
+        youtubeChannels: findArr(data,
+          "youtubeChannels", "youtube_channels", "YouTubeChannels",
+          "youtube", "channels", "youTubeChannels", "yt", "videos"
+        ) as Channel[],
+        websites: findArr(data,
+          "websites", "website", "sites", "links", "resources", "onlineResources", "online_resources"
+        ) as Website[],
+        freeCourses: findArr(data,
+          "freeCourses", "free_courses", "FreeCourses", "courses",
+          "onlineCourses", "online_courses", "freeResources"
+        ) as Course[],
+        weekOnePlan: typeof data.weekOnePlan === "string"
+          ? data.weekOnePlan
+          : typeof data.week_one_plan === "string"
+          ? data.week_one_plan
+          : typeof data.weekOne === "string"
+          ? data.weekOne
+          : "",
+      };
+
+      setOutput(normalised);
+      saveSession("library", normalised as unknown as Record<string, unknown>, false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "UNKNOWN";
       if (msg === "NO_KEY") {
@@ -148,10 +209,20 @@ export default function Library() {
         </div>
       </div>
 
-      <div style={{ marginTop: 32 }}>
-        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid}>
+      <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <button className="btn-primary" onClick={handleSubmit} disabled={loading || !isValid} style={{ flex: "none" }}>
           {loading ? "The Outside Eye is reading your work..." : "Get the Outside Eye"}
         </button>
+        {isValid && (
+          <button
+            onClick={handleCopyShareLink}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: shareCopied ? "#7CBA6A" : "#5A5550", padding: 0, transition: "color 150ms ease" }}
+            onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
+            onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
+          >
+            {shareCopied ? "Link copied" : "Copy share link"}
+          </button>
+        )}
       </div>
 
       {error && <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#F87171", marginTop: 16, textTransform: "uppercase", letterSpacing: "0.06em" }}>{error}</p>}
@@ -188,6 +259,18 @@ export default function Library() {
                 marginBottom: -1, transition: "color 150ms ease",
               }}>
                 {tab === "youtube" ? "YouTube" : tab === "courses" ? "Free Courses" : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === "youtube" && output.youtubeChannels?.length > 0 && (
+                  <span style={{ marginLeft: 6, color: "#3A3530", fontSize: 10 }}>{output.youtubeChannels.length}</span>
+                )}
+                {tab === "websites" && output.websites?.length > 0 && (
+                  <span style={{ marginLeft: 6, color: "#3A3530", fontSize: 10 }}>{output.websites.length}</span>
+                )}
+                {tab === "courses" && output.freeCourses?.length > 0 && (
+                  <span style={{ marginLeft: 6, color: "#3A3530", fontSize: 10 }}>{output.freeCourses.length}</span>
+                )}
+                {tab === "books" && output.books?.length > 0 && (
+                  <span style={{ marginLeft: 6, color: "#3A3530", fontSize: 10 }}>{output.books.length}</span>
+                )}
               </button>
             ))}
           </div>
@@ -209,39 +292,47 @@ export default function Library() {
 
           {activeTab === "youtube" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {(Array.isArray(output.youtubeChannels) ? output.youtubeChannels : []).map((ch, i) => (
+              {(Array.isArray(output.youtubeChannels) && output.youtubeChannels.length > 0) ? output.youtubeChannels.map((ch, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8", marginBottom: 8 }}>{ch.name}</p>
                   <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", lineHeight: 1.6 }}>{ch.whyItMatters}</p>
                 </div>
-              ))}
+              )) : (
+                <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#5A5550", fontStyle: "italic" }}>No YouTube channels returned for this discipline. Try regenerating.</p>
+              )}
             </div>
           )}
 
           {activeTab === "websites" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {(Array.isArray(output.websites) ? output.websites : []).map((site, i) => (
+              {(Array.isArray(output.websites) && output.websites.length > 0) ? output.websites.map((site, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8" }}>{site.name}</p>
-                    <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#F5A623", letterSpacing: "0.06em" }}
-                      onMouseEnter={(e) => ((e.target as HTMLElement).style.textDecoration = "underline")}
-                      onMouseLeave={(e) => ((e.target as HTMLElement).style.textDecoration = "none")}>Visit →</a>
+                    {site.url && (
+                      <a href={site.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 11, color: "#F5A623", letterSpacing: "0.06em" }}
+                        onMouseEnter={(e) => ((e.target as HTMLElement).style.textDecoration = "underline")}
+                        onMouseLeave={(e) => ((e.target as HTMLElement).style.textDecoration = "none")}>Visit →</a>
+                    )}
                   </div>
                   <p style={{ fontFamily: "'DM Sans'", fontSize: 15, color: "#B8B2A8", lineHeight: 1.6 }}>{site.whyItMatters}</p>
                 </div>
-              ))}
+              )) : (
+                <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#5A5550", fontStyle: "italic" }}>No websites returned for this discipline. Try regenerating.</p>
+              )}
             </div>
           )}
 
           {activeTab === "courses" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {(Array.isArray(output.freeCourses) ? output.freeCourses : []).map((course, i) => (
+              {(Array.isArray(output.freeCourses) && output.freeCourses.length > 0) ? output.freeCourses.map((course, i) => (
                 <div key={i} style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", padding: 24 }}>
                   <p className="fraunces-label" style={{ fontSize: 18, color: "#F5F0E8", marginBottom: 4 }}>{course.name}</p>
                   <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 12, color: "#B8B2A8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{course.platform}</p>
                 </div>
-              ))}
+              )) : (
+                <p style={{ fontFamily: "'DM Sans'", fontSize: 14, color: "#5A5550", fontStyle: "italic" }}>No free courses returned for this discipline. Try regenerating.</p>
+              )}
             </div>
           )}
 

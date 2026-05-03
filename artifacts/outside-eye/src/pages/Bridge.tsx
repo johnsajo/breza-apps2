@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RoomTemplate from "@/components/RoomTemplate";
+import { decodeShare } from "@/lib/sharelink";
 
 const SYSTEM = `You are a poet and a strategist. Two things have been placed in front of you. Find three genuinely surprising threads that connect them. Each connection must be poetic, specific, and usable as a creative starting point. Not obvious. Not generic. Return ONLY a raw JSON object. No markdown code fences. No backticks.`;
 
@@ -7,6 +8,14 @@ export default function Bridge() {
   const [thingOne, setThingOne] = useState("");
   const [thingTwo, setThingTwo] = useState("");
   const [inspirationUrl, setInspirationUrl] = useState("");
+
+  useEffect(() => {
+    const s = decodeShare();
+    if (!s) return;
+    if (typeof s.thingOne === "string") setThingOne(s.thingOne);
+    if (typeof s.thingTwo === "string") setThingTwo(s.thingTwo);
+    if (typeof s.inspirationUrl === "string") setInspirationUrl(s.inspirationUrl);
+  }, []);
 
   const isValid = thingOne.trim().length > 0 && thingTwo.trim().length > 0;
 
@@ -31,6 +40,7 @@ export default function Bridge() {
       systemPrompt={SYSTEM}
       buildUserPrompt={buildUserPrompt}
       isValid={isValid}
+      shareState={{ thingOne, thingTwo, inspirationUrl }}
       inputSection={
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div

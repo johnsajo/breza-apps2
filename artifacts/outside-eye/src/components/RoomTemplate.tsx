@@ -7,6 +7,7 @@ import { callOutsideEye } from "@/lib/ai";
 import { DEMO_RESPONSES } from "@/lib/demo";
 import { markVisited } from "@/lib/visited";
 import { saveSession, loadSession, clearSession, sessionAge } from "@/lib/session";
+import { encodeShare, type ShareState } from "@/lib/sharelink";
 
 interface RoomTemplateProps {
   roomNumber: string;
@@ -20,6 +21,7 @@ interface RoomTemplateProps {
   isValid: boolean;
   imageBase64?: string;
   imageType?: string;
+  shareState?: ShareState;
 }
 
 export default function RoomTemplate({
@@ -34,12 +36,14 @@ export default function RoomTemplate({
   isValid,
   imageBase64,
   imageType,
+  shareState,
 }: RoomTemplateProps) {
   const [output, setOutput] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [restored, setRestored] = useState<number | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
     const saved = loadSession(demoKey);
@@ -91,6 +95,15 @@ export default function RoomTemplate({
     setOutput(null);
     setRestored(null);
     setIsDemo(false);
+  }
+
+  function handleCopyShareLink() {
+    if (!shareState) return;
+    const url = encodeShare(shareState);
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
   }
 
   return (
@@ -159,14 +172,37 @@ export default function RoomTemplate({
 
       {inputSection}
 
-      <div style={{ marginTop: 32 }}>
+      <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
         <button
           className="btn-primary"
           onClick={handleSubmit}
           disabled={loading || !isValid}
+          style={{ flex: "none" }}
         >
           {loading ? "The Outside Eye is reading your work..." : "Get the Outside Eye"}
         </button>
+
+        {shareState && (
+          <button
+            onClick={handleCopyShareLink}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 11,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: shareCopied ? "#7CBA6A" : "#5A5550",
+              padding: 0,
+              transition: "color 150ms ease",
+            }}
+            onMouseEnter={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#B8B2A8"; }}
+            onMouseLeave={(e) => { if (!shareCopied) (e.currentTarget as HTMLButtonElement).style.color = "#5A5550"; }}
+          >
+            {shareCopied ? "Link copied" : "Copy share link"}
+          </button>
+        )}
       </div>
 
       {error && (
