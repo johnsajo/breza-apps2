@@ -13,6 +13,7 @@ const ROOMS = [
   { key: "wordmark",  num: "07", name: "The Wordmark Room" },
   { key: "library",   num: "08", name: "The Library" },
   { key: "spark",     num: "09", name: "The First Draft" },
+  { key: "tone",      num: "10", name: "The Voice Room" },
 ];
 
 function formatDate(ts: number) {
@@ -136,7 +137,7 @@ function buildBrief(visited: string[], feedback: FeedbackEntry[]): string {
 
   if (visited.length === 0) { lines.push("No rooms tested yet."); return lines.join("\n"); }
 
-  const parts: string[] = [`I tested ${visited.length} of the nine rooms.`];
+  const parts: string[] = [`I tested ${visited.length} of the ten rooms.`];
   if (useful.length > 0) parts.push(`${useful.length} felt genuinely useful.`);
   if (notUseful.length > 0) parts.push(`${notUseful.length} didn't land.`);
   lines.push(parts.join(" "));
@@ -228,7 +229,7 @@ export default function FeedbackSummary() {
       <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 17, color: "#B8B2A8", marginBottom: 40 }}>
         {triedCount === 0
           ? "You haven't tried any rooms yet."
-          : `${triedCount} of 9 rooms tried. ${ratedCount > 0 ? `${upCount} useful, ${downCount} not useful.` : "No rooms rated yet."}`}
+          : `${triedCount} of 10 rooms tried. ${ratedCount > 0 ? `${upCount} useful, ${downCount} not useful.` : "No rooms rated yet."}`}
       </p>
 
       <hr className="hr-hairline" style={{ marginBottom: 32 }} />
@@ -237,7 +238,7 @@ export default function FeedbackSummary() {
       {triedCount > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, backgroundColor: "#2A2A2A", border: "1px solid #2A2A2A", marginBottom: 40 }}>
           {[
-            { label: "Tried", value: `${triedCount} / 9` },
+            { label: "Tried", value: `${triedCount} / 10` },
             { label: "Useful", value: String(upCount) },
             { label: "Not useful", value: String(downCount) },
           ].map((stat) => (
