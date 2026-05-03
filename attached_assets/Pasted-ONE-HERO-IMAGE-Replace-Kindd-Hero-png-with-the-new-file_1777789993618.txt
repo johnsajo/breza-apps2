@@ -1,0 +1,55 @@
+ONE. HERO IMAGE.
+Replace Kindd_Hero.png with the new file Gemini_Generated_Image_3w52d3w52d3w52d3.png. Same placement rules. object-fit cover, object-position center top.
+Update overlay to: linear-gradient(to bottom, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.20) 45%, transparent 100%).
+The sky in this image is near-white. The overlay should be light-handed. Text must read. Image must not disappear.
+Hero wordmark and hero line: keep Midnight Navy #0F172A. They will read cleanly against the pale sky with this overlay.
+
+TWO. COLOUR. CREAM OUT. WHITE AND OFF-WHITE IN.
+Find every instance of these values and replace as follows.
+#FAF6E8 → #FFFFFF for section backgrounds. → #F5F4F0 where a very slight warm tone is needed for section alternation (premise section, always free section, disclaimer section).
+#F0EAD6 → #EEEDE9 for input backgrounds, expanded accordion fills, disclaimer blocks.
+#F8F8F5 → #F2F1EE for expanded guide state backgrounds.
+No cream anywhere on the site after this change. White and off-white only.
+
+THREE. GUIDE NAMES. COLOUR FIX.
+Inside every cluster card, the guide name rows are currently Cerulean. Change all guide name text to Midnight Navy #0F172A, weight 500. Chevron icon stays Cerulean. On hover the guide name row gets a background of #F5F4F0 and the text shifts to Cerulean. Cerulean stays only on government link buttons inside expanded state and on hover.
+
+FOUR. FONTS INSIDE GUIDE ACCORDION.
+The expanded accordion content div is not inheriting DM Sans. Add explicit font-family: 'DM Sans', sans-serif directly on the expanded content wrapper component. Weight 400. Size 14px. Line-height 1.65. Midnight Navy. Do not rely on inheritance.
+
+FIVE. EMERGENCY NUMBERS. SPACING.
+Increase padding on the emergency numbers band to 80px 24px top and bottom.
+Increase gap between number items in the grid from 32px to 48px.
+Increase the number size from 32px to 38px DM Serif Display.
+Increase space between the number and its label from default margin to 10px.
+Add 8px between the label line and the description line below it.
+
+SIX. INTERACTIVE AUSTRALIA MAP.
+Remove the dark placeholder rectangle entirely.
+Replace with a full-width interactive SVG map of Australia. Max-width 960px, centred, height auto with viewBox set to the correct Australian geography proportions approximately 1000x750.
+Build clickable SVG path regions for all six states and two self-governing territories. NT, WA, SA, QLD, NSW, VIC, TAS, ACT. External territories do not need to be on the map.
+Default state for each region: fill #1E3A5F (dark navy), stroke #FFFFFF 1.5px, border-radius on SVG paths not applicable but keep paths clean.
+Hover state: fill Cerulean #007BA7. Cursor pointer. Smooth CSS transition 200ms.
+Active/selected state: fill Midnight Navy #0F172A with a 2px Amber #F59E0B stroke.
+State abbreviation label centred inside each region. DM Sans 500 12px white. Not interactive.
+On click, a panel slides in below the map. Framer Motion AnimatePresence, smooth height. Panel background #F2F1EE, border-radius 16px, padding 28px. Shows the following for the selected state.
+State name: DM Serif Display 28px Midnight Navy.
+Capital: DM Sans 500 14px warm grey.
+Time zone: DM Sans 400 14px warm grey.
+Daylight saving: DM Sans 400 14px warm grey. "Observed" or "Not observed."
+Key government link: one Cerulean outlined button linking to the state government's main site.
+Public holidays 2026 for that state: a clean two-column list inside the panel. Date left DM Sans 400 13px warm grey, name right DM Sans 500 13px Midnight Navy. No accordion. Flat list.
+State data to hard-code:
+NSW: Capital Sydney. AEST UTC+10. Daylight saving observed. Site: nsw.gov.au. Holidays: plus Queen's Birthday 12 Oct, Bank Holiday 3 Aug.
+VIC: Capital Melbourne. AEST UTC+10. Daylight saving observed. Site: vic.gov.au. Holidays: plus AFL Grand Final Friday (date TBC), Melbourne Cup Day 3 Nov.
+QLD: Capital Brisbane. AEST UTC+10. Daylight saving not observed. Site: qld.gov.au. Holidays: plus Queen's Birthday 13 Oct.
+SA: Capital Adelaide. ACST UTC+9:30. Daylight saving observed. Site: sa.gov.au. Holidays: plus Adelaide Cup 9 Mar, Queen's Birthday 3 Aug, Proclamation Day 26 Dec.
+WA: Capital Perth. AWST UTC+8. Daylight saving not observed. Site: wa.gov.au. Holidays: plus WA Day 1 Jun, Queen's Birthday 22 Sep.
+TAS: Capital Hobart. AEST UTC+10. Daylight saving observed. Site: tas.gov.au. Holidays: plus Hobart Regatta 9 Feb (south only), Eight Hours Day 13 Apr.
+NT: Capital Darwin. ACST UTC+9:30. Daylight saving not observed. Site: nt.gov.au. Holidays: plus May Day 4 May, Picnic Day 3 Aug.
+ACT: Capital Canberra. AEST UTC+10. Daylight saving observed. Site: act.gov.au. Holidays: plus Canberra Day 9 Mar, Family and Community Day 26 Oct, Reconciliation Day 25 May.
+Add a small text below the map before the panel. DM Sans 400 13px warm grey centred. "Select a state or territory to see local facts and public holidays."
+
+SEVEN. REFERENCE TILES GRID. ORPHAN FIX.
+Remove Public Holidays 2026 as a standalone tile. It now lives inside the map panel per state.
+Remaining tiles: Australia at a Glance, States and Territories, National Anthem, Australian Values, Time Zones, Daylight Saving. Six tiles. Three columns desktop, two tablet, one mobile. Six divides cleanly into three. No orphan.

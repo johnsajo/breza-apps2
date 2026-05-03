@@ -9,13 +9,14 @@ import type { Cluster } from "@/data/guides";
 import { referenceTiles } from "@/data/reference";
 import type { RefTileData } from "@/data/reference";
 
-const heroImg = "/Kindd_Hero.png";
+const heroImg = "/Kindd_Hero_new.png";
 
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 const C = {
   navy:        "#0F172A",
-  cream:       "#FAF6E8",
-  offCream:    "#F0EAD6",
+  cream:       "#FFFFFF",
+  offCream:    "#EEEDE9",
+  softWhite:   "#F5F4F0",
   white:       "#FFFFFF",
   grey:        "#6B6B5E",
   cerulean:    "#007BA7",
@@ -137,6 +138,318 @@ const ID_DOCS = [
   { id: "ato_notice",     label: "ATO notice of assessment",                points: 25 },
 ];
 
+// ─── Australia map state data ─────────────────────────────────────────────────
+interface StateHoliday { date: string; name: string; }
+interface StateInfo {
+  name: string;
+  capital: string;
+  timezone: string;
+  dst: string;
+  siteLabel: string;
+  siteUrl: string;
+  holidays: StateHoliday[];
+}
+
+const STATE_INFO: Record<string, StateInfo> = {
+  NSW: {
+    name: "New South Wales",
+    capital: "Sydney",
+    timezone: "AEST UTC+10",
+    dst: "Observed",
+    siteLabel: "nsw.gov.au",
+    siteUrl: "https://www.nsw.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "8 Jun",  name: "King's Birthday" },
+      { date: "3 Aug",  name: "Bank Holiday" },
+      { date: "5 Oct",  name: "Labour Day" },
+      { date: "12 Oct", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  VIC: {
+    name: "Victoria",
+    capital: "Melbourne",
+    timezone: "AEST UTC+10",
+    dst: "Observed",
+    siteLabel: "vic.gov.au",
+    siteUrl: "https://www.vic.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar",  name: "Labour Day" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "8 Jun",  name: "King's Birthday" },
+      { date: "TBC",    name: "AFL Grand Final Friday" },
+      { date: "3 Nov",  name: "Melbourne Cup Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  QLD: {
+    name: "Queensland",
+    capital: "Brisbane",
+    timezone: "AEST UTC+10",
+    dst: "Not observed",
+    siteLabel: "qld.gov.au",
+    siteUrl: "https://www.qld.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "4 May",  name: "Labour Day" },
+      { date: "13 Oct", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  SA: {
+    name: "South Australia",
+    capital: "Adelaide",
+    timezone: "ACST UTC+9:30",
+    dst: "Observed",
+    siteLabel: "sa.gov.au",
+    siteUrl: "https://www.sa.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar",  name: "Adelaide Cup" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "3 Aug",  name: "Queen's Birthday" },
+      { date: "5 Oct",  name: "Labour Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "26 Dec", name: "Proclamation Day" },
+    ],
+  },
+  WA: {
+    name: "Western Australia",
+    capital: "Perth",
+    timezone: "AWST UTC+8",
+    dst: "Not observed",
+    siteLabel: "wa.gov.au",
+    siteUrl: "https://www.wa.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "1 Jun",  name: "WA Day" },
+      { date: "22 Sep", name: "Queen's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  TAS: {
+    name: "Tasmania",
+    capital: "Hobart",
+    timezone: "AEST UTC+10",
+    dst: "Observed",
+    siteLabel: "tas.gov.au",
+    siteUrl: "https://www.tas.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Feb",  name: "Hobart Regatta (south only)" },
+      { date: "9 Mar",  name: "Eight Hours Day" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "13 Apr", name: "Eight Hours Day" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "8 Jun",  name: "King's Birthday" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  NT: {
+    name: "Northern Territory",
+    capital: "Darwin",
+    timezone: "ACST UTC+9:30",
+    dst: "Not observed",
+    siteLabel: "nt.gov.au",
+    siteUrl: "https://www.nt.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "4 May",  name: "May Day" },
+      { date: "8 Jun",  name: "King's Birthday" },
+      { date: "3 Aug",  name: "Picnic Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+  ACT: {
+    name: "Australian Capital Territory",
+    capital: "Canberra",
+    timezone: "AEST UTC+10",
+    dst: "Observed",
+    siteLabel: "act.gov.au",
+    siteUrl: "https://www.act.gov.au",
+    holidays: [
+      { date: "1 Jan",  name: "New Year's Day" },
+      { date: "27 Jan", name: "Australia Day (observed)" },
+      { date: "9 Mar",  name: "Canberra Day" },
+      { date: "3 Apr",  name: "Good Friday" },
+      { date: "4 Apr",  name: "Easter Saturday" },
+      { date: "5 Apr",  name: "Easter Sunday" },
+      { date: "6 Apr",  name: "Easter Monday" },
+      { date: "25 Apr", name: "Anzac Day" },
+      { date: "25 May", name: "Reconciliation Day" },
+      { date: "8 Jun",  name: "King's Birthday" },
+      { date: "26 Oct", name: "Family and Community Day" },
+      { date: "25 Dec", name: "Christmas Day" },
+      { date: "28 Dec", name: "Boxing Day (observed)" },
+    ],
+  },
+};
+
+// ─── SVG map paths (viewBox 0 0 1000 750) ────────────────────────────────────
+const STATE_PATHS: Record<string, string> = {
+  WA:  "M 0,118 L 188,0 L 390,0 L 390,558 L 0,558 Z",
+  NT:  "M 390,0 L 612,0 L 612,358 L 390,358 Z",
+  SA:  "M 390,358 L 683,358 L 683,558 L 390,558 Z",
+  QLD: "M 612,0 L 1000,18 L 1000,412 L 683,412 L 683,358 L 612,358 Z",
+  NSW: "M 683,358 L 1000,358 L 1000,595 L 683,595 Z",
+  VIC: "M 683,595 L 952,595 L 942,648 L 683,640 Z",
+  TAS: "M 780,672 L 878,672 L 872,732 L 780,728 Z",
+  ACT: "M 856,524 L 893,524 L 893,560 L 856,560 Z",
+};
+
+const STATE_LABEL_POS: Record<string, [number, number]> = {
+  WA:  [190, 330],
+  NT:  [501, 185],
+  SA:  [537, 462],
+  QLD: [825, 205],
+  NSW: [843, 477],
+  VIC: [813, 618],
+  TAS: [826, 700],
+  ACT: [874, 542],
+};
+
+// ─── Interactive Australia Map ────────────────────────────────────────────────
+function AustraliaMap() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const [hovered,  setHovered]  = useState<string | null>(null);
+
+  const getFill = (code: string) => {
+    if (selected === code) return C.navy;
+    if (hovered  === code) return C.cerulean;
+    return "#1E3A5F";
+  };
+  const getStroke = (code: string) => selected === code ? C.amber : "#FFFFFF";
+  const getStrokeWidth = (code: string) => selected === code ? 2 : 1.5;
+
+  const info = selected ? STATE_INFO[selected] : null;
+
+  return (
+    <div style={{ maxWidth: 960, margin: "0 auto" }}>
+      <svg
+        viewBox="0 0 1000 750"
+        style={{ width: "100%", height: "auto", display: "block" }}
+        aria-label="Interactive map of Australia"
+      >
+        {Object.entries(STATE_PATHS).map(([code, path]) => (
+          <g key={code}>
+            <path
+              d={path}
+              fill={getFill(code)}
+              stroke={getStroke(code)}
+              strokeWidth={getStrokeWidth(code)}
+              style={{ cursor: "pointer", transition: "fill 0.2s" }}
+              onClick={() => setSelected(selected === code ? null : code)}
+              onMouseEnter={() => setHovered(code)}
+              onMouseLeave={() => setHovered(null)}
+            />
+            <text
+              x={STATE_LABEL_POS[code][0]}
+              y={STATE_LABEL_POS[code][1]}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              style={{
+                fontFamily: SANS,
+                fontWeight: 500,
+                fontSize: code === "ACT" ? 9 : 12,
+                fill: "#FFFFFF",
+                pointerEvents: "none",
+                userSelect: "none",
+              }}
+            >
+              {code}
+            </text>
+          </g>
+        ))}
+      </svg>
+
+      <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, textAlign: "center", marginTop: 12, marginBottom: 24 }}>
+        Select a state or territory to see local facts and public holidays.
+      </p>
+
+      <AnimatePresence>
+        {info && selected && (
+          <motion.div
+            key={selected}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ overflow: "hidden" }}
+          >
+            <div style={{ background: "#F2F1EE", borderRadius: 16, padding: 28 }}>
+              <div style={{ marginBottom: 20 }}>
+                <h3 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, marginBottom: 10 }}>{info.name}</h3>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 28px" }}>
+                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Capital: <span style={{ fontWeight: 400 }}>{info.capital}</span></span>
+                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Time zone: <span style={{ fontWeight: 400 }}>{info.timezone}</span></span>
+                  <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.darkSec }}>Daylight saving: <span style={{ fontWeight: 400 }}>{info.dst}</span></span>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <CerBtn href={info.siteUrl}>{info.siteLabel}</CerBtn>
+                </div>
+              </div>
+
+              <div style={{ height: 1, background: "rgba(15,23,42,0.08)", marginBottom: 20 }} />
+
+              <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 13, color: C.grey, marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.06em" }}>Public Holidays 2026</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 24px" }}>
+                {info.holidays.map((h) => (
+                  <div key={h.date + h.name} style={{ display: "flex", gap: 12, padding: "5px 0", borderBottom: "1px solid rgba(15,23,42,0.06)", alignItems: "baseline" }}>
+                    <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.darkSec, flexShrink: 0, minWidth: 54 }}>{h.date}</span>
+                    <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 13, color: C.navy }}>{h.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Cluster icon ─────────────────────────────────────────────────────────────
 function ClusterIcon({ id, color }: { id: string; color: string }) {
   const icons: Record<string, React.ReactNode> = {
@@ -255,7 +568,7 @@ function CtaButton({ onClick, children, variant = "dark" }: { onClick?: () => vo
       onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{ background: bg, color: C.cream, borderRadius: 32, padding: "16px 40px", fontFamily: SANS, fontWeight: 500, fontSize: 16, border: "none", cursor: "pointer", transition: "background 0.2s" }}
+      style={{ background: bg, color: "#FFFFFF", borderRadius: 32, padding: "16px 40px", fontFamily: SANS, fontWeight: 500, fontSize: 16, border: "none", cursor: "pointer", transition: "background 0.2s" }}
     >
       {children}
     </button>
@@ -286,7 +599,7 @@ function ToolInput({ label, value, onChange, placeholder }: { label: string; val
       <input
         type="number" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-        style={{ width: "100%", border: `1.5px solid ${focused ? C.cerulean : "#E8E0D0"}`, borderRadius: 12, padding: "12px 16px", fontFamily: SANS, fontSize: 15, color: C.navy, background: C.white, boxSizing: "border-box", outline: "none", transition: "border-color 0.15s" }}
+        style={{ width: "100%", borderStyle: "solid", borderWidth: "1.5px", borderColor: focused ? C.cerulean : "#E0DFDB", borderRadius: 12, padding: "12px 16px", fontFamily: SANS, fontSize: 15, color: C.navy, background: C.offCream, boxSizing: "border-box", outline: "none", transition: "border-color 0.15s" }}
       />
     </div>
   );
@@ -374,7 +687,7 @@ function IDTool() {
     <div>
       <p style={{ fontFamily: SANS, fontSize: 13, color: C.grey, marginBottom: 12 }}>Select the documents you have. Points add up as you tick.</p>
       {ID_DOCS.map((doc) => (
-        <label key={doc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: "1px solid #F0EAD6", cursor: "pointer" }}>
+        <label key={doc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: `1px solid ${C.offCream}`, cursor: "pointer" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <input type="checkbox" checked={checked.has(doc.id)} onChange={() => toggle(doc.id)}
               style={{ width: 17, height: 17, accentColor: C.cerulean, cursor: "pointer", flexShrink: 0 }} />
@@ -396,7 +709,8 @@ function IDTool() {
 
 // ─── Guide cluster card ───────────────────────────────────────────────────────
 function GuideClusterCard({ cluster }: { cluster: Cluster }) {
-  const [openGuide, setOpenGuide] = useState<string | null>(null);
+  const [openGuide,   setOpenGuide]   = useState<string | null>(null);
+  const [hoveredGuide, setHoveredGuide] = useState<string | null>(null);
   const toggle = (name: string) => setOpenGuide(openGuide === name ? null : name);
   return (
     <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: cardShadow, padding: 28, breakInside: "avoid", marginBottom: 24 }}>
@@ -405,20 +719,25 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
       <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.grey, marginTop: 4, lineHeight: 1.5 }}>{cluster.description}</div>
       <div style={{ height: 1, background: "#E8E0D0", margin: "16px 0" }} />
       {cluster.guides.map((guide) => (
-        <div key={guide.name} style={{ borderBottom: "1px solid #F0EAD6" }}>
+        <div key={guide.name} style={{ borderBottom: `1px solid ${C.offCream}` }}>
           <button
             onClick={() => toggle(guide.name)}
-            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "10px 0", cursor: "pointer", background: "none", border: "none" }}
+            onMouseEnter={() => setHoveredGuide(guide.name)}
+            onMouseLeave={() => setHoveredGuide(null)}
+            style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              width: "100%", padding: "10px 8px", cursor: "pointer", background: hoveredGuide === guide.name ? C.softWhite : "none", border: "none", borderRadius: 6, transition: "background 0.15s",
+            }}
           >
-            <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: C.cerulean, textAlign: "left" }}>{guide.name}</span>
+            <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 14, color: hoveredGuide === guide.name ? C.cerulean : C.navy, textAlign: "left", transition: "color 0.15s" }}>{guide.name}</span>
             <ChevronRight style={{ width: 14, height: 14, color: C.cerulean, flexShrink: 0, transform: openGuide === guide.name ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
           </button>
           <AnimatePresence>
             {openGuide === guide.name && (
               <motion.div key={guide.name} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} style={{ overflow: "hidden" }}>
-                <div style={{ background: "#F7F6F2", borderRadius: 12, padding: 16, marginBottom: 10 }}>
-                  <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 14, color: C.navy, lineHeight: 1.65 }}>{guide.description}</p>
-                  <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, marginTop: 8 }}>Last reviewed May 2026. Always check the official source linked below.</p>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 14, lineHeight: 1.65, color: C.navy, background: C.offCream, borderRadius: 12, padding: 16, marginBottom: 10 }}>
+                  <p style={{ margin: 0, marginBottom: 8 }}>{guide.description}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, margin: 0, marginTop: 8 }}>Last reviewed May 2026. Always check the official source linked below.</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
                     {guide.links.map((link) => (
                       <CerBtn key={link.label} href={link.url}>{link.label}</CerBtn>
@@ -436,13 +755,12 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
 
 // ─── Reference tile card ──────────────────────────────────────────────────────
 function RefTileCard({ tile }: { tile: RefTileData }) {
-  const [open, setOpen]   = useState(false);
-  const [phTab, setPhTab] = useState("NSW");
+  const [open, setOpen] = useState(false);
   return (
     <div style={{ background: C.navy, borderRadius: cardRadius, boxShadow: "0 4px 28px rgba(15,23,42,0.18)", overflow: "hidden" }}>
       <div style={{ height: 4, background: tile.stripe }} />
       <div style={{ padding: 28 }}>
-        <h3 style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, lineHeight: 1.2 }}>{tile.title}</h3>
+        <h3 style={{ fontFamily: SERIF, fontSize: 22, color: "#FAF6E8", lineHeight: 1.2 }}>{tile.title}</h3>
         <p style={{ fontFamily: SANS, fontSize: 13, color: C.darkSec, marginTop: 6, lineHeight: 1.5 }}>{tile.description}</p>
         <button
           onClick={() => setOpen(!open)}
@@ -455,26 +773,7 @@ function RefTileCard({ tile }: { tile: RefTileData }) {
           {open && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} style={{ overflow: "hidden" }}>
               <div style={{ marginTop: 16 }}>
-                {tile.id === "holidays" && tile.holidays ? (
-                  <div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 16 }}>
-                      {Object.keys(tile.holidays).map((state) => (
-                        <button key={state} onClick={() => setPhTab(state)}
-                          style={{ padding: "4px 10px", borderRadius: 6, fontFamily: SANS, fontSize: 12, fontWeight: phTab === state ? 600 : 400, background: phTab === state ? C.cerulean : "rgba(255,255,255,0.1)", color: phTab === state ? C.white : C.darkSec, border: "none", cursor: "pointer" }}>
-                          {state}
-                        </button>
-                      ))}
-                    </div>
-                    {tile.holidays[phTab]?.map((h) => (
-                      <div key={h.date + h.name} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-                        <span style={{ fontFamily: MONO, fontSize: 12, color: C.darkSec }}>{h.date}</span>
-                        <span style={{ fontFamily: SANS, fontSize: 13, color: C.cream }}>{h.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p style={{ fontFamily: SANS, fontSize: 14, color: C.darkSec, lineHeight: 1.75, whiteSpace: "pre-line" }}>{tile.content}</p>
-                )}
+                <p style={{ fontFamily: SANS, fontSize: 14, color: C.darkSec, lineHeight: 1.75, whiteSpace: "pre-line" }}>{tile.content}</p>
                 {tile.source && (
                   <p style={{ fontFamily: MONO, fontSize: 11, color: "#6B6B5E", marginTop: 14 }}>{tile.source}</p>
                 )}
@@ -521,7 +820,7 @@ export default function Home() {
     <div style={{ fontFamily: SANS, background: C.white, color: C.navy, overflowX: "hidden" }}>
 
       {/* ── NAV ─────────────────────────────────────────────────────────────── */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, backdropFilter: scrolled ? "blur(14px)" : "none", background: scrolled ? "rgba(250,246,232,0.93)" : "transparent", transition: "background 0.3s, backdrop-filter 0.3s", borderBottom: scrolled ? "1px solid rgba(15,23,42,0.07)" : "none" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 40, backdropFilter: scrolled ? "blur(14px)" : "none", background: scrolled ? "rgba(255,255,255,0.93)" : "transparent", transition: "background 0.3s, backdrop-filter 0.3s", borderBottom: scrolled ? "1px solid rgba(15,23,42,0.07)" : "none" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <button onClick={() => scrollTo("home")} style={{ fontFamily: SERIF, fontSize: 22, color: C.navy, background: "none", border: "none", cursor: "pointer", padding: 0, letterSpacing: "-0.01em" }}>
             kindd
@@ -575,7 +874,7 @@ export default function Home() {
       {/* ── S1: HERO ────────────────────────────────────────────────────────── */}
       <section id="home" style={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}>
         <img src={heroImg} alt="Australian suburban street" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(250,246,232,0.72) 0%, rgba(250,246,232,0.28) 48%, transparent 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.20) 45%, transparent 100%)" }} />
         <div style={{ position: "absolute", top: "38%", left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 820, padding: "0 24px", textAlign: "center" }}>
           <div style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3.5vw, 52px)", color: C.navy, marginBottom: 14, letterSpacing: "-0.01em" }}>kindd</div>
           <h1 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 5.5vw, 68px)", color: C.navy, lineHeight: 1.06, marginBottom: 22, letterSpacing: "-0.02em" }}>
@@ -598,7 +897,7 @@ export default function Home() {
       </section>
 
       {/* ── S2: PREMISE ─────────────────────────────────────────────────────── */}
-      <section style={{ background: C.offCream, padding: "96px 24px" }}>
+      <section style={{ background: C.softWhite, padding: "96px 24px" }}>
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, marginBottom: 36 }}>Why KINDD exists.</h2>
           <div style={{ maxWidth: 660, display: "flex", flexDirection: "column", gap: 22 }}>
@@ -610,7 +909,7 @@ export default function Home() {
       </section>
 
       {/* ── S3: GUIDES ──────────────────────────────────────────────────────── */}
-      <section id="guides" style={{ background: C.cream, padding: "96px 24px" }}>
+      <section id="guides" style={{ background: C.white, padding: "96px 24px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>Guides.</h2>
           <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", marginBottom: 6 }}>
@@ -646,7 +945,7 @@ export default function Home() {
               </svg>
               <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>Freelance Day Rate Calculator</h3>
               <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Enter your annual income target and working pattern to estimate your day rate.</p>
-              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+              <div style={{ background: "#F2F1EE", borderRadius: 10, padding: 14, marginBottom: 20 }}>
                 <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
               </div>
               <FreelanceTool />
@@ -663,7 +962,7 @@ export default function Home() {
               </svg>
               <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>Loan Repayment Estimator</h3>
               <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Enter a loan amount, interest rate, and term to estimate monthly repayments.</p>
-              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+              <div style={{ background: "#F2F1EE", borderRadius: 10, padding: 14, marginBottom: 20 }}>
                 <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
               </div>
               <LoanTool />
@@ -680,7 +979,7 @@ export default function Home() {
               </svg>
               <h3 style={{ fontFamily: SERIF, fontSize: 26, color: C.navy, marginBottom: 8 }}>100 Point ID Checker</h3>
               <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, marginBottom: 16, lineHeight: 1.5 }}>Tick the documents you have to see if you meet the 100-point identification threshold.</p>
-              <div style={{ background: "#F7F6F2", borderRadius: 10, padding: 14, marginBottom: 20 }}>
+              <div style={{ background: "#F2F1EE", borderRadius: 10, padding: 14, marginBottom: 20 }}>
                 <p style={{ fontFamily: MONO, fontSize: 11, color: C.grey, lineHeight: 1.6 }}>{TOOL_DISCLAIMER}</p>
               </div>
               <IDTool />
@@ -691,7 +990,7 @@ export default function Home() {
       </section>
 
       {/* ── S5: CITIZENSHIP ─────────────────────────────────────────────────── */}
-      <section id="citizenship" style={{ background: C.cream, padding: "96px 24px" }}>
+      <section id="citizenship" style={{ background: C.softWhite, padding: "96px 24px" }}>
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(36px, 4vw, 52px)", color: C.navy, textAlign: "center", marginBottom: 10 }}>Citizenship and coming to Australia.</h2>
           <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 17, color: C.grey, textAlign: "center", maxWidth: 680, margin: "0 auto 56px" }}>
@@ -708,7 +1007,7 @@ export default function Home() {
                 <button onClick={() => setOpenCit(openCit === stage.num ? null : stage.num)}
                   className="flex lg:flex-col"
                   style={{ alignItems: "center", gap: 12, background: "none", border: "none", cursor: "pointer", padding: "0 0 16px", width: "100%", justifyContent: "flex-start" }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: openCit === stage.num ? C.auGold : "#F0EAD6", border: `2px solid ${openCit === stage.num ? C.auGold : "#E8E0D0"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1, transition: "all 0.2s" }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: openCit === stage.num ? C.auGold : C.offCream, border: `2px solid ${openCit === stage.num ? C.auGold : "#E8E0D0"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1, transition: "all 0.2s" }}>
                     <span style={{ fontFamily: SERIF, fontSize: 20, color: openCit === stage.num ? C.navy : C.grey }}>{stage.num}</span>
                   </div>
                   <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy }}>{stage.heading}</span>
@@ -738,7 +1037,7 @@ export default function Home() {
                         <p style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, marginBottom: 16 }}>Four things citizenship unlocks:</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
                           {stage.unlocks.map((u) => (
-                            <div key={u.title} style={{ background: C.cream, borderRadius: 12, padding: 20 }}>
+                            <div key={u.title} style={{ background: C.softWhite, borderRadius: 12, padding: 20 }}>
                               <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: C.navy, marginBottom: 6 }}>{u.title}</div>
                               <p style={{ fontFamily: SANS, fontSize: 14, color: C.grey, lineHeight: 1.65, marginBottom: 12 }}>{u.desc}</p>
                               <CerBtn href={u.link.url}>{u.link.label}</CerBtn>
@@ -756,15 +1055,15 @@ export default function Home() {
       </section>
 
       {/* ── S6: EMERGENCY NUMBERS ───────────────────────────────────────────── */}
-      <section style={{ background: C.navy, padding: "64px 24px", borderTop: `4px solid ${C.signalGreen}` }}>
+      <section style={{ background: C.navy, padding: "80px 24px", borderTop: `4px solid ${C.signalGreen}` }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <h2 style={{ fontFamily: SERIF, fontSize: 36, color: C.cream, textAlign: "center", marginBottom: 48 }}>Save these. Share these.</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 32 }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 36, color: "#FAF6E8", textAlign: "center", marginBottom: 48 }}>Save these. Share these.</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 48 }}>
             {EMERGENCY_NUMBERS.map((n) => (
               <div key={n.number} style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: SERIF, fontSize: 32, color: C.cream, lineHeight: 1.1 }}>{n.number}</div>
-                <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.darkSec, marginTop: 6 }}>{n.label}</div>
-                {n.desc && <div style={{ fontFamily: SANS, fontWeight: 300, fontSize: 12, color: C.darkSec, marginTop: 3 }}>{n.desc}</div>}
+                <div style={{ fontFamily: SERIF, fontSize: 38, color: "#FAF6E8", lineHeight: 1.1 }}>{n.number}</div>
+                <div style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, color: C.darkSec, marginTop: 10 }}>{n.label}</div>
+                {n.desc && <div style={{ fontFamily: SANS, fontWeight: 300, fontSize: 12, color: C.darkSec, marginTop: 8 }}>{n.desc}</div>}
               </div>
             ))}
           </div>
@@ -782,14 +1081,12 @@ export default function Home() {
             Hard-coded facts. Sourced from official government records. Updated when they change.
           </p>
 
-          {/* Map placeholder */}
-          <div style={{ maxWidth: 800, margin: "0 auto 56px", borderRadius: 16, background: "#1A2A3A", height: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
-            <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 14, color: C.darkSec, textAlign: "center", maxWidth: 480, lineHeight: 1.7 }}>
-              Interactive Australia map coming soon. Each state will show local facts, public holidays, and key contacts.
-            </p>
+          {/* Interactive map */}
+          <div style={{ marginBottom: 64 }}>
+            <AustraliaMap />
           </div>
 
-          {/* Reference tiles */}
+          {/* Reference tiles — 6 tiles, 3 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 24 }}>
             {referenceTiles.map((tile) => (
               <RefTileCard key={tile.id} tile={tile} />
@@ -799,7 +1096,7 @@ export default function Home() {
       </section>
 
       {/* ── S8: HOW KINDD WORKS ─────────────────────────────────────────────── */}
-      <section id="how-it-works" style={{ background: C.cream, padding: "96px 24px" }}>
+      <section id="how-it-works" style={{ background: C.softWhite, padding: "96px 24px" }}>
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 46px)", color: C.navy, textAlign: "center", marginBottom: 48 }}>Three things to know before you start.</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 32 }}>
@@ -849,7 +1146,7 @@ export default function Home() {
       </section>
 
       {/* ── S10: ALWAYS FREE ────────────────────────────────────────────────── */}
-      <section style={{ background: C.cream, padding: "96px 24px" }}>
+      <section style={{ background: C.softWhite, padding: "96px 24px" }}>
         <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(30px, 4vw, 40px)", color: C.navy, marginBottom: 24, lineHeight: 1.15 }}>It costs nothing. It will always cost nothing.</h2>
           <p style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, color: C.grey, lineHeight: 1.75, marginBottom: 40 }}>
@@ -860,7 +1157,7 @@ export default function Home() {
       </section>
 
       {/* ── S11: DISCLAIMER ─────────────────────────────────────────────────── */}
-      <section style={{ background: C.offCream, padding: "64px 24px" }}>
+      <section style={{ background: C.softWhite, padding: "64px 24px" }}>
         <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontFamily: SERIF, fontSize: 28, color: C.navy, marginBottom: 28 }}>Before you use KINDD.</h2>
           {[
