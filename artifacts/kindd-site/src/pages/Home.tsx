@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoMercator, geoPath } from "d3-geo";
 import {
-  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink, Download, Search,
+  ChevronDown, ChevronRight, ArrowUp, Menu, X, ExternalLink, Download, Search, Link2,
   Linkedin, Instagram, Twitter, Youtube,
 } from "lucide-react";
 import { clusters } from "@/data/guides";
@@ -936,9 +936,17 @@ function IDTool() {
 
 // ─── Guide cluster card ───────────────────────────────────────────────────────
 function GuideClusterCard({ cluster }: { cluster: Cluster }) {
-  const [openGuide,   setOpenGuide]   = useState<string | null>(null);
+  const [openGuide,    setOpenGuide]    = useState<string | null>(null);
   const [hoveredGuide, setHoveredGuide] = useState<string | null>(null);
+  const [copiedGuide,  setCopiedGuide]  = useState<string | null>(null);
   const toggle = (name: string) => setOpenGuide(openGuide === name ? null : name);
+  const copyLink = (name: string) => {
+    const url = window.location.origin + window.location.pathname + "#guides";
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedGuide(name);
+      setTimeout(() => setCopiedGuide(null), 1800);
+    });
+  };
   return (
     <div style={{ background: C.white, borderRadius: cardRadius, boxShadow: cardShadow, padding: 28, breakInside: "avoid", marginBottom: 24 }}>
       <ClusterIcon id={cluster.id} color={cluster.color} />
@@ -974,6 +982,15 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
                     {guide.links.map((link) => (
                       <CerBtn key={link.label} href={link.url}>{link.label}</CerBtn>
                     ))}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12, borderTop: `1px solid rgba(15,23,42,0.06)`, paddingTop: 10 }}>
+                    <button
+                      onClick={() => copyLink(guide.name)}
+                      style={{ display: "inline-flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", fontFamily: MONO, fontSize: 11, color: copiedGuide === guide.name ? C.auGreen : C.grey, transition: "color 0.15s", padding: "2px 0" }}
+                    >
+                      <Link2 style={{ width: 11, height: 11 }} />
+                      {copiedGuide === guide.name ? "copied!" : "copy link"}
+                    </button>
                   </div>
                 </div>
               </motion.div>
