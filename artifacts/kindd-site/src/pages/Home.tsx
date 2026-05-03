@@ -1,14 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube } from "lucide-react";
+import { ChevronDown, ArrowUp, Menu, X, Linkedin, Instagram, Twitter, Youtube, Search } from "lucide-react";
 import { clusters } from "@/data/guides";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openGuide, setOpenGuide] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [contactForm, setContactForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [contactSent, setContactSent] = useState(false);
+
+  const filteredClusters = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return clusters;
+    return clusters
+      .map((cluster) => ({
+        ...cluster,
+        guides: cluster.guides.filter(
+          (g) =>
+            g.name.toLowerCase().includes(q) ||
+            g.description.toLowerCase().includes(q) ||
+            cluster.name.toLowerCase().includes(q) ||
+            cluster.desc.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((cluster) => cluster.guides.length > 0);
+  }, [searchQuery]);
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,13 +184,57 @@ export default function Home() {
       {/* SECTION 3 - THE SIXTEEN GUIDES */}
       <section id="guides" className="py-32 px-6 bg-card">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-medium text-primary mb-4">Sixteen guides. One small world.</h2>
             <p className="text-xl text-muted-foreground">Pick a cluster. Pick a guide. Get the right link, the right script, the right next step.</p>
           </div>
 
+          {/* Search bar */}
+          <div className="max-w-xl mx-auto mb-14">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setOpenGuide(null);
+                }}
+                placeholder="Search guides — tax, renting, Medicare, voting…"
+                className="w-full bg-background border border-accent/40 rounded-full pl-11 pr-5 py-3 text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                data-testid="input-guide-search"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(""); setOpenGuide(null); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  data-testid="btn-search-clear"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            {searchQuery && (
+              <p className="text-center text-xs font-mono text-muted-foreground mt-3">
+                {filteredClusters.reduce((acc, c) => acc + c.guides.length, 0)} guide{filteredClusters.reduce((acc, c) => acc + c.guides.length, 0) !== 1 ? "s" : ""} found
+              </p>
+            )}
+          </div>
+
+          {filteredClusters.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-lg text-muted-foreground">No guides matched &ldquo;{searchQuery}&rdquo;.</p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="mt-4 text-sm text-ring hover:opacity-80 transition-opacity underline underline-offset-2"
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clusters.map((cluster, i) => (
+            {filteredClusters.map((cluster, i) => (
               <div key={i} className="bg-background rounded-xl p-8 border border-accent/30 shadow-sm">
                 <h3 className="text-xl font-medium text-primary mb-2">{cluster.name}</h3>
                 <p className="text-sm text-muted-foreground mb-8">{cluster.desc}</p>
@@ -232,6 +294,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
