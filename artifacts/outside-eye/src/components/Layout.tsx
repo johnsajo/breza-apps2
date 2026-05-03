@@ -63,6 +63,12 @@ export default function Layout({ children }: { children: ReactNode }) {
         }}
       />
 
+      <img
+        src={`${import.meta.env.BASE_URL}hero-bg.png`}
+        className="bg-illustration"
+        alt=""
+      />
+
       <Nav />
 
       <main

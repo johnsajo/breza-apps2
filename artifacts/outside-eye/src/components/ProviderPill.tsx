@@ -28,42 +28,93 @@ export default function ProviderPill() {
 
   const isLive = !!stored;
 
+  if (isLive) {
+    return (
+      <button
+        onClick={() => navigate("/settings")}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          background: "#F5A623",
+          border: "none",
+          borderRadius: 100,
+          padding: "3px 10px 3px 8px",
+          cursor: "pointer",
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          fontSize: 11,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "#0D0D0D",
+          fontWeight: 600,
+          lineHeight: 1.6,
+          transition: "background 150ms ease",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "#C47D0E";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "#F5A623";
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            backgroundColor: "#0D0D0D",
+            display: "inline-block",
+            flexShrink: 0,
+            opacity: 0.5,
+          }}
+        />
+        {getProviderLabel(stored!.provider)}
+      </button>
+    );
+  }
+
   return (
     <button
-      onClick={() => navigate(isLive ? "/settings" : "/howitworks")}
+      onClick={() => navigate("/howitworks")}
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 6,
-        background: "none",
-        border: "none",
+        gap: 5,
+        background: "transparent",
+        border: "1px solid #3A3530",
+        borderRadius: 100,
+        padding: "3px 10px 3px 8px",
         cursor: "pointer",
-        padding: 0,
         fontFamily: "'DM Sans', system-ui, sans-serif",
-        fontSize: 12,
+        fontSize: 11,
         letterSpacing: "0.08em",
         textTransform: "uppercase",
-        color: isLive ? "#F5A623" : "#B8B2A8",
-        transition: "color 150ms ease",
+        color: "#5A5550",
+        lineHeight: 1.6,
+        transition: "border-color 150ms ease, color 150ms ease",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.color = isLive ? "#F5F0E8" : "#F5A623";
+        const btn = e.currentTarget as HTMLButtonElement;
+        btn.style.borderColor = "#B8B2A8";
+        btn.style.color = "#B8B2A8";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.color = isLive ? "#F5A623" : "#B8B2A8";
+        const btn = e.currentTarget as HTMLButtonElement;
+        btn.style.borderColor = "#3A3530";
+        btn.style.color = "#5A5550";
       }}
     >
       <span
         style={{
-          width: 7,
-          height: 7,
+          width: 6,
+          height: 6,
           borderRadius: "50%",
-          backgroundColor: isLive ? "#A3E635" : "#444444",
+          backgroundColor: "#5A5550",
           display: "inline-block",
           flexShrink: 0,
         }}
       />
-      {isLive ? getProviderLabel(stored!.provider) : "Demo Mode"}
+      Demo Mode
     </button>
   );
 }

@@ -48,7 +48,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={{ backgroundColor: "#0F172A", width: "100%", marginTop: "auto" }}>
+    <footer style={{ backgroundColor: "#141414", width: "100%", marginTop: "auto" }}>
       <div
         className="content-width"
         style={{ paddingTop: 56, paddingBottom: 48 }}
