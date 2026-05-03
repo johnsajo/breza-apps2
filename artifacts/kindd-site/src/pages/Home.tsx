@@ -981,6 +981,14 @@ function GuideClusterCard({ cluster }: { cluster: Cluster }) {
           </AnimatePresence>
         </div>
       ))}
+      <button
+        onClick={() => document.getElementById("guides")?.scrollIntoView({ behavior: "smooth" })}
+        style={{ display: "block", width: "100%", marginTop: 14, paddingTop: 12, background: "none", border: "none", borderTop: `1px solid ${C.offCream}`, cursor: "pointer", fontFamily: MONO, fontSize: 11, color: C.grey, textAlign: "center", letterSpacing: "0.03em", transition: "color 0.15s" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = C.cerulean)}
+        onMouseLeave={(e) => (e.currentTarget.style.color = C.grey)}
+      >
+        ↑ back to filters
+      </button>
     </div>
   );
 }
