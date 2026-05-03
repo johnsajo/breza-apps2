@@ -1,13 +1,13 @@
 export default function Footer() {
+  const productLine1 = "compyr · alertss · turnd · yourrr · novlit · sharpend · moodframe";
+  const productLine2 = "the outside eye · rostrr · platd · sortd · earnt · kindd";
+
   const divisionLinks = [
     { label: "tbcworldwide.com", href: "https://tbcworldwide.com" },
     { label: "brezaplusyou.com.au", href: "https://brezaplusyou.com.au" },
     { label: "taracollective.org", href: "https://taracollective.org" },
     { label: "celes13.com.au", href: "https://celes13.com.au" },
   ];
-
-  const products =
-    "compyr · alertss · turnd · yourrr · novlit · sharpend · moodframe · the outside eye · rostrr · platd · sortd · earnt · neighbr";
 
   const socialIcons = [
     {
@@ -51,7 +51,7 @@ export default function Footer() {
     <footer style={{ backgroundColor: "#000000", width: "100%", marginTop: "auto" }}>
       <div
         className="content-width"
-        style={{ paddingTop: 56, paddingBottom: 48 }}
+        style={{ paddingTop: 56, paddingBottom: 48, textAlign: "center" }}
       >
         <div>
           <p
@@ -73,11 +73,12 @@ export default function Footer() {
         </div>
 
         <div style={{ marginTop: 36 }} />
-        <hr style={{ border: "none", borderTop: "1px solid #1A2536" }} />
-        <div style={{ marginTop: 28 }} />
 
         <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 13, color: "#94A3B8" }}>
-          {products}
+          {productLine1}
+        </p>
+        <p style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: 13, color: "#94A3B8", marginTop: 8 }}>
+          {productLine2}
         </p>
 
         <div style={{ marginTop: 20 }}>
@@ -120,10 +121,8 @@ export default function Footer() {
         </div>
 
         <div style={{ marginTop: 36 }} />
-        <hr style={{ border: "none", borderTop: "1px solid #1A2536" }} />
-        <div style={{ marginTop: 28 }} />
 
-        <div style={{ display: "flex", gap: 28 }}>
+        <div style={{ display: "flex", gap: 28, justifyContent: "center" }}>
           {socialIcons.map((icon) => (
             <span
               key={icon.label}
@@ -134,12 +133,8 @@ export default function Footer() {
                 transition: "color 150ms ease",
                 display: "inline-flex",
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = "#F0F4F8")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = "#94A3B8")
-              }
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#F0F4F8")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#94A3B8")}
             >
               {icon.svg}
             </span>

@@ -40,8 +40,8 @@ router.post("/ai/chat", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      max_tokens: 2000,
+      model: "gpt-5.1",
+      max_completion_tokens: 2000,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: systemPrompt },

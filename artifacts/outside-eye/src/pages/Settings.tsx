@@ -318,6 +318,47 @@ export default function Settings() {
         Clear it any time.
       </p>
 
+      <div style={{ marginTop: 40 }} />
+      <hr className="hr-hairline" />
+      <div style={{ marginTop: 32 }} />
+
+      <div>
+        <p
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 11,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#F5A623",
+            marginBottom: 12,
+          }}
+        >
+          Test with shared AI
+        </p>
+        <p
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 15,
+            color: "#B8B2A8",
+            lineHeight: 1.65,
+            maxWidth: 520,
+          }}
+        >
+          Switch to Live mode without adding a personal key and all thirteen rooms use a shared AI — real responses, not demo data. This lets you check every room exactly as a live user would experience it.
+        </p>
+        <p
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            fontSize: 13,
+            color: "#5A5550",
+            marginTop: 10,
+            lineHeight: 1.5,
+          }}
+        >
+          To use: clear any saved key above, then click Live in the top nav.
+        </p>
+      </div>
+
       {sessionStats.tried > 0 && (
         <>
           <div style={{ marginTop: 40 }} />
@@ -354,7 +395,7 @@ export default function Settings() {
                   lineHeight: 1.5,
                 }}
               >
-                {sessionStats.tried} of 10 rooms tried
+                {sessionStats.tried} of 13 rooms tried
                 {sessionStats.rated > 0
                   ? ` · ${sessionStats.up} useful, ${sessionStats.rated - sessionStats.up} not`
                   : " · not yet rated"}
